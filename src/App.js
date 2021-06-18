@@ -12,7 +12,6 @@ import { fontFamily } from './globalAssets/fontFamily';
 import img1 from './images/img1.png';
 import {Switch, Route} from 'react-router-dom';
 import {Home} from './components/pages/Dashboard/index';
-import { SignIn } from './components/pages/SignInComponent/SignIn';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { loadProgressBar } from 'axios-progress-bar'
  
@@ -23,7 +22,7 @@ function App() {
   return (
     <Switch>
       <Route exact path='/'>
-        <SignIn/>
+       <div>Sign In page</div>
       </Route>
       <ProtectedRoute path='/dashboard'>
         <Home/>
