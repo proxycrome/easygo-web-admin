@@ -1,13 +1,52 @@
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+* {
+    box-sizing: border-box !important;
+}
+
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+    color: #41AF1B!important;
+}
+
+.ant-tabs-ink-bar {
+    background: #41AF1B !important;
+}
+
+.ant-tabs-tab:hover {
+    color: #41AF1B!important;
+}
+
+.ant-form-item-has-error .ant-input,
+.ant-form-item-has-error .ant-input-affix-wrapper,
+.ant-form-item-has-error .ant-input-affix-wrapper:hover {
+    background-color: #F7F7F7 !important;
+    border-color: #fff !important;
+}
+
+.ant-form-item-has-error .ant-input:hover,
+.ant-form-item-has-error .ant-input:focus {
+    background-color: #fff !important;
+    border-color: #fff !important;
+}
+
+#nprogress .bar {
+    background: #41AF1B !important;
+}
+
+#nprogress .peg {
+    box-shadow: 0 0 10px #41AF1B, 0 0 5px #41AF1B !important;
+}
+
+#nprogress .spinner-icon {
+    border-top-color: #41AF1B !important;
+    border-left-color: #41AF1B!important;
 }
