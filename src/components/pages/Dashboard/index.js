@@ -10,7 +10,8 @@ import {
   FiLogOut as LogoutIcon,
   FiBell as BellIcon,
   FiPlus as PlusIcon,
-  FiUsers
+  FiUsers,
+  FiList as TransactionIcon,
 } from 'react-icons/fi';
 import { GoHome as HomeIcon } from 'react-icons/go';
 import { fontFamily } from '../../../globalAssets/fontFamily';
@@ -30,7 +31,7 @@ const { Option } = Select;
 const navs = [
   { name: 'dashboard', icon: <HomeIcon />,  route:''},
   { name: 'users', icon: <FiUsers />, route:'/users'},
-/*   { name: 'transactions', icon: <TransactionIcon />, route:'/transactions' }, */
+  { name: 'transactions', icon: <TransactionIcon />, route:'/transactions' },
 ];
 
 const title = ['ID', 'Merchat Name', 'Channels', 'Volume', 'Revenue', 'Transaction count', 'Last Activity']
@@ -42,36 +43,17 @@ export const UsePageStateContext = () => useContext(PageStateContext);
 
 export function Home(props) {
   const [navState, setNavState] = React.useState(navs);
-  const [pageState, setPageState] = React.useState('welcome to sterling bank');
-  const history = useHistory();
   const location = useLocation();
   let {path, url} = useRouteMatch();
-  const dispatcher = useDispatch();
-  const signInResponse = useSelector(state => state.signInResponse);
 
 
-  
 
-  const onNavClick = (e, name) => {
-    const setActive = (item) => {
-      if (item.name === name) {
-
-        //localStorage.setItem('activePage', item.name);
-        item.isActive = true;
-        return item;
-      }
-      item.isActive = false;
-      return item;
-    };   
-    setNavState((prevState) => prevState.map(setActive));
-  };
 
   const navList = navState.map((item, index) => {
     return (
       <StyledSingleNav
         isActive={location.pathname === `${url}${item.route}`}
         key={index}
-       /*  onClick={onNavClick} */
         to={`${url}${item.route}`}
       >
         {item.icon}
@@ -112,12 +94,12 @@ export function Home(props) {
                   <Badge count={5}>
                     <BellIcon />
                   </Badge>
-                  <StyledButtonDiv>
+                  {/* <StyledButtonDiv>
                     <StyledButton>
                       <PlusIcon />
                       Create
                     </StyledButton>
-                  </StyledButtonDiv>
+                  </StyledButtonDiv> */}
                 </StyledAlertDiv>
               </StyledHeader>
             </Col>
@@ -129,15 +111,6 @@ export function Home(props) {
                     <Route exact path={`${path}`}>
                         <DashBoard/>
                     </Route>
-                    {/* <Route path={`${path}/dashboard`}>
-                        <DashBoard/>
-                    </Route> */}
-                    {/* <Route path={`${path}/transactions`}>
-                        <Transaction/>
-                    </Route>
-                    <Route path={`${path}/merchants`}>
-                        <Merchant/>
-                    </Route> */}
                     <Route path={`${path}/users`}>
                         <User/>
                     </Route>
