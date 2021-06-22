@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import img1 from '../../images/img1.png';
 import styled from 'styled-components';
 import {themes} from '../../globalAssets/theme';
@@ -9,12 +9,23 @@ import { Statistic } from 'antd';
 
 
 export const StatCard = (props) => {
+  const [numberColor, setNumberColor] = useState(themes.deepBlack);
+
+  useEffect(() => {
+    if(props.warning){
+      setNumberColor(themes.orange);
+    }
+
+    if(props.failed){
+      setNumberColor(themes.red);
+    }
+  }, [])
     return (
-      <StyledStatCard isOdd={props.isOdd} failed={props.failed} isGrey={props.isGrey}>
+      <StyledStatCard warning={props.warning} isOdd={props.isOdd} failed={props.failed} isGrey={props.isGrey}>
         <div>
           <h5>{props.title}</h5>
           {/* <h1>{props.amount}</h1> */}
-          <Statistic precision={props.hidePrecision? 0:2} valueStyle={{fontSize: '20px', color: props.failed? themes.red: themes.deepBlack, backgroundColor:'transparent', padding: '0px', marginBottom:'10px',  margin: '0px',  fontFamily: fontFamily.inter}} value={props.amount} prefix={props.hidenaira? '':'₦'} /> 
+          <Statistic precision={props.hidePrecision? 0:2} valueStyle={{fontSize: '20px', color: numberColor, backgroundColor:'transparent', padding: '0px', marginBottom:'10px',  margin: '0px',  fontFamily: fontFamily.inter}} value={props.amount} prefix={props.hidenaira? '':'₦'} /> 
             <div style={{marginTop: 10, visibility: props.count >= 0? 'visible': 'hidden'}}>
               <div>{props.isCount? 'Count': 'Profit'}:</div>
               <p>{props.count}</p>
@@ -56,7 +67,8 @@ box-shadow: 0px 3px 8px -1px rgba(50, 50, 71, 0.05);
 
   & h1 {
     font-size: 20px;
-    color: ${props => props.failed? themes.red: themes.deepBlack};
+    color: ${props => props.failed? themes.red: props.warning? themes.orange: themes.deepBlack};
+   /*  color: red; */
     font-weight: 600;
   }
 

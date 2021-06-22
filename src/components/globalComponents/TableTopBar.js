@@ -21,7 +21,7 @@ export const TableTopBar = (props) => {
       <StyledSearchInputBorder>
         <SearchIcon />
         <Input
-          placeholder="Search transaction ID, Full name…"
+          placeholder={props.placeholder}
           bordered={false}
         />{' '}
       </StyledSearchInputBorder>{' '}
@@ -45,20 +45,24 @@ export const TableTopBar = (props) => {
         </StyledDateInputBorder>{' '}
       </StyledDateInputDiv>{' '}
       <StyledDateInputDiv>
-        Filter by:
+        {props.showfilterby && (
+          <>
+          Filter by:
         <StyledSelectDiv islong width="40%">
           <StyledSelect
             suffixIcon={
               <IoMdArrowDropdown style={{ color: themes.deepBlack }} />
             }
             islong
-            defaultValue="select"
+            defaultValue="All Transactions"
             bordered={false}>
-            <Option value="jack"> All Channel </Option>{' '}
-            <Option value="Select"> Select </Option>{' '}
-            <Option value="Select2"> Select2 </Option>{' '}
-          </StyledSelect>{' '}
-        </StyledSelectDiv>{' '}
+            <Option value="All Transactions"> All Transactions </Option>{' '}
+            <Option value="Failed"> Failed </Option>{' '}
+            <Option value="Successful"> Successful </Option>{' '}
+          </StyledSelect>
+        </StyledSelectDiv>
+        </>
+        )}
         <TransparentButton
           width="40%"
           text="Export"
