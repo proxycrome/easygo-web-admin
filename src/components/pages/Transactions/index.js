@@ -117,19 +117,6 @@ export const Transaction = (props) => {
     }
   }, []);
 
-/*   React.useEffect(() => {
-    const analyticRefCurrent = keyActionRef?.current;
-    if (keyActionRef.current !== null) {
-      window.addEventListener('resize', () => {
-        setPieHeight(`${(analyticRefCurrent?.getBoundingClientRect()?.height/window.innerHeight) * 100}`)
-      });
-
-      return () =>
-        window.addEventListener('resize', () => {
-            setPieHeight(`${(analyticRefCurrent.getBoundingClientRect()?.height/window.innerHeight) * 100}`)
-        });
-    }
-  }, []); */
 
   const tableTitle = title.map((item, index) => {
     return <th key={index}>{item}</th>;
@@ -143,7 +130,6 @@ export const Transaction = (props) => {
   }
 
   const goToTransactionDetails = () => {
-    //setPageState('Transaction Details');
       history.push(`${url}/dispute-details`);
   }
 
@@ -157,9 +143,7 @@ export const Transaction = (props) => {
   const statCardArry = statItem.map((item, index) => {
     return <StatCard isCount={item.isCount} isGrey={item.isGrey} backgroundColor={item.color} key={index} count={item.count} title={item.title} amount={item.amount}/>
   })
-  const mostPerformingList = mostPerforming.map((item, index) => {
-    return <ListItem left={item.name} right={item.amount} key={index}/>
-  })
+ 
 
   return (
     <Switch>
