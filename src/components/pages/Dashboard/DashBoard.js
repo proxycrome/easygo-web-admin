@@ -12,6 +12,7 @@ import moment from "moment";
 import { TableComponent } from '../../globalComponents/TableComponent';
 import  { data } from '../../data/merchantData';
 import { FiMoreVertical } from 'react-icons/fi';
+import { selectUser } from "../Users/slice";
 
 
 const { TabPane } = Tabs;
@@ -63,10 +64,10 @@ const userDataSource = [
 
 
 export const DashBoard = (props) => {
-  const merchantData = useSelector((state) => state.merchantData);
   const { url, path } = useRouteMatch();
   const history = useHistory();
-  const [activeTab, setActiveTab] = useState(1)
+  const [activeTab, setActiveTab] = useState(1);
+  const userState = useSelector(selectUser);
 
   const transactionContent = (
     <div>
@@ -134,14 +135,9 @@ export const DashBoard = (props) => {
 
   const userColumns = [
     {
-      title: 'User ID',
-      dataIndex: 'id',
-      key: 'id',
-    },
-    {
       title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'fullName',
+      key: 'fullName',
     },
     {
       title: 'Email',
@@ -149,21 +145,36 @@ export const DashBoard = (props) => {
       key: 'email',
     }, 
     {
-      title: 'Transaction Count',
-      dataIndex: 'count',
-      key: 'count',
+      title: 'Phone Number',
+      dataIndex: 'phoneNumber',
+      key: 'phoneNumber',
     }, 
     {
-      title: 'Last Activity',
-      dataIndex: 'lastActivity',
-      key: 'lastActivity',
+      title: 'Device Name',
+      dataIndex: 'deviceName',
+      key: 'deviceName',
+    }, 
+   /*  {
+      title: 'Device Model',
+      dataIndex: 'deviceModel',
+      key: 'deviceModel',
     }, 
     {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
-    }, 
+      title: 'Device UUID',
+      dataIndex: 'deviceUUID',
+      key: 'deviceUUID',
+    }, */
     {
+      title: 'Wallet Balance',
+      dataIndex: 'walletBalance',
+      key: 'walletBalance',
+    },
+    {
+      title: 'Wallet Number',
+      dataIndex: 'walletNumber',
+      key: 'walletNumber',
+    },
+    /* {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
@@ -174,7 +185,7 @@ export const DashBoard = (props) => {
           return <Tag color="#f50">Blocked</Tag>
         }
       }
-    },
+    }, */
    
     {
       title:'Actions',
@@ -286,7 +297,6 @@ export const DashBoard = (props) => {
         </StyledStatDiv>
         <StyledKeyActionSection>
           <ChartComponent
-            data={merchantData}
             title="Transactions"
           />
         </StyledKeyActionSection>
@@ -296,8 +306,8 @@ export const DashBoard = (props) => {
             defaultActiveKey='1'
             onChange={onTabChange}
           >
-            <TabPane tab='Recent Users' key='1'>
-              <AntTable columns={userColumns} dataSource={userDataSource}/>
+            <TabPane tab='Recent Active Users' key='1'>
+              <AntTable columns={userColumns} dataSource={userState.activeUserList}/>
             </TabPane>
             <TabPane tab='Recent Transactions' key='2'>
             <AntTable

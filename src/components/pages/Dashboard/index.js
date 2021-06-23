@@ -22,6 +22,8 @@ import { DashBoard } from './DashBoard';
 import { User } from '../Users/index';
 import { Transaction } from '../Transactions/index';
 import {Switch, Link, Route, useRouteMatch, useHistory, useLocation, useParams} from 'react-router-dom';
+import { fetchAllUser } from '../Users/slice';
+import ScrollToTop  from '../../ScrollTop'
 
 import moment from 'moment';
 const { TabPane } = Tabs;
@@ -45,9 +47,24 @@ export function Home(props) {
   const [navState, setNavState] = React.useState(navs);
   const location = useLocation();
   let {path, url} = useRouteMatch();
+  const history = useHistory();
 
 
 
+  const dispatcher = useDispatch();
+
+  const getAllUser = async () => {
+    try {
+      await dispatcher(fetchAllUser({page: 0, pageSize: 10, status: 'ACTIVE'}));
+      await dispatcher(fetchAllUser({page: 0, pageSize: 10, status: 'SUSPENDED'}));
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    getAllUser()
+  }, [])
 
   const navList = navState.map((item, index) => {
     return (
@@ -62,8 +79,14 @@ export function Home(props) {
     );
   });
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    history.push('/')
+  }
+
   return (
-    <PageStateContext.Provider /* value={{pageState, setPageState}} */>
+    <>
+    <ScrollToTop/>
     <Row>
       <Col span={4}>
         <StyledSideBar>
@@ -73,7 +96,7 @@ export function Home(props) {
           <StyledLinkDiv>
             <div>{navList}</div>
             <div>
-              <StyledSingleNav /* onClick={handleLogout} */>
+              <StyledSingleNav onClick={handleLogout}>
                 <LogoutIcon />
                 <p>Logout</p>
               </StyledSingleNav>
@@ -124,7 +147,7 @@ export function Home(props) {
         </StyledMainBodyContainer>
       </Col>
     </Row>
-    </PageStateContext.Provider>
+    </>
   );
 }
 
