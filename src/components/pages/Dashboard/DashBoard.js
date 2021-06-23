@@ -12,7 +12,10 @@ import moment from "moment";
 import { TableComponent } from '../../globalComponents/TableComponent';
 import  { data } from '../../data/merchantData';
 import { FiMoreVertical } from 'react-icons/fi';
-import { selectUser } from "../Users/slice";
+import { selectUser, sendVerificationEmail } from "../Users/slice";
+import { SendEmailVerificatioModal } from '../Users/index'
+import { getDashboardStat, selectDashboard} from './slice';
+import { notificationAlert } from '../../../utils/notificationAlert';
 
 
 const { TabPane } = Tabs;
@@ -68,6 +71,41 @@ export const DashBoard = (props) => {
   const history = useHistory();
   const [activeTab, setActiveTab] = useState(1);
   const userState = useSelector(selectUser);
+  const{ dashboardStat } = useSelector(selectDashboard);
+  const [verifyEmailProps, setVerifyEmailProps] = useState({
+    loading: false,
+    email: '',
+    isModalVisible: false,
+  });
+  const dispatcher = useDispatch();
+
+  const onOpenSendVerificationEmailModal = (user) => async () => {
+    if (user.emailVerified) {
+      notificationAlert('warning', 'Email Verified', 'Email already verified');
+      return;
+    }
+    setVerifyEmailProps((prevState) => ({
+      ...prevState,
+      email: user.email,
+      isModalVisible: true,
+    }));
+  };
+
+
+  const fetchDashboardStat = async () => {
+    try {
+      const response = await dispatcher(getDashboardStat());
+      console.log(response);
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
+  useEffect(() => {
+    fetchDashboardStat();
+  }, [])
+
 
   const transactionContent = (
     <div>
@@ -154,16 +192,7 @@ export const DashBoard = (props) => {
       dataIndex: 'deviceName',
       key: 'deviceName',
     }, 
-   /*  {
-      title: 'Device Model',
-      dataIndex: 'deviceModel',
-      key: 'deviceModel',
-    }, 
-    {
-      title: 'Device UUID',
-      dataIndex: 'deviceUUID',
-      key: 'deviceUUID',
-    }, */
+  
     {
       title: 'Wallet Balance',
       dataIndex: 'walletBalance',
@@ -174,24 +203,25 @@ export const DashBoard = (props) => {
       dataIndex: 'walletNumber',
       key: 'walletNumber',
     },
-    /* {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status) => {
-        if(status === 'active'){
-          return  <Tag color="#87d068">Active</Tag>
-        }else if(status === 'blocked'){
-          return <Tag color="#f50">Blocked</Tag>
-        }
-      }
-    }, */
+    
    
     {
       title:'Actions',
       dataIndex: 'actions',
       key: 'actions',
       render: (action, alldata)=> {
+
+        const userContent = (
+          <div>
+            <p
+              style={{ cursor: 'pointer' }}
+              onClick={onOpenSendVerificationEmailModal(alldata)}>
+              Send Email Verification
+            </p>
+            <p style={{ color: 'red', cursor: 'pointer' }}>Deactivate</p>
+          </div>
+        );
+
         return (
           <Popover trigger="click" content={userContent}>
             <FiMoreVertical />
@@ -202,7 +232,34 @@ export const DashBoard = (props) => {
   ];
 
 
+  const handleSendVerificationEmail = async () => {
+    setVerifyEmailProps((prevState) => ({ ...prevState, loading: true }));
+    try {
+      const response = await dispatcher(
+        sendVerificationEmail({ email: verifyEmailProps.email })
+      );
+      setVerifyEmailProps((prevState) => ({
+        ...prevState,
+        isModalVisible: false,
+        loading: false,
+      }));
+      notificationAlert(
+        'success',
+        'Sent',
+        response
+      );
+    } catch (error) {
+      notificationAlert('error', 'Failed', error.message || 'Please try again');
+      setVerifyEmailProps((prevState) => ({ ...prevState, loading: false }));
+    }
+  };
 
+  const handleCloseSendVerificationModal = () => {
+    setVerifyEmailProps((prevState) => ({
+      ...prevState,
+      isModalVisible: false,
+    }));
+  };
 
 
   const handleTableExpand = () => {
@@ -217,7 +274,19 @@ export const DashBoard = (props) => {
   const onTabChange = (value) => {
     setActiveTab(value)
   }
-  
+  const getTotalFailedTransactions = (dashboardStat) => {
+    const totalFailedWallet = dashboardStat.totalWalletTransactions - dashboardStat.totalWalletTransactionsWithValueGiven;
+    const totalFailedCard = dashboardStat.totalCardTransactions - dashboardStat.totalCardTransactionsWithValueGiven;
+    const totalFailed = totalFailedWallet + totalFailedCard;
+
+    return {
+      totalFailedWallet,
+      totalFailedCard,
+      totalFailed
+    }
+  } 
+
+
   return (
     <Switch>
       <Route exact path={path}>
@@ -230,15 +299,33 @@ export const DashBoard = (props) => {
             title="Total Transactions"
             hidenaira
             hidePrecision
-            amount={50}
+            amount={dashboardStat.totalTransactions || 0}
           />
+
+          <StatCard
+            isCount={true}
+            isGrey={true}
+            title="Total Card Transactions"
+            hidenaira
+            hidePrecision
+            amount={dashboardStat.totalCardTransactions || 0}
+          />   
+
+          <StatCard
+            isCount={true}
+            isGrey={true}
+            title="Total Wallet Transactions"
+            hidenaira
+            hidePrecision
+            amount={dashboardStat.totalWalletTransactions || 0}
+          />   
 
           <StatCard
             isCount={true}
             isGrey={true}
             title="Successful Transactions"
             hidePrecision
-            amount={40}
+            amount={(dashboardStat.totalCardTransactionsWithValueGiven + dashboardStat.totalWalletTransactionsWithValueGiven) || 0}
             hidenaira
           />
 
@@ -248,7 +335,7 @@ export const DashBoard = (props) => {
             failed
             title="Failed Transactions"
             hidePrecision
-            amount={10}
+            amount={getTotalFailedTransactions(dashboardStat).totalFailed || 0}
             hidenaira
           />
           <StatCard
@@ -256,7 +343,7 @@ export const DashBoard = (props) => {
             isGrey={true}
             title="Total Users"
             hidePrecision
-            amount={546000}
+            amount={dashboardStat.totalUsers || 0}
             hidenaira
           />
           <StatCard
@@ -264,7 +351,7 @@ export const DashBoard = (props) => {
             isGrey={true}
             title="Active Users"
             hidePrecision
-            amount={400000}
+            amount={dashboardStat.totalActiveUsers || 0}
             hidenaira
           />
           <StatCard
@@ -272,7 +359,7 @@ export const DashBoard = (props) => {
             isGrey={true}
             title="Suspended Users"
             hidePrecision
-            amount={100000}
+            amount={dashboardStat.totalSuspendedUsers || 0}
             hidenaira
             warning
           />
@@ -281,11 +368,11 @@ export const DashBoard = (props) => {
             isGrey={true}
             title="Deleted Users"
             hidePrecision
-            amount={46000}
+            amount={dashboardStat.totalDeletedUsersCount || 0}
             hidenaira
             failed
           />
-          <StatCard
+          {/* <StatCard
             isCount={true}
             isGrey={true}
             title="Total Wallet Top-Up Today"
@@ -293,7 +380,7 @@ export const DashBoard = (props) => {
             amount={50000}
             isOdd={true}
            
-          />
+          /> */}
         </StyledStatDiv>
         <StyledKeyActionSection>
           <ChartComponent
@@ -317,6 +404,13 @@ export const DashBoard = (props) => {
             </TabPane>
           </Tabs>
         </TableComponent>
+        <SendEmailVerificatioModal
+          email={verifyEmailProps.email}
+          onCancel={handleCloseSendVerificationModal}
+          onOk={handleSendVerificationEmail}
+          loading={verifyEmailProps.loading}
+          visible={verifyEmailProps.isModalVisible}
+        />
       </Route>
     </Switch>
   );

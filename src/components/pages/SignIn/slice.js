@@ -28,7 +28,7 @@ export const loginAdmin = payload => dispatcher => {
         }
     ).catch(error => {
         if(error.response){
-            return error.response.data
+            return Promise.reject(error.response.data)
         }
     })
 }

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Tabs, Table as AntTable, Tag, Popover } from 'antd';
+import React, { useState } from 'react';
+import { Tabs, Table as AntTable, Tag, Popover, Modal } from 'antd';
 import { Switch, Route, useRouteMatch, useHistory } from 'react-router-dom';
 import { CustomerDetail } from './CustomerDetails';
 import { TableTopBar } from '../../globalComponents/TableTopBar';
@@ -9,41 +9,39 @@ import { FiMoreVertical } from 'react-icons/fi';
 import { selectUser } from './slice';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { sendVerificationEmail } from './slice';
+import { useDispatch } from 'react-redux';
+import { StyledModal } from '../../globalComponents/styles';
+import { notificationAlert } from '../../../utils/notificationAlert';
 
 const { TabPane } = Tabs;
-
-const dataSource = [
-  {
-    key: '1',
-    id: '#12234',
-    status: 'active',
-    name: 'Johnson Adewale',
-    count: 30,
-    lastActivity: '10/02/2021 10:01pm',
-    email: 'test@yahoo.com',
-  },
-  {
-    key: '2',
-    id: '#56778',
-    status: 'blocked',
-    name: 'Johnson Adewale',
-    count: 10,
-    lastActivity: '10/02/2021 10:01pm',
-    email: 'test@yahoo.com',
-  },
-];
 
 export const User = (props) => {
   const { url, path } = useRouteMatch();
   const history = useHistory();
   const userState = useSelector(selectUser);
+  const [verifyEmailProps, setVerifyEmailProps] = useState({
+    loading: false,
+    email: '',
+    isModalVisible: false,
+  });
+  const dispatcher = useDispatch();
 
-  const content = (
-    <div>
-      <p>Send Email Verification</p>
-      <p style={{ color: 'red' }}>Deactivate</p>
-    </div>
-  );
+  const onOpenSendVerificationEmailModal = (user) => async () => {
+    if (user.emailVerified) {
+      notificationAlert('warning', 'Email Verified', 'Email already verified');
+      return;
+    }
+    setVerifyEmailProps((prevState) => ({
+      ...prevState,
+      email: user.email,
+      isModalVisible: true,
+    }));
+  };
+
+  /*   const openPopOver = () => {
+    setPopOverVisible(true);
+  } */
 
   const columns = [
     {
@@ -66,16 +64,7 @@ export const User = (props) => {
       dataIndex: 'deviceName',
       key: 'deviceName',
     },
-    /*  {
-      title: 'Device Model',
-      dataIndex: 'deviceModel',
-      key: 'deviceModel',
-    }, 
-    {
-      title: 'Device UUID',
-      dataIndex: 'deviceUUID',
-      key: 'deviceUUID',
-    }, */
+
     {
       title: 'Wallet Balance',
       dataIndex: 'walletBalance',
@@ -86,24 +75,23 @@ export const User = (props) => {
       dataIndex: 'walletNumber',
       key: 'walletNumber',
     },
-    /* {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status) => {
-        if(status === 'active'){
-          return  <Tag color="#87d068">Active</Tag>
-        }else if(status === 'blocked'){
-          return <Tag color="#f50">Blocked</Tag>
-        }
-      }
-    }, */
 
     {
       title: 'Actions',
       dataIndex: 'actions',
       key: 'actions',
       render: (action, alldata) => {
+        const content = (
+          <div>
+            <p
+              style={{ cursor: 'pointer' }}
+              onClick={onOpenSendVerificationEmailModal(alldata)}>
+              Send Email Verification
+            </p>
+            <p style={{ color: 'red', cursor: 'pointer' }}>Deactivate</p>
+          </div>
+        );
+
         return (
           <Popover trigger="click" content={content}>
             <FiMoreVertical />
@@ -113,31 +101,46 @@ export const User = (props) => {
     },
   ];
 
-  function callback(key) {
-    console.log(key);
-  }
-
   const gotoAllUserTable = () => {
     history.push(`${url}/table`);
   };
-  const handleRow = type => (record, rowIndex) => {
-    console.log({record, rowIndex});
+  const handleRow = (type) => (record, rowIndex) => {
     return {
-      onClick: event => {
-        
-      }, // click row
-      onDoubleClick: event => {
+      onDoubleClick: (event) => {
         localStorage.userStatus = type;
-        console.log({record, rowIndex, event});
-        history.push(`${url}/${record.email}`)
-      }, // double click row
-      onContextMenu: event => {}, // right button click row
-      onMouseEnter: event => {
-
-      }, // mouse enter row
-      onMouseLeave: event => {}, // mouse leave row
+        history.push(`${url}/${record.email}`);
+      },
     };
-  }
+  };
+
+  const handleSendVerificationEmail = async () => {
+    setVerifyEmailProps((prevState) => ({ ...prevState, loading: true }));
+    try {
+      const response = await dispatcher(
+        sendVerificationEmail({ email: verifyEmailProps.email })
+      );
+      setVerifyEmailProps((prevState) => ({
+        ...prevState,
+        isModalVisible: false,
+        loading: false,
+      }));
+      notificationAlert(
+        'success',
+        'Sent',
+        response
+      );
+    } catch (error) {
+      notificationAlert('error', 'Failed', error.message || 'Please try again');
+      setVerifyEmailProps((prevState) => ({ ...prevState, loading: false }));
+    }
+  };
+
+  const handleCloseSendVerificationModal = () => {
+    setVerifyEmailProps((prevState) => ({
+      ...prevState,
+      isModalVisible: false,
+    }));
+  };
 
   return (
     <Switch>
@@ -146,8 +149,7 @@ export const User = (props) => {
         <TableComponent onClick={gotoAllUserTable}>
           <Tabs
             tabBarStyle={{ color: '#A0AEC0', padding: '0px 23px' }}
-            defaultActiveKey="1"
-            onChange={callback}>
+            defaultActiveKey="1">
             <TabPane tab="Active Users" key="1">
               <TableTopBar placeholder="Email, Full name" />
               <StyledAntTable
@@ -166,6 +168,13 @@ export const User = (props) => {
             </TabPane>
           </Tabs>
         </TableComponent>
+        <SendEmailVerificatioModal
+          email={verifyEmailProps.email}
+          onCancel={handleCloseSendVerificationModal}
+          onOk={handleSendVerificationEmail}
+          loading={verifyEmailProps.loading}
+          visible={verifyEmailProps.isModalVisible}
+        />
       </Route>
       <Route path={`${path}/:email`}>
         <CustomerDetail />
@@ -174,8 +183,30 @@ export const User = (props) => {
   );
 };
 
+export const SendEmailVerificatioModal = (props) => {
+  return (
+    <StyledModal
+      visible={props.visible}
+      okButtonProps={{
+        loading: props.loading,
+      }}
+      cancelButtonProps={{
+        type: 'danger',
+      }}
+      onOk={props.onOk}
+      okText="Send"
+      onCancel={props.onCancel}>
+      <h3>Send Email Verification</h3>
+      <p>
+        Would you like to send email verification link to{' '}
+        <strong>{props.email}</strong>
+      </p>
+    </StyledModal>
+  );
+};
+
 const StyledAntTable = styled(AntTable)`
-  & .ant-table-tbody > tr > td{
+  & .ant-table-tbody > tr > td {
     cursor: pointer;
   }
-`
+`;

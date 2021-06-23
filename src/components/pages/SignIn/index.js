@@ -39,9 +39,9 @@ export const SignIn = (props) => {
            history.push(`/dashboard`)
            setSignInLoading(false);
         } catch (error) {
-            notificationAlert('error', 'Failed', error.message || 'Please try again')
-           
+            console.log('HERE')
             setSignInLoading(false);
+            notificationAlert('error', 'Failed', error.message || 'Please try again');
         }
     }
   return (

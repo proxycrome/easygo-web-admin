@@ -34,4 +34,35 @@ export class Services{
             }
         })
     }
+
+    static fetchDashboardStat(){
+        return axios({
+            method: 'GET',
+            url: `${routes.getDashboardStatRoute}`,
+            headers: {
+                Authorization: `Bearer ${localStorage.token}`
+            }
+        })
+    }
+
+    static sendEmailVerification(payload){
+        return axios({
+            method: 'POST',
+            url: `${routes.sendEmailVerificationRoute}/${payload.email}`,
+            headers: {
+                Authorization: `Bearer ${localStorage.token}`
+            }
+        })
+    }
+
+    static activateUser(payload){
+        return axios({
+            method: 'PUT',
+            url: `${routes.activateUserRoute}`,
+            headers: {
+                Authorization: `Bearer ${localStorage.token}`
+            },
+            data: payload.data
+        })
+    }
 }
