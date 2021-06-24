@@ -164,12 +164,7 @@ export const DashBoard = (props) => {
   ];
 
 
-  const userContent = (
-    <div>
-      <p>Send Email Verification</p>
-      <p style={{ color: 'red' }}>Deactivate</p>
-    </div>
-  );
+ 
 
   const userColumns = [
     {

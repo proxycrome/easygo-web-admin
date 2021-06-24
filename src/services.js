@@ -65,4 +65,15 @@ export class Services{
             data: payload.data
         })
     }
+
+    static suspendUser(payload){
+        return axios({
+            method: 'PUT',
+            url: `${routes.suspendUserRoute}`,
+            headers: {
+                Authorization: `Bearer ${localStorage.token}`
+            },
+            data: payload.data
+        })
+    }
 }

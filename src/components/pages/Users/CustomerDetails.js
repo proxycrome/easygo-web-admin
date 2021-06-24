@@ -71,12 +71,21 @@ export const CustomerDetail = (props) => {
       );
     });
 
-  console.log(Array.isArray(userProperties));
+  const handleSuspendOrActivateUser = (e) => {
+    e.preventDefault();
+
+    if (localStorage.userStatus === 'active') {
+      console.log(localStorage.userStatus === 'active');
+      return props.onSuspendUser(singleUser);
+    } else if (localStorage.userStatus === 'suspended') {
+     return  props.onActivateUser(singleUser);
+    }
+  };
 
   return (
     <StyledTransactionDetailsContainer>
       <BackButton />
-      <PageTitleBar hideButtons={true}  title="User Details" />
+      <PageTitleBar hideButtons={true} title="User Details" />
       <StyledPaymentDetail>
         <CardScaffold style={{ paddingLeft: '0px', paddingRight: '0px' }}>
           <StyledPaymentHeader>
@@ -97,6 +106,11 @@ export const CustomerDetail = (props) => {
             {userProperties}
             <div style={{ margin: '30px 40px' }}>
               <PrimaryButton
+                onClick={
+                  localStorage.userStatus === 'active'
+                    ? props.onSuspendUser(singleUser)
+                    : props.onActivateUser(singleUser)
+                }
                 other={localStorage.userStatus === 'active'}
                 text={
                   localStorage.userStatus === 'active' ? 'Suspend' : 'Activate'

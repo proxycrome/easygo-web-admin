@@ -63,7 +63,6 @@ export const fetchUserByEmail = (payload) => dispatcher => {
 export const sendVerificationEmail = payload => dispatcher => {
     return Services.sendEmailVerification(payload).then(
         response => {
-                console.log(response.data);
                 return Promise.resolve(response.data)
         }
     ).catch(error => {
@@ -72,6 +71,33 @@ export const sendVerificationEmail = payload => dispatcher => {
         }
     })
 }
+
+export const activateUser = payload => dispatcher => {
+    return Services.activateUser(payload).then(
+        response => {
+            console.log(response);
+            return Promise.resolve(response.data)
+        }
+    ).catch(error => {
+        if(error.response){
+            return Promise.reject(error.response.data);
+        }
+    })
+}
+
+export const suspendUser = payload => dispatcher => {
+    return Services.suspendUser(payload).then(
+        response => {
+            console.log(response);
+            return Promise.resolve(response.data)
+        }
+    ).catch(error => {
+        if(error.response){
+            return Promise.reject(error.response.data);
+        }
+    })
+}
+
 
 export const selectUser = state => state.userReducer;
 export default userSlice.reducer;
