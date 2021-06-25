@@ -15,7 +15,7 @@ export const CardScaffold = (props) => {
   );
 };
 
-const StyledCardScaffold = styled.div`
+export const StyledCardScaffold = styled.div`
   box-shadow: 0px 3px 8px -1px rgba(50, 50, 71, 0.05);
   background-color: ${themes.backgroundColor_w};
   border-radius: 10px;
