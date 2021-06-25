@@ -6,5 +6,6 @@ export const routes = {
     activateUserRoute: '/admin/users/activate',
     exportUserDataRoute: '/admin/users/export/excel',
     sendEmailVerificationRoute: '/admin/users/resend-email-verification-code',
-    suspendUserRoute: '/admin/users/suspend'
+    suspendUserRoute: '/admin/users/suspend',
+    emailConfirmationRoute: '/email-confirmation?token='
 }

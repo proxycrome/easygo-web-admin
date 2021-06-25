@@ -76,4 +76,11 @@ export class Services{
             data: payload.data
         })
     }
+
+    static confirmEmail(payload){
+        return axios({
+            method: 'GET',
+            url: `${routes.emailConfirmationRoute}${payload.token}`,
+        })
+    }
 }
