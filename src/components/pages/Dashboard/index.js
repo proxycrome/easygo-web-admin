@@ -10,7 +10,8 @@ import {
   FiLogOut as LogoutIcon,
   FiBell as BellIcon,
   FiPlus as PlusIcon,
-  FiUsers
+  FiUsers,
+  FiList as TransactionIcon,
 } from 'react-icons/fi';
 import { GoHome as HomeIcon } from 'react-icons/go';
 import { fontFamily } from '../../../globalAssets/fontFamily';
@@ -21,6 +22,8 @@ import { DashBoard } from './DashBoard';
 import { User } from '../Users/index';
 import { Transaction } from '../Transactions/index';
 import {Switch, Link, Route, useRouteMatch, useHistory, useLocation, useParams} from 'react-router-dom';
+import { fetchAllUser } from '../Users/slice';
+import ScrollToTop  from '../../ScrollTop'
 
 import moment from 'moment';
 const { TabPane } = Tabs;
@@ -30,7 +33,7 @@ const { Option } = Select;
 const navs = [
   { name: 'dashboard', icon: <HomeIcon />,  route:''},
   { name: 'users', icon: <FiUsers />, route:'/users'},
-/*   { name: 'transactions', icon: <TransactionIcon />, route:'/transactions' }, */
+  { name: 'transactions', icon: <TransactionIcon />, route:'/transactions' },
 ];
 
 const title = ['ID', 'Merchat Name', 'Channels', 'Volume', 'Revenue', 'Transaction count', 'Last Activity']
@@ -42,36 +45,32 @@ export const UsePageStateContext = () => useContext(PageStateContext);
 
 export function Home(props) {
   const [navState, setNavState] = React.useState(navs);
-  const [pageState, setPageState] = React.useState('welcome to sterling bank');
-  const history = useHistory();
   const location = useLocation();
   let {path, url} = useRouteMatch();
+  const history = useHistory();
+
+
+
   const dispatcher = useDispatch();
-  const signInResponse = useSelector(state => state.signInResponse);
 
+  const getAllUser = async () => {
+    try {
+      await dispatcher(fetchAllUser({page: 0, pageSize: 10, status: 'ACTIVE'}));
+      await dispatcher(fetchAllUser({page: 0, pageSize: 10, status: 'SUSPENDED'}));
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
-  
-
-  const onNavClick = (e, name) => {
-    const setActive = (item) => {
-      if (item.name === name) {
-
-        //localStorage.setItem('activePage', item.name);
-        item.isActive = true;
-        return item;
-      }
-      item.isActive = false;
-      return item;
-    };   
-    setNavState((prevState) => prevState.map(setActive));
-  };
+  useEffect(() => {
+    getAllUser()
+  }, [])
 
   const navList = navState.map((item, index) => {
     return (
       <StyledSingleNav
         isActive={location.pathname === `${url}${item.route}`}
         key={index}
-       /*  onClick={onNavClick} */
         to={`${url}${item.route}`}
       >
         {item.icon}
@@ -80,8 +79,14 @@ export function Home(props) {
     );
   });
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    history.push('/')
+  }
+
   return (
-    <PageStateContext.Provider /* value={{pageState, setPageState}} */>
+    <>
+    <ScrollToTop/>
     <Row>
       <Col span={4}>
         <StyledSideBar>
@@ -91,7 +96,7 @@ export function Home(props) {
           <StyledLinkDiv>
             <div>{navList}</div>
             <div>
-              <StyledSingleNav /* onClick={handleLogout} */>
+              <StyledSingleNav onClick={handleLogout}>
                 <LogoutIcon />
                 <p>Logout</p>
               </StyledSingleNav>
@@ -112,12 +117,12 @@ export function Home(props) {
                   <Badge count={5}>
                     <BellIcon />
                   </Badge>
-                  <StyledButtonDiv>
+                  {/* <StyledButtonDiv>
                     <StyledButton>
                       <PlusIcon />
                       Create
                     </StyledButton>
-                  </StyledButtonDiv>
+                  </StyledButtonDiv> */}
                 </StyledAlertDiv>
               </StyledHeader>
             </Col>
@@ -129,15 +134,6 @@ export function Home(props) {
                     <Route exact path={`${path}`}>
                         <DashBoard/>
                     </Route>
-                    {/* <Route path={`${path}/dashboard`}>
-                        <DashBoard/>
-                    </Route> */}
-                    {/* <Route path={`${path}/transactions`}>
-                        <Transaction/>
-                    </Route>
-                    <Route path={`${path}/merchants`}>
-                        <Merchant/>
-                    </Route> */}
                     <Route path={`${path}/users`}>
                         <User/>
                     </Route>
@@ -151,7 +147,7 @@ export function Home(props) {
         </StyledMainBodyContainer>
       </Col>
     </Row>
-    </PageStateContext.Provider>
+    </>
   );
 }
 

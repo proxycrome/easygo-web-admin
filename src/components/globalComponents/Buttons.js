@@ -7,24 +7,31 @@ import { fontFamily } from '../../globalAssets/fontFamily';
 import { device } from '../../globalAssets/breakpoints';
 
 export const PrimaryButton = ({ other, hasIcon, icon, text, ...props }) => {
-    return ( <StyledButton others = { other }
-        hasIcon = { hasIcon } {...props } > { icon } { text } </StyledButton>
-    );
+  return (
+    <StyledButton others={other} hasIcon={hasIcon} {...props}>
+      {' '}
+      {icon} {text}{' '}
+    </StyledButton>
+  );
 };
 
 export const TransparentButton = (props) => {
-    return ( <StyledTranparentButton color = { props.color }
-        backgroundColor = { props.backgroundColor }
-        borderColor = { props.borderColor }
-        width = { props.width } >
-        { props.text } </StyledTranparentButton>
-    );
+  return (
+    <StyledTranparentButton
+      color={props.color}
+      backgroundColor={props.backgroundColor}
+      borderColor={props.borderColor}
+      width={props.width}>
+      {props.text}{' '}
+    </StyledTranparentButton>
+  );
 };
 
-export const StyledButton = styled.button `
+export const StyledButton = styled.button`
   ${getCenter()};
   font-size: 12px;
-  background-color: ${props => props.others ? themes.red : themes.primaryColor};
+  background-color: ${(props) =>
+    props.others ? themes.red : themes.primaryColor};
   border: none;
   color: #fff;
   border-radius: 6px;
@@ -53,10 +60,9 @@ export const StyledButton = styled.button `
   }
 `;
 
-const StyledTranparentButton = styled.button `
-
+const StyledTranparentButton = styled.button`
   background: ${(props) => props.backgroundColor};
-  border: 1px solid ${props => props.borderColor};
+  border: 1px solid ${(props) => props.borderColor};
   border-radius: 6px;
   font-family: ${fontFamily.sora};
   font-size: 14px;
@@ -64,7 +70,7 @@ const StyledTranparentButton = styled.button `
   letter-spacing: -0.16187px;
   padding: 5.6px 17.6px;
   cursor: pointer;
-  width: ${props => props.width};
+  width: ${(props) => props.width};
 
   &:focus {
     outline: none;

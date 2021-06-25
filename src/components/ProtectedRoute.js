@@ -7,7 +7,7 @@ export const ProtectedRoute = ({children, ...rest}) => {
         <Route
           {...rest}
           render={({ location }) =>
-            true? (
+            localStorage.token? (
               children
             ) : (
               <Redirect

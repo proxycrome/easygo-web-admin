@@ -23,12 +23,12 @@ export const loginAdmin = payload => dispatcher => {
     return Services.login(payload).then(
         response => {
             console.log(response);
-            localStorage.token = response.data.data.accessToken
+            localStorage.token = response.data.data.body.accessToken
             return Promise.resolve(response.data.data)
         }
     ).catch(error => {
         if(error.response){
-            return error.response.data
+            return Promise.reject(error.response.data)
         }
     })
 }

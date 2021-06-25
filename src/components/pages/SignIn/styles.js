@@ -24,7 +24,7 @@ export const StyledInnerContainer = styled.div`
 `
 
 export const StyledCard = styled(StyledCardScaffold)`
-    width: 30%;
+    width: 25%;
     text-align: center;
     padding-left: 0px;
     padding-right: 0px;
@@ -32,6 +32,11 @@ export const StyledCard = styled(StyledCardScaffold)`
     & img{
         width: 8vw;
         height: auto;
+    }
+
+    & h3{
+        color: ${themes.primaryColor};
+        margin-bottom: 25px;
     }
 `
 
@@ -53,6 +58,7 @@ export const StyledButton = styled(Button)`
 export const StyledInput = styled(Input)`
     border-bottom: 1px solid #d9d9d9;
     border-radius: 0px;
+    margin-bottom: 15px;
 
     &:focus, &:hover{
         border-bottom: 1px solid ${themes.primaryColor} !important;;
@@ -62,6 +68,7 @@ export const StyledInput = styled(Input)`
 export const StyledPassword = styled(Password)`
     border-bottom: 1px solid #d9d9d9;
     border-radius: 0px;
+    margin-bottom: 15px;
 
     &:focus, &:hover{
         border-bottom: 1px solid ${themes.primaryColor} !important;

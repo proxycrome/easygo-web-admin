@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import { Row, Divider, Form, Input } from 'antd';
 import {
   StyledForm,
@@ -13,23 +13,35 @@ import Logo from '../../../images/logo.png';
 import { FiLock, FiUser } from 'react-icons/fi';
 import { loginAdmin } from './slice';
 import { useDispatch } from 'react-redux';
-import { notificationAlert } from '../../../utils/notificationAlert'
+import { notificationAlert } from '../../../utils/notificationAlert';
+import { useHistory, useLocation} from 'react-router';
 
 export const SignIn = (props) => {
     const [signInLoading, setSignInLoading] = useState(false);
-    const dispatcher = useDispatch()
+    const dispatcher = useDispatch();
+    const history = useHistory();
+    const location = useLocation();
+
+    const {from} = location.state ||  { from: { pathname: "/dashboard", state: {from: location}}};
+
+
+    useEffect(() => {
+        if(localStorage.token){
+            history.replace(from);
+          }
+    }, [])
 
     const onFinish = async (values) => {
         setSignInLoading(true);
 
         try {
            const response =  await dispatcher(loginAdmin({data: values}));
-           console.log({response});
+           history.push(`/dashboard`)
            setSignInLoading(false);
         } catch (error) {
-            notificationAlert('error', 'Failed', error.message || 'Please try again')
-            console.log(error);
+            console.log('HERE')
             setSignInLoading(false);
+            notificationAlert('error', 'Failed', error.message || 'Please try again');
         }
     }
   return (
@@ -39,6 +51,7 @@ export const SignIn = (props) => {
           <StyledCard>
             <img src={Logo} alt="logo" />
             <Divider />
+            <h3>Admin Login</h3>
             <StyledForm onFinish={onFinish}>
               <Form.Item name="emailOrPhone">
                 <StyledInput

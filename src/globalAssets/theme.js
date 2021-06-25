@@ -7,11 +7,12 @@ export const themes = {
     grey: '#A0AEC0',
     green1: '#219653',
     green2: '#27AE60',
-    red: '#DB353A',
+    red: '#f80e15',
     backgroundColor_w: '#fff',
     backgroundColor_b: '#F7FAFC',
     textColor: '#556575',
     deepBlack: '#16192C',
     subtleBlack : '#7A7A9D',
-    darkPrimaryColor: '#41AF1B'
+    darkPrimaryColor: '#41AF1B',
+    orange: 'orange'
 }

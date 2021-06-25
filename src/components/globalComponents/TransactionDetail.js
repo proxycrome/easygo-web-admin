@@ -6,7 +6,6 @@ import { fontFamily } from '../../globalAssets/fontFamily';
 import { device } from '../../globalAssets/breakpoints';
 import { CardScaffold } from './CardScaffold';
 import { data } from '../data/merchantData2';
-import { MerchantProfileRow } from '../TableRows/MerchantProfileRow';
 import {
   PrimaryButton,
   TransparentButton,
@@ -46,9 +45,6 @@ export const TransactionDetail = (props) => {
   const chatPaneRef = useRef();
   const chatcontainerRef = useRef();
 
-  const tableBody = data.map((data, index) => (
-    <MerchantProfileRow data={data} key={index} />
-  ));
 
   useEffect(() => {
     setEqualHeight(chatcontainerRef.current.getBoundingClientRect().height);
@@ -174,7 +170,7 @@ export const TransactionDetail = (props) => {
             <TabPane tab='All Transactions' key='1'>
             <TableTopBar />
             <TableActionButtons />
-            <Table tableTitle={tableTitle} tableBody={tableBody} />
+            {/* <Table tableTitle={tableTitle} tableBody={tableBody} /> */}
             </TabPane>
         </Tabs>
         </TableComponent>)}
