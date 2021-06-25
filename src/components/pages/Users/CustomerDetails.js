@@ -15,28 +15,158 @@ import { useParams } from 'react-router-dom';
 import { BackButton } from '../../globalComponents/BackButton';
 import { PageTitleBar } from '../../globalComponents/PageTitleBar';
 import { fetchUserByEmail, selectUser } from './slice';
-import { Tag } from 'antd';
+import { Tag, Tabs, Table as AntTable, Popover, Modal } from 'antd';
+import {
+  fetchTransactionsByEmail,
+  selectTransactions,
+} from '../Transactions/slice';
+import { TableTopBar } from '../../globalComponents/TableTopBar';
+import { TableComponent } from '../../globalComponents/TableComponent';
+import moment from 'moment';
+
+const formatDateTime = (dateTime) => {
+  if (dateTime) {
+    dateTime = dateTime.split('T');
+    const date = dateTime[0].split('-');
+    const time = dateTime[1].split(':');
+    const milisec = time[2].split('.');
+    console.log({date, time, milisec})
+    return date.concat(time[0]).concat(milisec).map(item => parseInt(item));
+  }
+
+  return []
+};
+
+const columns = [
+  {
+    title: 'Name',
+    dataIndex: 'customerFullName',
+    key: 'customerFullName',
+    width: '7%',
+    fixed: 'left',
+  },
+  {
+    title: 'Email',
+    dataIndex: 'customerEmail',
+    key: 'customerEmail',
+    width: '7%',
+    fixed: 'left',
+  },
+  {
+    title: 'Phone number',
+    dataIndex: 'customerPhoneNumber',
+    key: 'customerPhoneNumber',
+  },
+  {
+    title: 'Amount',
+    dataIndex: 'amount',
+    key: 'amount',
+  },
+  {
+    title: 'Charge',
+    dataIndex: 'charge',
+    key: 'charge',
+  },
+  {
+    title: 'Logged At',
+    dataIndex: 'dateTransactionLoggedAt',
+    key: 'dateTransactionLoggedAt',
+    render: (time) => {
+      return time?  <p>{moment(time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</p> : ''
+    },
+  },
+  {
+    title: 'Value Given At',
+    dataIndex: 'dateValueWasGiven',
+    key: 'dateValueWasGiven',
+    render: (time) => {
+        return time?  <p>{moment(time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</p> : ''
+      },
+  },
+  {
+    title: 'Paid At',
+    dataIndex: 'paidAt',
+    key: 'paidAt',
+    render: (time) => {
+        return time?  <p>{moment(time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</p> : ''
+      },
+  },
+  {
+    title: 'Paid For',
+    dataIndex: 'paidFor',
+    key: 'paidFor',
+  },
+  {
+    title: 'Payee',
+    dataIndex: 'payee',
+    key: 'payee',
+  },
+  {
+    title: 'Payment Gateway',
+    dataIndex: 'paymentGateway',
+    key: 'paymentGateway',
+  },
+  {
+    title: 'Provider',
+    dataIndex: 'provider',
+    key: 'provider',
+  },
+  {
+    title: 'Service',
+    dataIndex: 'service',
+    key: 'service',
+  },
+  {
+    title: 'Method',
+    dataIndex: 'transactionMethod',
+    key: 'transactionMethod',
+  },
+  {
+    title: 'Type',
+    dataIndex: 'transactionType',
+    key: 'transactionType',
+  },
+  {
+    title: 'Reference',
+    dataIndex: 'transactionReference',
+    key: 'transactionReference',
+  },
+  {
+    title: 'Status',
+    dataIndex: 'valueGiven',
+    key: 'valueGiven',
+    width: 100,
+    fixed: 'right',
+    render: (status) => {
+      if (status) {
+        return <Tag color="#87d068">successful</Tag>;
+      } else {
+        return <Tag color="#f50">Failed</Tag>;
+      }
+    },
+  },
+];
 
 export const CustomerDetail = (props) => {
   const { email } = useParams();
   const dispatcher = useDispatch();
   const { singleUser } = useSelector(selectUser);
+  const { transactionByemail } = useSelector(selectTransactions);
   const [userAttributes, setUserAttributes] = useState([]);
+ console.log( moment([2010, 1, 14, 15, 25, 50, 125]).format('LLLL'))
 
-  console.log({ singleUser });
   const getSingleUser = async () => {
     try {
       const response = await dispatcher(fetchUserByEmail({ email }));
-      console.log({ response });
-      /*  const arr = Object.entries(response).filter(
-        (item) => typeof item[0] !== 'object'
+      const transactions = await dispatcher(
+        fetchTransactionsByEmail({ email })
       );
-      console.log({ arr });
-      setUserAttributes(arr); */
+      console.log({ response, transactions });
     } catch (error) {
       console.log(error);
     }
   };
+
   useEffect(() => {
     getSingleUser();
   }, []);
@@ -49,7 +179,6 @@ export const CustomerDetail = (props) => {
     if (typeof value === 'boolean' && !value) {
       return 'Not Verified';
     }
-
     return value;
   };
 
@@ -71,56 +200,59 @@ export const CustomerDetail = (props) => {
       );
     });
 
-  const handleSuspendOrActivateUser = (e) => {
-    e.preventDefault();
-
-    if (localStorage.userStatus === 'active') {
-      console.log(localStorage.userStatus === 'active');
-      return props.onSuspendUser(singleUser);
-    } else if (localStorage.userStatus === 'suspended') {
-     return  props.onActivateUser(singleUser);
-    }
-  };
-
   return (
-    <StyledTransactionDetailsContainer>
-      <BackButton />
-      <PageTitleBar hideButtons={true} title="User Details" />
-      <StyledPaymentDetail>
-        <CardScaffold style={{ paddingLeft: '0px', paddingRight: '0px' }}>
-          <StyledPaymentHeader>
+    <>
+      <StyledTransactionDetailsContainer>
+        <BackButton />
+        <PageTitleBar hideButtons={true} title="User Details" />
+        <StyledPaymentDetail>
+          <CardScaffold style={{ paddingLeft: '0px', paddingRight: '0px' }}>
+            <StyledPaymentHeader>
+              <div>
+                <img src={singleUser?.pictureUrl} alt="customer" />
+              </div>
+              <div>
+                <h1>{singleUser?.fullName}</h1>
+                <p>{singleUser?.email}</p>
+              </div>
+              <Tag
+                style={{ marginLeft: 'auto' }}
+                color={
+                  localStorage.userStatus === 'active' ? '#87d068' : '#f50'
+                }>
+                {localStorage.userStatus.toUpperCase()}
+              </Tag>
+            </StyledPaymentHeader>
             <div>
-              <img src={singleUser?.pictureUrl} alt="customer" />
+              {userProperties}
+              <div style={{ margin: '30px 40px' }}>
+                <PrimaryButton
+                  onClick={
+                    localStorage.userStatus === 'active'
+                      ? props.onSuspendUser(singleUser)
+                      : props.onActivateUser(singleUser)
+                  }
+                  other={localStorage.userStatus === 'active'}
+                  text={
+                    localStorage.userStatus === 'active'
+                      ? 'Suspend'
+                      : 'Activate'
+                  }
+                />
+              </div>
             </div>
-            <div>
-              <h1>{singleUser?.fullName}</h1>
-              <p>{singleUser?.email}</p>
-            </div>
-            <Tag
-              style={{ marginLeft: 'auto' }}
-              color={localStorage.userStatus === 'active' ? '#87d068' : '#f50'}>
-              {localStorage.userStatus.toUpperCase()}
-            </Tag>
-          </StyledPaymentHeader>
-          <div>
-            {userProperties}
-            <div style={{ margin: '30px 40px' }}>
-              <PrimaryButton
-                onClick={
-                  localStorage.userStatus === 'active'
-                    ? props.onSuspendUser(singleUser)
-                    : props.onActivateUser(singleUser)
-                }
-                other={localStorage.userStatus === 'active'}
-                text={
-                  localStorage.userStatus === 'active' ? 'Suspend' : 'Activate'
-                }
-              />
-            </div>
-          </div>
-        </CardScaffold>
-      </StyledPaymentDetail>
-    </StyledTransactionDetailsContainer>
+          </CardScaffold>
+        </StyledPaymentDetail>
+      </StyledTransactionDetailsContainer>
+      <TableComponent>
+        <TableTopBar placeholder="Email, Full name" />
+        <AntTable
+          columns={columns}
+          scroll={{ x: '180vw' }}
+          dataSource={transactionByemail}
+        />
+      </TableComponent>
+    </>
   );
 };
 
