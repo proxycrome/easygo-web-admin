@@ -83,4 +83,30 @@ export class Services{
             url: `${routes.emailConfirmationRoute}${payload.token}`,
         })
     }
+
+    static fetchTransactions(payload){
+        const page = payload.page || 0;
+        const size = payload.pageSize || 10;
+
+        return axios({
+            method: 'GET',
+            url: `${routes.transactionRoute}?&page=${page}&size=${size}`,
+            headers: {
+                Authorization: `Bearer ${localStorage.token}`
+            },
+        })
+    }
+
+    static fetchTransactionsByEmail(payload){
+        const page = payload.page || 0;
+        const size = payload.pageSize || 10;
+
+        return axios({
+            method: 'GET',
+            url: `${routes.transactionRoute}/customer-email?page=${page}&size=${size}&customer-email=${payload.email}`,
+            headers: {
+                Authorization: `Bearer ${localStorage.token}`
+            },
+        })
+    }
 }

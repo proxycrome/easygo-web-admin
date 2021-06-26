@@ -12,7 +12,8 @@ import moment from "moment";
 import { TableComponent } from '../../globalComponents/TableComponent';
 import  { data } from '../../data/merchantData';
 import { FiMoreVertical } from 'react-icons/fi';
-import { selectUser, sendVerificationEmail } from "../Users/slice";
+import { selectUser, sendVerificationEmail, suspendUser, fetchAllUser } from "../Users/slice";
+import { SuspendUserModal } from '../Users/index'
 import { SendEmailVerificatioModal } from '../Users/index'
 import { getDashboardStat, selectDashboard} from './slice';
 import { notificationAlert } from '../../../utils/notificationAlert';
@@ -77,6 +78,11 @@ export const DashBoard = (props) => {
     email: '',
     isModalVisible: false,
   });
+  const [suspendUserProps, setSuspendUserProps] = useState({
+    loading: false,
+    email: '',
+    isModalVisible: false,
+  });
   const dispatcher = useDispatch();
 
   const onOpenSendVerificationEmailModal = (user) => async () => {
@@ -100,6 +106,15 @@ export const DashBoard = (props) => {
       console.log(error)
     }
   }
+
+
+  const openSuspendUserModal = (user) => () => {
+    setSuspendUserProps((prevState) => ({
+      ...prevState,
+      email: user.email,
+      isModalVisible: true,
+    }));
+  };
 
 
   useEffect(() => {
@@ -213,7 +228,7 @@ export const DashBoard = (props) => {
               onClick={onOpenSendVerificationEmailModal(alldata)}>
               Send Email Verification
             </p>
-            <p style={{ color: 'red', cursor: 'pointer' }}>Deactivate</p>
+            <p style={{ color: 'red', cursor: 'pointer' }} onClick={openSuspendUserModal(alldata)}>Suspend</p>
           </div>
         );
 
@@ -281,6 +296,45 @@ export const DashBoard = (props) => {
     }
   } 
 
+  const handleCloseSuspendUserModal = () => {
+    setSuspendUserProps((prevState) => ({
+      ...prevState,
+      isModalVisible: false,
+    }));
+  };
+
+
+  const handleSuspendUser = async () => {
+    setSuspendUserProps((prevState) => ({ ...prevState, loading: true }));
+    try {
+      const payload = {
+        data: {
+          confirm: true,
+          email: suspendUserProps.email,
+        },
+      };
+      await dispatcher(suspendUser(payload));
+      await dispatcher(
+        fetchAllUser({ page: 0, pageSize: 10, status: 'ACTIVE' })
+      );
+      await dispatcher(
+        fetchAllUser({ page: 0, pageSize: 10, status: 'SUSPENDED' })
+      );
+      setSuspendUserProps((prevState) => ({
+        ...prevState,
+        isModalVisible: false,
+        loading: false,
+      }));
+      notificationAlert(
+        'success',
+        'Suspended',
+        `User with the email ${suspendUserProps.email} has been suspended`
+      );
+    } catch (error) {
+      setSuspendUserProps((prevState) => ({ ...prevState, loading: false }));
+      notificationAlert('error', 'Failed', error.message || 'Please try again');
+    }
+  };
 
   return (
     <Switch>
@@ -406,6 +460,13 @@ export const DashBoard = (props) => {
           loading={verifyEmailProps.loading}
           visible={verifyEmailProps.isModalVisible}
         />
+         <SuspendUserModal
+            email={suspendUserProps.email}
+            loading={suspendUserProps.loading}
+            visible={suspendUserProps.isModalVisible}
+            onCancel={handleCloseSuspendUserModal}
+            onOk={handleSuspendUser}
+          />
       </Route>
     </Switch>
   );
