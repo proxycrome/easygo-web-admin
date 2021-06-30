@@ -87,7 +87,7 @@ export class Services{
     static fetchTransactions(payload){
         const page = payload.page || 0;
         const size = payload.pageSize || 10;
-
+        
         return axios({
             method: 'GET',
             url: `${routes.transactionRoute}?&page=${page}&size=${size}`,
@@ -103,10 +103,22 @@ export class Services{
 
         return axios({
             method: 'GET',
-            url: `${routes.transactionRoute}/customer-email?page=${page}&size=${size}&customer-email=${payload.email}`,
+            url: `${routes.transactionRoute}/users/customer-email?page=${page}&size=${size}&customer-email=${payload.email}`,
             headers: {
                 Authorization: `Bearer ${localStorage.token}`
             },
+        })
+    }
+
+
+    static requeryTransaction(payload){
+        return axios({
+            method: 'POST',
+            url:`${routes.requeryRoute}`,
+            headers: {
+                Authorization: `Bearer ${localStorage.token}`
+            },
+            data: payload.data
         })
     }
 }

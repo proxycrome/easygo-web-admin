@@ -1,49 +1,72 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { Services } from "../../../services";
+import { createSlice } from '@reduxjs/toolkit';
+import { Services } from '../../../services';
 
 const transactionSlice = createSlice({
-    name: 'transactionSlice',
-    initialState: {
-        transactionByemail: []
+  name: 'transactionSlice',
+  initialState: {
+    transactionByemail: [],
+    allTransactions: { data: [], limit: 0, page: 0, total: 0 },
+  },
+  reducers: {
+    addTransactionByEmail: (state, { payload }) => {
+      state.transactionByemail = payload;
     },
-    reducers: {
-        addTransactionByEmail: (state, {payload}) => {
-            state.transactionByemail = payload
-        }
-    }
+    addAllTransactions: (state, { payload }) => {
+      state.allTransactions = payload;
+    },
+  },
 });
 
+export const { addTransactionByEmail, addAllTransactions } =
+  transactionSlice.actions;
 
-export const { addTransactionByEmail } = transactionSlice.actions;
+export const fetchTransactions = (payload) => (dispatcher) => {
+  return Services.fetchTransactions(payload)
+    .then((response) => {
+      console.log('Transactions', response);
+      dispatcher(
+        addAllTransactions({
+          data: response.data.data.body,
+          total: response.data.total,
+          limit: response.data.limit,
+          page: response.data.page,
+        })
+      );
+      return Promise.resolve(response.data.data.body);
+    })
+    .catch((error) => {
+      if (error.response) {
+        return Promise.reject(error.response.data);
+      }
+    });
+};
 
-export const fetchTransactions = payload => dispatcher => {
-    return Services.fetchTransactions(payload).then(
+export const fetchTransactionsByEmail = (payload) => (dispatcher) => {
+  return Services.fetchTransactionsByEmail(payload)
+    .then((response) => {
+      dispatcher(addTransactionByEmail(response.data.data.body));
+      return Promise.resolve(response.data.data.body);
+    })
+    .catch((error) => {
+      if (error.response) {
+        return Promise.reject(error.response.data);
+      }
+    });
+};
+
+export const requeryTransaction = (payload) => dispatcher => {
+    return Services.requeryTransaction(payload).then(
         response => {
-            console.log('Transactions',response)
+            console.log(response);
             return Promise.resolve(response.data.data.body);
         }
-    ).catch(error => {
-        if(error.response){
-            return Promise.reject(error.response.data);
+    ).catch((error) => {
+        if (error.response) {
+          return Promise.reject(error.response.data);
         }
-    })
+      });
 }
 
-export const fetchTransactionsByEmail = payload => dispatcher => {
-    return Services.fetchTransactionsByEmail(payload).then(
-        response => {
-            console.log(response.data.data.body);
-            dispatcher(addTransactionByEmail(response.data.data.body))
-            return Promise.resolve(response.data.data.body);
-        }
-    ).catch(error => {
-        if(error.response){
-            return Promise.reject(error.response.data);
-        }
-    })
-}
-
-
-export const selectTransactions = state => state.transactionsReducer
+export const selectTransactions = (state) => state.transactionsReducer;
 
 export default transactionSlice.reducer;

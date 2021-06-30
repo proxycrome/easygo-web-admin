@@ -88,7 +88,7 @@ const StyledInputBorderSmall = styled.div`
   border-radius: 6px;
 `;
 
-const StyledSearchInputBorder = styled(StyledInputBorderSmall)`
+export const StyledSearchInputBorder = styled(StyledInputBorderSmall)`
   width: 31.5%;
   display: flex;
   align-items: center;

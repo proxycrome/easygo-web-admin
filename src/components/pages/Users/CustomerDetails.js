@@ -153,7 +153,7 @@ export const CustomerDetail = (props) => {
   const { singleUser } = useSelector(selectUser);
   const { transactionByemail } = useSelector(selectTransactions);
   const [userAttributes, setUserAttributes] = useState([]);
- console.log( moment([2010, 1, 14, 15, 25, 50, 125]).format('LLLL'))
+
 
   const getSingleUser = async () => {
     try {
@@ -256,7 +256,7 @@ export const CustomerDetail = (props) => {
   );
 };
 
-const PaymentDetail = (props) => {
+export const PaymentDetail = (props) => {
   return (
     <StyledSingleDetail borderless={props.borderless} isRed={props.isRed}>
       <p>{props.left}</p>
