@@ -12,7 +12,6 @@ export const EmailConfirmation = (props) => {
         const params = new URLSearchParams(location.search);
         const token = params.get('token')
         confirmEmailFn(token)
-        console.log({token})
     },[])
 
     async function confirmEmailFn(token){
