@@ -5,6 +5,7 @@ import { themes } from '../../globalAssets/theme';
 import { getCenter } from '../../utils/getCenter';
 import { fontFamily } from '../../globalAssets/fontFamily';
 import { device } from '../../globalAssets/breakpoints';
+import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 
 export const PrimaryButton = ({ other, hasIcon, icon, text, ...props }) => {
   return (
@@ -80,3 +81,25 @@ const StyledTranparentButton = styled.button`
     font-size: 1vw;
   }
 `;
+
+
+export const StyledReactHTMLTableToExcel = styled(ReactHTMLTableToExcel)`
+  background: ${(props) => props.backgroundColor};
+  border: 1px solid ${(props) => props.borderColor};
+  border-radius: 6px;
+  font-family: ${fontFamily.sora};
+  font-size: 14px;
+  color: ${(props) => props.color};
+  letter-spacing: -0.16187px;
+  padding: 5.6px 17.6px;
+  cursor: pointer;
+  width: ${(props) => props.width};
+
+  &:focus {
+    outline: none;
+  }
+
+  @media ${device.laptop} {
+    font-size: 1vw;
+  }
+`

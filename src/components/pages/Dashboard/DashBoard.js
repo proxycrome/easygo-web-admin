@@ -568,7 +568,7 @@ export const DashBoard = (props) => {
               <AntTable
                pagination={false}
                 columns={userColumns}
-                dataSource={userState.activeUserList}
+                dataSource={userState.activeUserList.data}
               />
             </TabPane>
             <TabPane tab="Recent Transactions" key="2">

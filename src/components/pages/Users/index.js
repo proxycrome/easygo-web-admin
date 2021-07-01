@@ -37,6 +37,8 @@ export const User = (props) => {
     email: '',
     isModalVisible: false,
   });
+  const [activeUserPageSize, setActiveUserPageSize] = useState(10);
+  const [suspendedUserPageSize, setSuspendedUserPageSize] = useState(10)
   const dispatcher = useDispatch();
 
   const onOpenSendVerificationEmailModal = (user) => async () => {
@@ -255,6 +257,19 @@ export const User = (props) => {
       notificationAlert('error', 'Failed', error.message || 'Please try again');
     }
   };
+
+  const handleActiveUserPagination = (page, pageSize) => {
+    setActiveUserPageSize(pageSize)
+    dispatcher(fetchAllUser({page: page - 1, pageSize , status: 'ACTIVE'}));
+  };
+
+  const handleSuspendedUserPagination = (page, pageSize) => {
+    setSuspendedUserPageSize(pageSize)
+   dispatcher(fetchAllUser({page: page - 1, pageSize, status: 'SUSPENDED'}));
+  };
+
+  console.log({ userState });
+
   return (
     <>
       <Switch>
@@ -270,7 +285,17 @@ export const User = (props) => {
                 <StyledAntTable
                   onRow={handleRow('active')}
                   columns={columns}
-                  dataSource={userState.activeUserList}
+                  dataSource={userState.activeUserList.data}
+                  pagination={{
+                    total: userState.activeUserList.total,
+                    showTotal: (total, range) =>
+                      `${range[0]}-${range[1]} of ${total} items`,
+                    defaultCurrent: 1,
+                    current: userState.activeUserList.page + 1,
+                    pageSize: activeUserPageSize,
+                    showSizeChanger: true,
+                    onChange: handleActiveUserPagination,
+                  }}
                 />
               </TabPane>
               <TabPane tab="Suspended Users" key="2">
@@ -278,7 +303,17 @@ export const User = (props) => {
                 <StyledAntTable
                   onRow={handleRow('suspended')}
                   columns={columns}
-                  dataSource={userState.suspendedUserList}
+                  dataSource={userState.suspendedUserList.data}
+                  pagination={{
+                    total: userState.suspendedUserList.total,
+                    showTotal: (total, range) =>
+                      `${range[0]}-${range[1]} of ${total} items`,
+                    defaultCurrent: 1,
+                    current: userState.suspendedUserList.page + 1,
+                    pageSize: suspendedUserPageSize,
+                    showSizeChanger: true,
+                    onChange: handleSuspendedUserPagination,
+                  }}
                 />
               </TabPane>
             </Tabs>
