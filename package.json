@@ -2,7 +2,6 @@
     "name": "easygo-admin-client",
     "version": "0.1.0",
     "private": true,
-    "proxy": "http://134.209.64.28:8083",
     "dependencies": {
         "@nivo/core": "^0.70.1",
         "@nivo/pie": "^0.70.1",
@@ -13,6 +12,7 @@
         "antd": "^4.16.3",
         "axios": "^0.21.1",
         "axios-progress-bar": "^1.2.0",
+        "http-proxy-middleware": "^2.0.0",
         "moment": "^2.29.1",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",

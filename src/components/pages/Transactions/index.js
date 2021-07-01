@@ -69,8 +69,6 @@ export const Transaction = (props) => {
     isVisible: false,
   })
 
-  console.log({allTransactions});
-
   const openRequeryModal = (ref, id) => () => {
     console.log({ref, id});
     //form.resetFields();
