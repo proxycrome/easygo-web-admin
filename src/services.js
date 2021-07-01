@@ -6,7 +6,7 @@ export class Services{
     static login(payload){
         return axios({
             method: 'POST',
-            url: `${routes.loginRoute}`,
+            url: `${domain}${routes.loginRoute}`,
             data: payload.data,
         })
     }
@@ -17,7 +17,7 @@ export class Services{
 
         return axios({
             method: 'GET',
-            url:`${routes.userRoute}?role=USER&page=${page}&size=${size}&status=${payload.status}`,
+            url:`${domain}${routes.userRoute}?role=USER&page=${page}&size=${size}&status=${payload.status}`,
             headers: {
                 Authorization: `Bearer ${localStorage.token}`
             }
@@ -28,7 +28,7 @@ export class Services{
     static fetchUserByEmail(payload){
         return axios({
             method: 'GET',
-            url: `${routes.userRoute}/details/email?email=${payload.email}`,
+            url: `${domain}${routes.userRoute}/details/email?email=${payload.email}`,
             headers: {
                 Authorization: `Bearer ${localStorage.token}`
             }
@@ -38,7 +38,7 @@ export class Services{
     static fetchDashboardStat(){
         return axios({
             method: 'GET',
-            url: `${routes.getDashboardStatRoute}`,
+            url: `${domain}${routes.getDashboardStatRoute}`,
             headers: {
                 Authorization: `Bearer ${localStorage.token}`
             }
@@ -48,7 +48,7 @@ export class Services{
     static sendEmailVerification(payload){
         return axios({
             method: 'POST',
-            url: `${routes.sendEmailVerificationRoute}/${payload.email}`,
+            url: `${domain}${routes.sendEmailVerificationRoute}/${payload.email}`,
             headers: {
                 Authorization: `Bearer ${localStorage.token}`
             }
@@ -58,7 +58,7 @@ export class Services{
     static activateUser(payload){
         return axios({
             method: 'PUT',
-            url: `${routes.activateUserRoute}`,
+            url: `${domain}${routes.activateUserRoute}`,
             headers: {
                 Authorization: `Bearer ${localStorage.token}`
             },
@@ -69,7 +69,7 @@ export class Services{
     static suspendUser(payload){
         return axios({
             method: 'PUT',
-            url: `${routes.suspendUserRoute}`,
+            url: `${domain}${routes.suspendUserRoute}`,
             headers: {
                 Authorization: `Bearer ${localStorage.token}`
             },
@@ -80,7 +80,7 @@ export class Services{
     static confirmEmail(payload){
         return axios({
             method: 'GET',
-            url: `${routes.emailConfirmationRoute}${payload.token}`,
+            url: `${domain}${routes.emailConfirmationRoute}${payload.token}`,
         })
     }
 
@@ -90,7 +90,7 @@ export class Services{
         
         return axios({
             method: 'GET',
-            url: `${routes.transactionRoute}?&page=${page}&size=${size}`,
+            url: `${domain}${routes.transactionRoute}?&page=${page}&size=${size}`,
             headers: {
                 Authorization: `Bearer ${localStorage.token}`
             },
@@ -103,7 +103,7 @@ export class Services{
 
         return axios({
             method: 'GET',
-            url: `${routes.transactionRoute}/users/customer-email?page=${page}&size=${size}&customer-email=${payload.email}`,
+            url: `${domain}${routes.transactionRoute}users/customer-email?page=${page}&size=${size}&customer-email=${payload.email}`,
             headers: {
                 Authorization: `Bearer ${localStorage.token}`
             },
@@ -114,7 +114,7 @@ export class Services{
     static requeryTransaction(payload){
         return axios({
             method: 'POST',
-            url:`${routes.requeryRoute}`,
+            url:`${domain}${routes.requeryRoute}`,
             headers: {
                 Authorization: `Bearer ${localStorage.token}`
             },
