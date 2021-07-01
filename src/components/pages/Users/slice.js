@@ -5,8 +5,8 @@ import { Services } from "../../../services";
 const userSlice = createSlice({
     name: 'userSlice',
     initialState: {
-        suspendedUserList: [],
-        activeUserList: [],
+        suspendedUserList:  { data: [], limit: 0, page: 0, total: 0 },
+        activeUserList:  { data: [], limit: 0, page: 0, total: 0 },
         singleUser: {}
     },
 
@@ -31,9 +31,19 @@ export const fetchAllUser = (payload) => dispatcher => {
     return Services.fetchAllUser(payload).then(
             response => {
                 if(payload.status === 'ACTIVE'){
-                    dispatcher(addActiveUserList(response.data.data.body))
+                    dispatcher(addActiveUserList({
+                        data: response.data.data.body,
+                        total: response.data.total,
+                        limit: response.data.limit,
+                        page: response.data.page,
+                      }))
                 }else if(payload.status === 'SUSPENDED'){
-                    dispatcher(addSuspendedUserList(response.data.data.body))
+                    dispatcher(addSuspendedUserList({
+                        data: response.data.data.body,
+                        total: response.data.total,
+                        limit: response.data.limit,
+                        page: response.data.page,
+                      }))
                 }
                 console.log(response );
                 return Promise.resolve()

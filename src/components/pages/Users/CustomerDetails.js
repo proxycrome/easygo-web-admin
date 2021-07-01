@@ -23,6 +23,7 @@ import {
 import { TableTopBar } from '../../globalComponents/TableTopBar';
 import { TableComponent } from '../../globalComponents/TableComponent';
 import moment from 'moment';
+import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 
 const formatDateTime = (dateTime) => {
   if (dateTime) {
@@ -30,11 +31,14 @@ const formatDateTime = (dateTime) => {
     const date = dateTime[0].split('-');
     const time = dateTime[1].split(':');
     const milisec = time[2].split('.');
-    console.log({date, time, milisec})
-    return date.concat(time[0]).concat(milisec).map(item => parseInt(item));
+    console.log({ date, time, milisec });
+    return date
+      .concat(time[0])
+      .concat(milisec)
+      .map((item) => parseInt(item));
   }
 
-  return []
+  return [];
 };
 
 const columns = [
@@ -72,7 +76,11 @@ const columns = [
     dataIndex: 'dateTransactionLoggedAt',
     key: 'dateTransactionLoggedAt',
     render: (time) => {
-      return time?  <p>{moment(time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</p> : ''
+      return time ? (
+        <p>{moment(time).format('dddd, MMMM Do YYYY, h:mm:ss a')}</p>
+      ) : (
+        ''
+      );
     },
   },
   {
@@ -80,16 +88,24 @@ const columns = [
     dataIndex: 'dateValueWasGiven',
     key: 'dateValueWasGiven',
     render: (time) => {
-        return time?  <p>{moment(time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</p> : ''
-      },
+      return time ? (
+        <p>{moment(time).format('dddd, MMMM Do YYYY, h:mm:ss a')}</p>
+      ) : (
+        ''
+      );
+    },
   },
   {
     title: 'Paid At',
     dataIndex: 'paidAt',
     key: 'paidAt',
     render: (time) => {
-        return time?  <p>{moment(time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</p> : ''
-      },
+      return time ? (
+        <p>{moment(time).format('dddd, MMMM Do YYYY, h:mm:ss a')}</p>
+      ) : (
+        ''
+      );
+    },
   },
   {
     title: 'Paid For',
@@ -154,7 +170,6 @@ export const CustomerDetail = (props) => {
   const { transactionByemail } = useSelector(selectTransactions);
   const [userAttributes, setUserAttributes] = useState([]);
 
-
   const getSingleUser = async () => {
     try {
       const response = await dispatcher(fetchUserByEmail({ email }));
@@ -199,6 +214,8 @@ export const CustomerDetail = (props) => {
         />
       );
     });
+
+    console.log({ transactionByemail })
 
   return (
     <>
@@ -245,13 +262,44 @@ export const CustomerDetail = (props) => {
         </StyledPaymentDetail>
       </StyledTransactionDetailsContainer>
       <TableComponent>
-        <TableTopBar placeholder="Email, Full name" />
+        <TableTopBar fullName={singleUser?.fullName} placeholder="Email, Full name" />
         <AntTable
+          
           columns={columns}
           scroll={{ x: '180vw' }}
           dataSource={transactionByemail}
         />
       </TableComponent>
+      <table id="user-transaction" style={{display: 'none'}}>
+             <thead>
+               <tr>
+                 {
+                  transactionByemail.length &&  Object.keys(transactionByemail[0]).map((item, index) => {
+                     return <td key={index}>{item}</td>
+                   })
+                 }
+               </tr>
+            </thead>  
+            <tbody>
+              {transactionByemail.map((item, index) => {
+                return (
+                  <tr key={`${index}-item`}>
+                    {Object.values(item).filter(item => typeof item !== 'object').map((data, index) => {
+                      return (
+                        <td key={`${index}-data`}>{data}</td>
+                      )
+                    })}
+                  </tr>
+                )
+              })}
+            </tbody>   
+      </table>
+     {/*  <ReactHTMLTableToExcel
+        buttonText="Export"
+        table="user-transaction"
+        sheet="user-transaction"
+        filename={`${singleUser.fullName}Transactions`}
+      /> */}
     </>
   );
 };

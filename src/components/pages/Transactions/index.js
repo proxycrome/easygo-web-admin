@@ -62,6 +62,7 @@ export const Transaction = (props) => {
     ref:'',
     id: ''
   })
+  const [transactionPageSize, setTransactionPageSize] = React.useState(10)
 
   const [queryResultModalProps, setQueryResultModalProps] = React.useState({
     data:{},
@@ -237,10 +238,10 @@ export const Transaction = (props) => {
   };
 
   const handlePagination = (page, pageSize) => {
+    setTransactionPageSize(pageSize)
     dispatcher(fetchTransactions({ page: page - 1, pageSize }));
   };
   const handleRequeryTransaction = async (values) => {
-    console.log(values);
     setRequeryModalProps(prevState => ({...prevState, loading: true}))
       try {
         const response = await dispatcher(requeryTransaction({data: values}));
@@ -286,7 +287,7 @@ export const Transaction = (props) => {
                     `${range[0]}-${range[1]} of ${total} items`,
                   defaultCurrent: 1,
                   current: allTransactions.page + 1,
-                  pageSize: allTransactions.limit,
+                  pageSize: transactionPageSize,
                   showSizeChanger: true,
                   onChange: handlePagination,
                 }}

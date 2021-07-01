@@ -5,14 +5,14 @@ import { themes } from '../../globalAssets/theme';
 import { getCenter } from '../../utils/getCenter';
 import { fontFamily } from '../../globalAssets/fontFamily';
 import { device } from '../../globalAssets/breakpoints';
-import { TransparentButton } from './Buttons';
+import { TransparentButton, StyledReactHTMLTableToExcel } from './Buttons';
 import { FaLongArrowAltRight } from 'react-icons/fa';
 import { IoMdArrowDropdown } from 'react-icons/io';
 import { GoHome as HomeIcon, GoCalendar } from 'react-icons/go';
 import { Input, Select, DatePicker } from 'antd';
 import moment from 'moment';
 import { FiSearch as SearchIcon } from 'react-icons/fi';
-
+import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 const { Option } = Select;
 
 export const TableTopBar = (props) => {
@@ -20,10 +20,7 @@ export const TableTopBar = (props) => {
     <StyledTableBar>
       <StyledSearchInputBorder>
         <SearchIcon />
-        <Input
-          placeholder={props.placeholder}
-          bordered={false}
-        />{' '}
+        <Input placeholder={props.placeholder} bordered={false} />{' '}
       </StyledSearchInputBorder>{' '}
       <StyledDateInputDiv>
         <StyledDateInputBorder>
@@ -47,28 +44,38 @@ export const TableTopBar = (props) => {
       <StyledDateInputDiv>
         {props.showfilterby && (
           <>
-          Filter by:
-        <StyledSelectDiv islong width="40%">
-          <StyledSelect
-            suffixIcon={
-              <IoMdArrowDropdown style={{ color: themes.deepBlack }} />
-            }
-            islong
-            defaultValue="All Transactions"
-            bordered={false}>
-            <Option value="All Transactions"> All Transactions </Option>{' '}
-            <Option value="Failed"> Failed </Option>{' '}
-            <Option value="Successful"> Successful </Option>{' '}
-          </StyledSelect>
-        </StyledSelectDiv>
-        </>
+            Filter by:
+            <StyledSelectDiv islong width="40%">
+              <StyledSelect
+                suffixIcon={
+                  <IoMdArrowDropdown style={{ color: themes.deepBlack }} />
+                }
+                islong
+                defaultValue="All Transactions"
+                bordered={false}>
+                <Option value="All Transactions"> All Transactions </Option>{' '}
+                <Option value="Failed"> Failed </Option>{' '}
+                <Option value="Successful"> Successful </Option>{' '}
+              </StyledSelect>
+            </StyledSelectDiv>
+          </>
         )}
-        <TransparentButton
+        {/*  <TransparentButton
           width="40%"
           text="Export"
           color="#16192C"
           borderColor="#e2e2ea"
           backgroundColor="transparent"
+        /> */}
+        <StyledReactHTMLTableToExcel
+          color="#16192C"
+          borderColor="#e2e2ea"
+          width="40%"
+          backgroundColor="transparent"
+          buttonText="Export"
+          table="user-transaction"
+          sheet="user-transaction"
+          filename={`${props.fullName}Transactions`}
         />
       </StyledDateInputDiv>{' '}
     </StyledTableBar>
