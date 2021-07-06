@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Tabs,
   Table as AntTable,
@@ -7,7 +7,7 @@ import {
   Form,
   Input,
   Select,
-  Typography
+  Typography,
 } from 'antd';
 import {
   TableTopBar,
@@ -22,7 +22,11 @@ import { TransactionDetail } from '../../globalComponents/TransactionDetail';
 import { PageTitleBar } from '../../globalComponents/PageTitleBar';
 import { FiMoreVertical } from 'react-icons/fi';
 import moment from 'moment';
-import { selectTransactions, fetchTransactions, requeryTransaction } from './slice';
+import {
+  selectTransactions,
+  fetchTransactions,
+  requeryTransaction,
+} from './slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { StyledModal } from '../../globalComponents/styles';
 import { notificationAlert } from '../../../utils/notificationAlert';
@@ -52,32 +56,40 @@ const dataSource = [
 export const Transaction = (props) => {
   const [form] = Form.useForm();
   const { allTransactions } = useSelector(selectTransactions);
-  const [page, setPage] = React.useState(1);
+  const [page, setPage] = useState(1);
   const { path, url } = useRouteMatch();
   const history = useHistory();
   const dispatcher = useDispatch();
-  const [requeryModalProps, setRequeryModalProps] = React.useState({
+  const [requeryModalProps, setRequeryModalProps] = useState({
     loading: false,
     isVisible: false,
-    ref:'',
-    id: ''
-  })
-  const [transactionPageSize, setTransactionPageSize] = React.useState(10)
+    ref: '',
+    id: '',
+  });
+  const [transactionPageSize, setTransactionPageSize] = useState(10);
+  const [endDate, setEndDate] = useState(moment().format('YYYY/MM/DD'));
+  const [startDate, setStartDate] = useState('2019/01/01');
+  const [filterParam, setFilterParam] = useState({ field: '', value: '' });
 
-  const [queryResultModalProps, setQueryResultModalProps] = React.useState({
-    data:{},
+  const [queryResultModalProps, setQueryResultModalProps] = useState({
+    data: {},
     isVisible: false,
-  })
+  });
 
   const openRequeryModal = (ref, id) => () => {
-    console.log({ref, id});
+    console.log({ ref, id });
     //form.resetFields();
     form.setFieldsValue({
       transactionId: ref,
       transactionReference: ref,
     });
-    setRequeryModalProps(prevState => ({...prevState, ref, id, isVisible: true}));
-  }
+    setRequeryModalProps((prevState) => ({
+      ...prevState,
+      ref,
+      id,
+      isVisible: true,
+    }));
+  };
 
   const columns = [
     {
@@ -108,6 +120,9 @@ export const Transaction = (props) => {
       title: 'Amount',
       dataIndex: 'amount',
       key: 'amount',
+      defaultSortOrder: 'descend',
+      sorter: (a, b) => parseInt(a.amount) - parseInt(b.amount),
+      sortDirections: ['descend', 'ascend'],
     },
     {
       title: 'Charge',
@@ -196,9 +211,22 @@ export const Transaction = (props) => {
       key: 'valueGiven',
       width: 100,
       fixed: 'right',
+      filters: [
+        {
+          text: 'Successful',
+          value: true,
+        },
+        {
+          text: 'Failed',
+          value: false,
+        },
+      ],
+      onFilter: (value, record) => {
+        return record.valueGiven === value;
+      },
       render: (status) => {
         if (status) {
-          return <Tag color="#87d068">successful</Tag>;
+          return <Tag color="#87d068">Successful</Tag>;
         } else {
           return <Tag color="#f50">Failed</Tag>;
         }
@@ -211,10 +239,14 @@ export const Transaction = (props) => {
       key: 'actions',
       width: '4%',
       fixed: 'right',
-      render: (action, {transactionReference, id}) => {
+      render: (action, { transactionReference, id }) => {
         const content = (
           <div>
-            <p onClick={openRequeryModal(transactionReference, id)} style={{ cursor: 'pointer' }}>Re-query</p>
+            <p
+              onClick={openRequeryModal(transactionReference, id)}
+              style={{ cursor: 'pointer' }}>
+              Re-query
+            </p>
           </div>
         );
 
@@ -236,31 +268,107 @@ export const Transaction = (props) => {
   };
 
   const handlePagination = (page, pageSize) => {
-    setTransactionPageSize(pageSize)
-    dispatcher(fetchTransactions({ page: page - 1, pageSize }));
+    setTransactionPageSize(pageSize);
+    setPage(page);
+    dispatcher(
+      fetchTransactions({
+        page: page - 1,
+        pageSize,
+        'start-date': startDate,
+        'end-date': endDate,
+        [filterParam.field]: filterParam.value,
+      })
+    );
   };
   const handleRequeryTransaction = async (values) => {
-    setRequeryModalProps(prevState => ({...prevState, loading: true}))
-      try {
-        const response = await dispatcher(requeryTransaction({data: values}));
-        console.log(response);
-        notificationAlert('success', 'Re-query Successfull', 'Operation was successful');
-        setQueryResultModalProps(prevState => ({...prevState, isVisible: true, data: response}))
-        setRequeryModalProps(prevState => ({...prevState, isVisible: false, loading: false}))
-      } catch (error) {
-        notificationAlert('error', 'Re-query Failed', 'Please try again');
-        setRequeryModalProps(prevState => ({...prevState, loading: false}))
-      }
-  }
+    setRequeryModalProps((prevState) => ({ ...prevState, loading: true }));
+    try {
+      const response = await dispatcher(requeryTransaction({ data: values }));
+      console.log(response);
+      notificationAlert(
+        'success',
+        'Re-query Successfull',
+        'Operation was successful'
+      );
+      setQueryResultModalProps((prevState) => ({
+        ...prevState,
+        isVisible: true,
+        data: response,
+      }));
+      setRequeryModalProps((prevState) => ({
+        ...prevState,
+        isVisible: false,
+        loading: false,
+      }));
+    } catch (error) {
+      notificationAlert('error', 'Re-query Failed', 'Please try again');
+      setRequeryModalProps((prevState) => ({ ...prevState, loading: false }));
+    }
+  };
 
   const closeRequeryModal = (values) => {
-    setRequeryModalProps(prevState => ({...prevState, isVisible: false}))
-  }
+    setRequeryModalProps((prevState) => ({ ...prevState, isVisible: false }));
+  };
 
   const closeQueryResultModal = () => {
-    setQueryResultModalProps(prevState => ({...prevState, isVisible: false}))
-  }
+    setQueryResultModalProps((prevState) => ({
+      ...prevState,
+      isVisible: false,
+    }));
+  };
 
+  const formatDate = (date) => {
+    return date.split('-').join('/');
+  };
+  const onStartDateChange = (date, dateString) => {
+    setStartDate(formatDate(dateString));
+    dispatcher(
+      fetchTransactions({
+        page: page - 1,
+        pageSize: transactionPageSize,
+        'start-date': formatDate(dateString),
+        'end-date': endDate,
+        [filterParam.field]: filterParam.value,
+      })
+    );
+    console.log({ dateString });
+  };
+
+  const onEndDateChange = (date, dateString) => {
+    setEndDate(formatDate(dateString));
+    dispatcher(
+      fetchTransactions({
+        page: page - 1,
+        pageSize: transactionPageSize,
+        'start-date': startDate,
+        'end-date': formatDate(dateString),
+        [filterParam.field]: filterParam.value,
+      })
+    );
+    console.log({ dateString });
+  };
+
+  const onFilterTransaction = (value, field) => {
+    console.log({ value, field });
+
+    //value = value === 'Successful' ? true : value === 'Failed' ? false : value;
+
+    setFilterParam({ value, field });
+
+    dispatcher(
+      fetchTransactions({
+        page: page - 1,
+        pageSize: transactionPageSize,
+        'start-date': startDate,
+        'end-date': endDate,
+        [field]: value,
+      })
+    );
+  };
+
+  const clearFilter = () => {
+    setFilterParam({ value: '', field: '' });
+  };
   return (
     <Switch>
       <Route exact path={`${path}`}>
@@ -272,7 +380,14 @@ export const Transaction = (props) => {
             onChange={callback}>
             <TabPane tab="All Transactions" key="1">
               <TableTopBar
+                isTransaction={true}
                 showfilterby
+                onFilterTransaction={onFilterTransaction}
+                onStartDateChange={onStartDateChange}
+                onEndDateChange={onEndDateChange}
+                clearFilter={clearFilter}
+                tableId="transactions"
+                fullName="All Transactions"
                 placeholder="Transaction ID, Customer Full Name"
               />
               <AntTable
@@ -293,7 +408,33 @@ export const Transaction = (props) => {
             </TabPane>
           </Tabs>
         </TableComponent>
-        <StyledModal onCancel={closeRequeryModal} visible={requeryModalProps.isVisible} footer={false}>
+        <table id="transactions" style={{ display: 'none' }}>
+          <thead>
+            <tr>
+              {allTransactions.data.length &&
+                Object.keys(allTransactions.data[0]).map((item, index) => {
+                  return <td key={index}>{item}</td>;
+                })}
+            </tr>
+          </thead>
+          <tbody>
+            {allTransactions.data.map((item, index) => {
+              return (
+                <tr key={`${index}-item`}>
+                  {Object.values(item)
+                    .filter((item) => typeof item !== 'object')
+                    .map((data, index) => {
+                      return <td key={`${index}-data`}>{data}</td>;
+                    })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        <StyledModal
+          onCancel={closeRequeryModal}
+          visible={requeryModalProps.isVisible}
+          footer={false}>
           <Typography.Title level={4}>Re-query Transaction</Typography.Title>
           <Form
             form={form}
@@ -304,41 +445,88 @@ export const Transaction = (props) => {
             wrapperCol={{
               span: 24,
             }}
-           /*  initialValues={{
+            /*  initialValues={{
               transactionId: requeryModalProps.id,
               transactionReference: requeryModalProps.ref
             }} */
-            >
-            <Form.Item rules={[{ required: true }]} name='paymentStatus' label="Transaction Status">
-              <Select placeholder='Select payment status'>
+          >
+            <Form.Item
+              rules={[{ required: true }]}
+              name="paymentStatus"
+              label="Transaction Status">
+              <Select placeholder="Select payment status">
                 <Option value="SUCCESSFUL">SUCCESSFUL </Option>{' '}
                 <Option value="PENDING"> PENDING </Option>{' '}
                 <Option value="FAILED"> FAILED </Option>{' '}
               </Select>
             </Form.Item>
-            <Form.Item rules={[{ required: true }]} name='transactionId' label="Transaction ID">
+            <Form.Item
+              rules={[{ required: true }]}
+              name="transactionId"
+              label="Transaction ID">
               <Input />
             </Form.Item>
-            <Form.Item rules={[{ required: true }]} name='transactionReference' label="Transaction Reference">
+            <Form.Item
+              rules={[{ required: true }]}
+              name="transactionReference"
+              label="Transaction Reference">
               <Input />
             </Form.Item>
             <Form.Item>
-              <PrimaryButton disabled={requeryModalProps.loading} htmlType='submit' text='Re-query'/>
+              <PrimaryButton
+                disabled={requeryModalProps.loading}
+                htmlType="submit"
+                text="Re-query"
+              />
             </Form.Item>
           </Form>
         </StyledModal>
-        <StyledModal onCancel={closeQueryResultModal} visible={queryResultModalProps.isVisible} footer={false}>
-            <div style={{width: '100%'}}>
-              <PaymentDetail left='Transaction Reference' right={queryResultModalProps?.data?.transactionReference}/>
-              <PaymentDetail left='Transaction Type' right={queryResultModalProps?.data?.transactionType}/>
-              <PaymentDetail left='Transaction Method' right={queryResultModalProps?.data?.transactionMethod}/>
-              <PaymentDetail left='Customer Name' right={queryResultModalProps?.data?.customerName}/>
-              <PaymentDetail left='Service' right={queryResultModalProps?.data?.service}/>
-              <PaymentDetail left='Amount' right={queryResultModalProps?.data?.amount}/>
-              <PaymentDetail left='Status' right={queryResultModalProps?.data?.valueGiven? 'Successful':'Failed'}/>
-              <PaymentDetail left='Payee' right={queryResultModalProps?.data?.payee}/>
-              <PaymentDetail left='Paid At' right={queryResultModalProps?.data?.paidAt}/>
-            </div>
+        <StyledModal
+          onCancel={closeQueryResultModal}
+          visible={queryResultModalProps.isVisible}
+          footer={false}>
+          <div style={{ width: '100%' }}>
+            <PaymentDetail
+              left="Transaction Reference"
+              right={queryResultModalProps?.data?.transactionReference}
+            />
+            <PaymentDetail
+              left="Transaction Type"
+              right={queryResultModalProps?.data?.transactionType}
+            />
+            <PaymentDetail
+              left="Transaction Method"
+              right={queryResultModalProps?.data?.transactionMethod}
+            />
+            <PaymentDetail
+              left="Customer Name"
+              right={queryResultModalProps?.data?.customerName}
+            />
+            <PaymentDetail
+              left="Service"
+              right={queryResultModalProps?.data?.service}
+            />
+            <PaymentDetail
+              left="Amount"
+              right={queryResultModalProps?.data?.amount}
+            />
+            <PaymentDetail
+              left="Status"
+              right={
+                queryResultModalProps?.data?.valueGiven
+                  ? 'Successful'
+                  : 'Failed'
+              }
+            />
+            <PaymentDetail
+              left="Payee"
+              right={queryResultModalProps?.data?.payee}
+            />
+            <PaymentDetail
+              left="Paid At"
+              right={queryResultModalProps?.data?.paidAt}
+            />
+          </div>
         </StyledModal>
       </Route>
     </Switch>

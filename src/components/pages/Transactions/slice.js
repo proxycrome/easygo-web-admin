@@ -21,7 +21,7 @@ export const { addTransactionByEmail, addAllTransactions } =
   transactionSlice.actions;
 
 export const fetchTransactions = (payload) => (dispatcher) => {
-  return Services.fetchTransactions(payload)
+  return Services.fetchTransactionsWithFilter(payload)
     .then((response) => {
       console.log('Transactions', response);
       dispatcher(

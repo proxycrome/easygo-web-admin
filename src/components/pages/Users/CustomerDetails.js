@@ -262,7 +262,7 @@ export const CustomerDetail = (props) => {
         </StyledPaymentDetail>
       </StyledTransactionDetailsContainer>
       <TableComponent>
-        <TableTopBar fullName={singleUser?.fullName} placeholder="Email, Full name" />
+        <TableTopBar fullName={singleUser?.fullName} tableId="user-transaction" placeholder="Email, Full name" />
         <AntTable
           
           columns={columns}

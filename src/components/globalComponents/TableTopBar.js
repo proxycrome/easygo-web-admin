@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import img1 from '../../images/img1.png';
 import styled from 'styled-components';
 import { themes } from '../../globalAssets/theme';
@@ -15,14 +15,60 @@ import { FiSearch as SearchIcon } from 'react-icons/fi';
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 const { Option } = Select;
 
+
+const transactionStatus = ['Successful', 'Failed'];
+const transactionMethod = ['CARD']
+const transactionType =['OTHER', 'WALLET_FUNDING'];
+
 export const TableTopBar = (props) => {
+  const [activeFilter, setActiveState] = useState([]);
+  const [selectValue, setSelectValue] = useState('');
+  const [activeFilterName, setActiveFilterName] = useState('');
+
+
+  useEffect(() => {
+    if (props.isTransaction){
+      props.onFilterTransaction(selectValue, activeFilterName?.toLowerCase())
+    }
+  }, [activeFilterName]);
+
+  const  handleChangeFilterType = (value) => {
+    if(value === 'Status'){
+      setSelectValue(transactionStatus[0]);
+      setActiveState(transactionStatus);
+    }else if(value === 'transaction-method'){
+      setActiveState(transactionMethod);
+      setSelectValue(transactionMethod[0]);
+    }else if(value === 'transaction-type'){
+      setActiveState(transactionType);
+      setSelectValue(transactionType[0]);
+    }
+
+    setActiveFilterName(value);
+  }
+
+  const handleFilterValueChange = (value) => {
+    setSelectValue(value);
+    props.onFilterTransaction(value, activeFilterName.toLowerCase())
+  }
+
+  const filterList = activeFilter.map((item, index) => {
+    return (<Option key={index} value={item}> {item} </Option>);
+  })
+
+  const handleSelectClear = () => {
+    setSelectValue('');
+    setActiveFilterName('')
+    setActiveState([]);
+    props.clearFilter()
+  }
   return (
     <StyledTableBar>
-      <StyledSearchInputBorder>
+      {/* <StyledSearchInputBorder>
         <SearchIcon />
         <Input placeholder={props.placeholder} bordered={false} />{' '}
-      </StyledSearchInputBorder>{' '}
-      <StyledDateInputDiv>
+      </StyledSearchInputBorder>{' '} */}
+      <StyledDateInputDiv style={{ width: 'auto', marginRight: '15px' }}>
         <StyledDateInputBorder>
           <DatePicker
             defaultValue={moment('2019-01-01', 'YYYY-MM-DD')}
@@ -41,21 +87,40 @@ export const TableTopBar = (props) => {
           />{' '}
         </StyledDateInputBorder>{' '}
       </StyledDateInputDiv>{' '}
-      <StyledDateInputDiv>
+      <StyledDateInputDiv style={{ flex: 1 , marginRight: '15px' }}>
         {props.showfilterby && (
           <>
             Filter by:
             <StyledSelectDiv islong width="40%">
               <StyledSelect
+                allowClear={true}
+                onClear={handleSelectClear}
+                style={{width: '50%'}}
+                onChange={handleChangeFilterType}
                 suffixIcon={
                   <IoMdArrowDropdown style={{ color: themes.deepBlack }} />
                 }
                 islong
-                defaultValue="All Transactions"
+                placeholder='Filter Category'
                 bordered={false}>
-                <Option value="All Transactions"> All Transactions </Option>{' '}
-                <Option value="Failed"> Failed </Option>{' '}
-                <Option value="Successful"> Successful </Option>{' '}
+                <Option value="Status"> Status</Option>{' '}
+                <Option value="transaction-method"> Transaction method </Option>{' '}
+                <Option value="transaction-type"> Transaction type </Option>{' '}
+              </StyledSelect>
+            </StyledSelectDiv>
+            <StyledSelectDiv islong width="40%">
+              <StyledSelect
+                allowClear={true}
+                onClear={handleSelectClear}
+                suffixIcon={
+                  <IoMdArrowDropdown style={{ color: themes.deepBlack }} />
+                }
+                islong
+                placeholder='Filter Value'
+                value={selectValue}
+                onChange={handleFilterValueChange}
+                bordered={false}>
+                {filterList}
               </StyledSelect>
             </StyledSelectDiv>
           </>
@@ -67,25 +132,29 @@ export const TableTopBar = (props) => {
           borderColor="#e2e2ea"
           backgroundColor="transparent"
         /> */}
-        <StyledReactHTMLTableToExcel
-          color="#16192C"
-          borderColor="#e2e2ea"
-          width="40%"
-          backgroundColor="transparent"
-          buttonText="Export"
-          table="user-transaction"
-          sheet="user-transaction"
-          filename={`${props.fullName}Transactions`}
-        />
+       
       </StyledDateInputDiv>{' '}
+      <StyledDateInputDiv style={{ width: '20%' }}>
+          <StyledReactHTMLTableToExcel
+            color="#16192C"
+            borderColor="#e2e2ea"
+            width="100%"
+            backgroundColor="transparent"
+            buttonText="Export"
+            table={props.tableId}
+            sheet="user-transaction"
+            filename={props.fullName}
+          />
+        </StyledDateInputDiv>
     </StyledTableBar>
   );
 };
 
 const StyledTableBar = styled.div`
-  width: 100%;
-  ${getCenter({ justifyContent: 'space-between' })};
-  padding: 0 23px;
+  width: 95%;
+  margin: 0 auto;
+  margin-bottom: 15px;
+  ${getCenter({ justifyContent: 'flex-start' })};
 `;
 const StyledInputBorderSmall = styled.div`
   background: #ffffff;
