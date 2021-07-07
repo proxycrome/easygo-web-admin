@@ -150,6 +150,9 @@ export const DashBoard = (props) => {
       title: 'Amount',
       dataIndex: 'amount',
       key: 'amount',
+      defaultSortOrder: 'descend',
+      sorter: (a, b) => parseInt(a.amount) - parseInt(b.amount),
+      sortDirections: ['descend', 'ascend'],
     },
     {
       title: 'Charge',
@@ -233,6 +236,19 @@ export const DashBoard = (props) => {
           return <Tag color="#f50">Failed</Tag>;
         }
       },
+      filters: [
+        {
+          text: 'Successful',
+          value: true,
+        },
+        {
+          text: 'Failed',
+          value: false,
+        },
+      ],
+      onFilter: (value, record) => {
+        return record.valueGiven === value;
+      },
     },
 
     {
@@ -301,6 +317,11 @@ export const DashBoard = (props) => {
     },
   ]; */
 
+
+  const getWalletDigit = (value) => {
+    return value?.split('₦').join('');
+  }
+
   const userColumns = [
     {
       title: 'Name',
@@ -327,6 +348,9 @@ export const DashBoard = (props) => {
       title: 'Wallet Balance',
       dataIndex: 'walletBalance',
       key: 'walletBalance',
+      defaultSortOrder: 'descend',
+      sorter: (a, b) => getWalletDigit(a.walletBalance) - getWalletDigit(b.walletBalance),
+      sortDirections: ['descend', 'ascend'],
     },
     {
       title: 'Wallet Number',
@@ -460,7 +484,7 @@ export const DashBoard = (props) => {
       <Route exact path={path}>
         <PageTitleBar hideButtons={true} title="Dashboard" />
         <StyledStatDiv>
-          <StatCard
+          {/* <StatCard
             isCount={true}
             isGrey={true}
             title="Total Transactions"
@@ -485,7 +509,7 @@ export const DashBoard = (props) => {
             hidenaira
             hidePrecision
             amount={dashboardStat.totalWalletTransactions || 0}
-          />
+          /> */}
 
           <StatCard
             isCount={true}

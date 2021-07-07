@@ -38,7 +38,7 @@ export const User = (props) => {
     isModalVisible: false,
   });
   const [activeUserPageSize, setActiveUserPageSize] = useState(10);
-  const [suspendedUserPageSize, setSuspendedUserPageSize] = useState(10)
+  const [suspendedUserPageSize, setSuspendedUserPageSize] = useState(10);
   const dispatcher = useDispatch();
 
   const onOpenSendVerificationEmailModal = (user) => async () => {
@@ -69,6 +69,10 @@ export const User = (props) => {
     }));
   };
 
+
+  const getWalletDigit = (value) => {
+    return value?.split('₦').join('');
+  }
   const columns = [
     {
       title: 'Name',
@@ -95,6 +99,9 @@ export const User = (props) => {
       title: 'Wallet Balance',
       dataIndex: 'walletBalance',
       key: 'walletBalance',
+      defaultSortOrder: 'descend',
+      sorter: (a, b) => getWalletDigit(a.walletBalance) - getWalletDigit(b.walletBalance),
+      sortDirections: ['descend', 'ascend'],
     },
     {
       title: 'Wallet Number',
@@ -212,7 +219,6 @@ export const User = (props) => {
         'Activated',
         `User with the email ${activateUserProps.email} has been activated`
       );
-      
     } catch (error) {
       setActivateUserProps((prevState) => ({ ...prevState, loading: false }));
       notificationAlert('error', 'Failed', error.message || 'Please try again');
@@ -259,13 +265,13 @@ export const User = (props) => {
   };
 
   const handleActiveUserPagination = (page, pageSize) => {
-    setActiveUserPageSize(pageSize)
-    dispatcher(fetchAllUser({page: page - 1, pageSize , status: 'ACTIVE'}));
+    setActiveUserPageSize(pageSize);
+    dispatcher(fetchAllUser({ page: page - 1, pageSize, status: 'ACTIVE' }));
   };
 
   const handleSuspendedUserPagination = (page, pageSize) => {
-    setSuspendedUserPageSize(pageSize)
-   dispatcher(fetchAllUser({page: page - 1, pageSize, status: 'SUSPENDED'}));
+    setSuspendedUserPageSize(pageSize);
+    dispatcher(fetchAllUser({ page: page - 1, pageSize, status: 'SUSPENDED' }));
   };
 
   console.log({ userState });
@@ -281,7 +287,7 @@ export const User = (props) => {
               defaultActiveKey="1"
               onChange={onTabChange}>
               <TabPane tab="Active Users" key="1">
-                <TableTopBar placeholder="Email, Full name" />
+                <TableTopBar fullName= {activeTab === '1' ? "Active Users":"Suspended Users"} tableId='all-user' placeholder="Email, Full name" />
                 <StyledAntTable
                   onRow={handleRow('active')}
                   columns={columns}
@@ -299,7 +305,7 @@ export const User = (props) => {
                 />
               </TabPane>
               <TabPane tab="Suspended Users" key="2">
-                <TableTopBar placeholder="Email, Full name" />
+                <TableTopBar fullName= {activeTab === '1' ? "Active Users":"Suspended Users"} tableId='all-user' placeholder="Email, Full name" />
                 <StyledAntTable
                   onRow={handleRow('suspended')}
                   columns={columns}
@@ -318,6 +324,56 @@ export const User = (props) => {
               </TabPane>
             </Tabs>
           </TableComponent>
+         {activeTab === '1' ? (<table id="all-user" style={{ display: 'none' }}>
+            <thead>
+              <tr>
+                {userState.suspendedUserList.data.length &&
+                  Object.keys(userState.suspendedUserList.data[0]).map(
+                    (item, index) => {
+                      return <td key={index}>{item}</td>;
+                    }
+                  )}
+              </tr>
+            </thead>
+            <tbody>
+              {userState.suspendedUserList.data.map((item, index) => {
+                return (
+                  <tr key={`${index}-item`}>
+                    {Object.values(item)
+                      .filter((item) => typeof item !== 'object')
+                      .map((data, index) => {
+                        return <td key={`${index}-data`}>{data}</td>;
+                      })}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>) : (
+          <table id="all-user" style={{ display: 'none' }}>
+            <thead>
+              <tr>
+                {userState.activeUserList.data.length &&
+                  Object.keys(userState.activeUserList.data[0]).map(
+                    (item, index) => {
+                      return <td key={index}>{item}</td>;
+                    }
+                  )}
+              </tr>
+            </thead>
+            <tbody>
+              {userState.activeUserList.data.map((item, index) => {
+                return (
+                  <tr key={`${index}-item`}>
+                    {Object.values(item)
+                      .filter((item) => typeof item !== 'object')
+                      .map((data, index) => {
+                        return <td key={`${index}-data`}>{data}</td>;
+                      })}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>)}
         </Route>
         <Route path={`${path}/:email`}>
           <CustomerDetail

@@ -1,6 +1,7 @@
 import axios from "axios";
 import domain from "./domain";
 import { routes } from "./routes";
+import getURLParams from "./utils/getParams";
 
 export class Services{
     static login(payload){
@@ -91,6 +92,22 @@ export class Services{
         return axios({
             method: 'GET',
             url: `${domain}${routes.transactionRoute}?&page=${page}&size=${size}`,
+            headers: {
+                Authorization: `Bearer ${localStorage.token}`
+            },
+        })
+    }
+
+    static fetchTransactionsWithFilter(payload){
+        const params = getURLParams({...payload}).replace('Successful', true).replace('Failed', false);
+
+        console.log({params});
+
+
+        
+        return axios({
+            method: 'GET',
+            url: `${domain}${routes.transactionWithFilterRoute}${params}`,
             headers: {
                 Authorization: `Bearer ${localStorage.token}`
             },
