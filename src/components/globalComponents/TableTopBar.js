@@ -17,7 +17,7 @@ const { Option } = Select;
 
 
 const transactionStatus = ['Successful', 'Failed'];
-const transactionMethod = ['CARD']
+const transactionMethod = ['CARD', 'USSD', 'WALLET', 'TRANSFER'];
 const transactionType =['OTHER', 'WALLET_FUNDING'];
 
 export const TableTopBar = (props) => {
