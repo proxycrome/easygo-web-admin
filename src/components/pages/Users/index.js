@@ -287,7 +287,7 @@ export const User = (props) => {
               defaultActiveKey="1"
               onChange={onTabChange}>
               <TabPane tab="Active Users" key="1">
-                <TableTopBar fullName= {activeTab === '1' ? "Active Users":"Suspended Users"} tableId='all-user' placeholder="Email, Full name" />
+                <TableTopBar hideDate={true} fullName= {activeTab === '1' ? "Active Users":"Suspended Users"} tableId='all-user' placeholder="Email, Full name" />
                 <StyledAntTable
                   onRow={handleRow('active')}
                   columns={columns}
@@ -305,7 +305,7 @@ export const User = (props) => {
                 />
               </TabPane>
               <TabPane tab="Suspended Users" key="2">
-                <TableTopBar fullName= {activeTab === '1' ? "Active Users":"Suspended Users"} tableId='all-user' placeholder="Email, Full name" />
+                <TableTopBar hideDate={true} fullName= {activeTab === '1' ? "Active Users":"Suspended Users"} tableId='all-user' placeholder="Email, Full name" />
                 <StyledAntTable
                   onRow={handleRow('suspended')}
                   columns={columns}

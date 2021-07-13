@@ -369,6 +369,7 @@ export const Transaction = (props) => {
   const clearFilter = () => {
     setFilterParam({ value: '', field: '' });
   };
+
   return (
     <Switch>
       <Route exact path={`${path}`}>
@@ -412,23 +413,54 @@ export const Transaction = (props) => {
           <thead>
             <tr>
               {allTransactions.data.length &&
-                Object.keys(allTransactions.data[0]).map((item, index) => {
-                  return <td key={index}>{item}</td>;
-                })}
+                Object.keys(allTransactions.data[0])
+                  .filter(
+                    (props) =>
+                      props !== 'requestBody' &&
+                      props !== 'responseBody' &&
+                      props !== 'user' &&
+                      props !== 'monnifyResponseBody'
+                  )
+                  .map((item, index) => {
+                    return <td key={index}>{item}</td>;
+                  })}
             </tr>
           </thead>
           <tbody>
-            {allTransactions.data.map((item, index) => {
-              return (
-                <tr key={`${index}-item`}>
-                  {Object.values(item)
-                    .filter((item) => typeof item !== 'object')
-                    .map((data, index) => {
-                      return <td key={`${index}-data`}>{data}</td>;
-                    })}
-                </tr>
-              );
-            })}
+            {allTransactions.data.map(
+              (
+                {
+                  requestBody,
+                  responseBody,
+                  user,
+                  monnifyResponseBody,
+                  ...item
+                },
+                index
+              ) => {
+                console.log({ item });
+                return (
+                  <tr key={`${index}-item`}>
+                    {Object.values(
+                      Object.fromEntries(
+                        Object.entries(item).map(([key, value]) => [
+                          key,
+                          typeof value === 'boolean' && value
+                            ? 'Successful'
+                            : typeof value === 'boolean' && !value
+                            ? 'Failed'
+                            : typeof value !== 'boolean' && value? value : '',
+                        ])
+                      )
+                    )
+                      .filter((item) => typeof item !== 'object')
+                      .map((data, idx) => {
+                        return <td key={`${idx}-data`}>{data ?? ''}</td>;
+                      })}
+                  </tr>
+                );
+              }
+            )}
           </tbody>
         </table>
         <StyledModal
