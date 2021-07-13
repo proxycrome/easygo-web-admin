@@ -58,7 +58,7 @@ export function Home(props) {
     try {
       await dispatcher(fetchAllUser({page: 0, pageSize: 10, status: 'ACTIVE'}));
       await dispatcher(fetchAllUser({page: 0, pageSize: 10, status: 'SUSPENDED'}));
-      await dispatcher(fetchTransactions({page: 0, pageSize: 10}));
+      await dispatcher(fetchTransactions({page: 0, pageSize: 10,'end-date': moment().format('YYYY/MM/DD'), 'start-date': '2019/01/01'}));
     } catch (error) {
       console.log(error);
     }

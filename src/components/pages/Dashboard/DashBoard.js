@@ -74,6 +74,7 @@ export const DashBoard = (props) => {
   const [activeTab, setActiveTab] = useState(1);
   const userState = useSelector(selectUser);
   const transactions = useSelector(selectTransactions);
+  const { allTransactions } = useSelector(selectTransactions);
   const { dashboardStat } = useSelector(selectDashboard);
   const [verifyEmailProps, setVerifyEmailProps] = useState({
     loading: false,
@@ -86,6 +87,8 @@ export const DashBoard = (props) => {
     isModalVisible: false,
   });
   const dispatcher = useDispatch();
+
+  console.log({transactions});
 
   const onOpenSendVerificationEmailModal = (user) => async () => {
     if (user.emailVerified) {
@@ -576,9 +579,9 @@ export const DashBoard = (props) => {
            
           /> */}
         </StyledStatDiv>
-        <StyledKeyActionSection>
+       {/*  <StyledKeyActionSection>
           <ChartComponent title="Transactions" />
-        </StyledKeyActionSection>
+        </StyledKeyActionSection> */}
         <TableComponent
           bottomText={
             activeTab === 1 ? 'View All Users' : 'View All Transactions'
@@ -600,7 +603,7 @@ export const DashBoard = (props) => {
                 pagination={false}
                 columns={transactionColumns}
                 scroll={{ x: '180vw' }}
-                dataSource={transactions.allTransactions.data}
+                dataSource={allTransactions.data}
               />
             </TabPane>
           </Tabs>

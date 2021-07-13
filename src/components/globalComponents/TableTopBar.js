@@ -68,7 +68,7 @@ export const TableTopBar = (props) => {
         <SearchIcon />
         <Input placeholder={props.placeholder} bordered={false} />{' '}
       </StyledSearchInputBorder>{' '} */}
-      <StyledDateInputDiv style={{ width: 'auto', marginRight: '15px' }}>
+      {!props.hideDate && <StyledDateInputDiv style={{ width: 'auto', marginRight: '15px' }}>
         <StyledDateInputBorder>
           <DatePicker
             defaultValue={moment('2019-01-01', 'YYYY-MM-DD')}
@@ -86,7 +86,7 @@ export const TableTopBar = (props) => {
             suffixIcon={<GoCalendar />}
           />{' '}
         </StyledDateInputBorder>{' '}
-      </StyledDateInputDiv>{' '}
+      </StyledDateInputDiv>}
       <StyledDateInputDiv style={{ flex: 1 , marginRight: '15px' }}>
         {props.showfilterby && (
           <>
