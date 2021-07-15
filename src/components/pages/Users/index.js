@@ -274,8 +274,6 @@ export const User = (props) => {
     dispatcher(fetchAllUser({ page: page - 1, pageSize, status: 'SUSPENDED' }));
   };
 
-  console.log({ userState });
-
   return (
     <>
       <Switch>

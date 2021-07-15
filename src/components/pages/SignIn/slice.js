@@ -22,7 +22,6 @@ export const { addAdminDetail } = loginSlice.actions;
 export const loginAdmin = payload => dispatcher => {
     return Services.login(payload).then(
         response => {
-            console.log(response);
             localStorage.token = response.data.data.body.accessToken
             return Promise.resolve(response.data.data)
         }

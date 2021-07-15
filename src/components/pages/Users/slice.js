@@ -45,7 +45,6 @@ export const fetchAllUser = (payload) => dispatcher => {
                         page: response.data.page,
                       }))
                 }
-                console.log(response );
                 return Promise.resolve()
             }
     ).catch(error => {
@@ -58,7 +57,6 @@ export const fetchAllUser = (payload) => dispatcher => {
 export const fetchUserByEmail = (payload) => dispatcher => {
     return Services.fetchUserByEmail(payload).then(
         response => {
-            console.log(response);
             dispatcher(addSingleUser(response.data.data.body));
             return Promise.resolve(response.data.data.body)
         }
@@ -85,7 +83,6 @@ export const sendVerificationEmail = payload => dispatcher => {
 export const activateUser = payload => dispatcher => {
     return Services.activateUser(payload).then(
         response => {
-            console.log(response);
             return Promise.resolve(response.data)
         }
     ).catch(error => {
@@ -98,7 +95,6 @@ export const activateUser = payload => dispatcher => {
 export const suspendUser = payload => dispatcher => {
     return Services.suspendUser(payload).then(
         response => {
-            console.log(response);
             return Promise.resolve(response.data)
         }
     ).catch(error => {

@@ -31,7 +31,6 @@ const formatDateTime = (dateTime) => {
     const date = dateTime[0].split('-');
     const time = dateTime[1].split(':');
     const milisec = time[2].split('.');
-    console.log({ date, time, milisec });
     return date
       .concat(time[0])
       .concat(milisec)
@@ -176,7 +175,6 @@ export const CustomerDetail = (props) => {
       const transactions = await dispatcher(
         fetchTransactionsByEmail({ email })
       );
-      console.log({ response, transactions });
     } catch (error) {
       console.log(error);
     }
@@ -215,7 +213,6 @@ export const CustomerDetail = (props) => {
       );
     });
 
-    console.log({ transactionByemail })
 
   return (
     <>

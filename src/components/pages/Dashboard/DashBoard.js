@@ -88,8 +88,6 @@ export const DashBoard = (props) => {
   });
   const dispatcher = useDispatch();
 
-  console.log({transactions});
-
   const onOpenSendVerificationEmailModal = (user) => async () => {
     if (user.emailVerified) {
       notificationAlert('warning', 'Email Verified', 'Email already verified');
@@ -105,7 +103,6 @@ export const DashBoard = (props) => {
   const fetchDashboardStat = async () => {
     try {
       const response = await dispatcher(getDashboardStat());
-      console.log(response);
     } catch (error) {
       console.log(error);
     }
