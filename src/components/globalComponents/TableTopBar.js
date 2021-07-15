@@ -49,7 +49,7 @@ export const TableTopBar = (props) => {
 
   const handleFilterValueChange = (value) => {
     setSelectValue(value);
-    props.onFilterTransaction(value, activeFilterName.toLowerCase())
+    props.onFilterTransaction(value, activeFilterName?.toLowerCase())
   }
 
   const filterList = activeFilter.map((item, index) => {
