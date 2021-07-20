@@ -27,7 +27,6 @@ export const CustomerDetail = (props) => {
     console.log('IMPORTANT', selectedDetail);
   }, []); */
 
-  console.log(id);
   return (
     <StyledTransactionDetailsContainer>
       <BackButton />

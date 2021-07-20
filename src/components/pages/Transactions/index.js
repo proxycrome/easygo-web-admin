@@ -77,7 +77,6 @@ export const Transaction = (props) => {
   });
 
   const openRequeryModal = (ref, id) => () => {
-    console.log({ ref, id });
     //form.resetFields();
     form.setFieldsValue({
       transactionId: ref,
@@ -260,7 +259,6 @@ export const Transaction = (props) => {
   ];
 
   function callback(key) {
-    console.log(key);
   }
 
   const gotoAllTransactionTable = () => {
@@ -284,7 +282,6 @@ export const Transaction = (props) => {
     setRequeryModalProps((prevState) => ({ ...prevState, loading: true }));
     try {
       const response = await dispatcher(requeryTransaction({ data: values }));
-      console.log(response);
       notificationAlert(
         'success',
         'Re-query Successfull',
@@ -331,7 +328,6 @@ export const Transaction = (props) => {
         [filterParam.field]: filterParam.value,
       })
     );
-    console.log({ dateString });
   };
 
   const onEndDateChange = (date, dateString) => {
@@ -345,11 +341,9 @@ export const Transaction = (props) => {
         [filterParam.field]: filterParam.value,
       })
     );
-    console.log({ dateString });
   };
 
   const onFilterTransaction = (value, field) => {
-    console.log({ value, field });
 
     //value = value === 'Successful' ? true : value === 'Failed' ? false : value;
 
@@ -438,7 +432,6 @@ export const Transaction = (props) => {
                 },
                 index
               ) => {
-                console.log({ item });
                 return (
                   <tr key={`${index}-item`}>
                     {Object.values(

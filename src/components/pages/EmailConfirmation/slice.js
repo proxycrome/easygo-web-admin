@@ -16,7 +16,6 @@ const emailConfirmationSlice = createSlice({
 export const confirmEmail = payload => dispatcher => {
     return Services.confirmEmail(payload).then(
         response => {
-            console.log(response);
             return Promise.resolve(response.data);
         }
     ).catch(error => {

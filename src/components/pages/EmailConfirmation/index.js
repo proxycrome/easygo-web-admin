@@ -17,7 +17,6 @@ export const EmailConfirmation = (props) => {
     async function confirmEmailFn(token){
         try {
             const response = await dispatcher(confirmEmail({token}));
-            console.log(response);
             setIsEmailConfirmed({status: true, message: response});
         } catch (error) {
             setIsEmailConfirmed({status: false, message: error.message});
