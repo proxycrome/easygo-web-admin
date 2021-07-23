@@ -134,7 +134,7 @@ const columns = [
                     style={{ cursor: 'pointer' }}>
                     Broadcast
                   </p>
-                  {/* <p onClick={() => setEditNotificationProps(prevState => ({...prevState, selectedNotification: allData, visible: true}))} style={{ cursor: 'pointer' }}>Edit</p> */}
+                 {/*  <p onClick={() => setEditNotificationProps(prevState => ({...prevState, selectedNotification: allData, visible: true}))} style={{ cursor: 'pointer' }}>Edit</p> */}
                 </div>
               );
             return (
