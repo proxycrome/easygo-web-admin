@@ -39,6 +39,7 @@ import { PaymentDetail } from '../Users/CustomerDetails';
 import { addNotificationList, selectNotification } from './slice';
 import { Services } from '../../../services';
 import { themes } from '../../../globalAssets/theme';
+import { servicesSelector } from '../Services/slice'
 const { Option } = Select;
 const { TabPane } = Tabs;
 
@@ -53,7 +54,8 @@ export const Notifications = (props) => {
     const [transactionPageSize, setTransactionPageSize] = useState(10);
     const [endDate, setEndDate] = useState(moment().format('YYYY/MM/DD'));
     const [startDate, setStartDate] = useState('2019/01/01');
-    const [services, setServices] = useState([]);
+    /* const [services, setServices] = useState([]); */
+    const { services } = useSelector(servicesSelector);
     const [notifications, setNotifications] = useState([]);
     const [selectedService, setSelectedService] = useState(null);
     const [notificationExpiryDate, setNotificationExpiryDate] = useState(null);
@@ -156,18 +158,18 @@ const columns = [
     }
 
 
-    const fetchAllServices = async () => {
+  /*   const fetchAllServices = async () => {
         try {
             const response = await Services.fetchAllServices({ size: 10, page: 0 });
             setServices(response.data.data.body);
         } catch (error) {
             console.log({ error });
         }
-    }
+    } */
 
     useEffect(() => {
         fetchAllNotification();
-        fetchAllServices();
+       /*  fetchAllServices(); */
     }, [])
 
     const formatDate = (date) => {
@@ -229,7 +231,7 @@ const columns = [
 
     return (
         <>
-            <PageTitleBar onButtonClick={() => setCreateNotificationProps(prevState => ({ ...prevState, visible: true }))} buttonText='Create Notification' hideButtons={false} title="Transactions" />
+            <PageTitleBar onButtonClick={() => setCreateNotificationProps(prevState => ({ ...prevState, visible: true }))} buttonText='Create Notification' hideButtons={false} title="Notification" />
             <TableComponent >
             <AntTable
                 columns={columns}

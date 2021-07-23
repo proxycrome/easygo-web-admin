@@ -173,10 +173,18 @@ export class Services{
         const params = getURLParams({...payload});
         return axios({
             method: 'GET',
-            url: /* `http://134.209.64.28:8083/services/?page=0&size=10` */ `${domain}${routes.servicesRoute}/${params}`,
-           /*  headers: {
+            url: `${domain}${routes.servicesRoute}/${params}`,
+        })
+    }
+
+    static async createService(payload){
+        return axios({
+            method: 'POST',
+            url: `${domain}${routes.servicesRoute}/?credentials=%7B%7D&details=%7B%7&principal=%7B%7D`,
+            headers: {
                 Authorization: `Bearer ${localStorage.token}`
-            }, */
+            },
+            data: payload.data
         })
     }
 }
