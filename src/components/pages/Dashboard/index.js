@@ -12,6 +12,7 @@ import {
   FiPlus as PlusIcon,
   FiUsers,
   FiList as TransactionIcon,
+  FiActivity
 } from 'react-icons/fi';
 import { GoHome as HomeIcon } from 'react-icons/go';
 import { fontFamily } from '../../../globalAssets/fontFamily';
@@ -21,10 +22,14 @@ import sterlingLogo from '../../../images/logo.png';
 import { DashBoard } from './DashBoard';
 import { User } from '../Users/index';
 import { Transaction } from '../Transactions/index';
+import { ProductServices } from '../Services/index';
 import {Switch, Link, Route, useRouteMatch, useHistory, useLocation, useParams} from 'react-router-dom';
 import { fetchAllUser } from '../Users/slice';
 import { fetchTransactions } from '../Transactions/slice';
 import ScrollToTop  from '../../ScrollTop';
+import { AiOutlineNotification } from 'react-icons/ai';
+import { Notifications } from '../Notifications';
+import { fetchAllServices } from '../Services/slice'
 
 import moment from 'moment';
 const { TabPane } = Tabs;
@@ -35,6 +40,8 @@ const navs = [
   { name: 'dashboard', icon: <HomeIcon />,  route:''},
   { name: 'users', icon: <FiUsers />, route:'/users'},
   { name: 'transactions', icon: <TransactionIcon />, route:'/transactions' },
+  {name: 'notification', icon: <AiOutlineNotification/>, route: '/notifications'},
+  {name: 'services', icon: <FiActivity/>, route: '/services'}
 ];
 
 const title = ['ID', 'Merchat Name', 'Channels', 'Volume', 'Revenue', 'Transaction count', 'Last Activity']
@@ -59,6 +66,7 @@ export function Home(props) {
       await dispatcher(fetchAllUser({page: 0, pageSize: 10, status: 'ACTIVE'}));
       await dispatcher(fetchAllUser({page: 0, pageSize: 10, status: 'SUSPENDED'}));
       await dispatcher(fetchTransactions({page: 0, pageSize: 10,'end-date': moment().format('YYYY/MM/DD'), 'start-date': '2019/01/01'}));
+      await dispatcher(fetchAllServices({page: 0, pageSize: 10}));
     } catch (error) {
       console.log(error);
     }
@@ -141,6 +149,12 @@ export function Home(props) {
                     </Route>
                     <Route path={`${path}/transactions`}>
                       <Transaction/>
+                    </Route>
+                    <Route path={`${path}/notifications`}>
+                      <Notifications/> 
+                    </Route>
+                    <Route path={`${path}/services`}>
+                      <ProductServices/> 
                     </Route>
                 </Switch>
               </StyledBodyComtainer>

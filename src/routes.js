@@ -9,5 +9,7 @@ export const routes = {
     suspendUserRoute: '/admin/users/suspend',
     emailConfirmationRoute: '/email-confirmation?token=',
     requeryRoute: '/admin/re-query-payment',
-    transactionWithFilterRoute: '/transactions/with-filters'
+    transactionWithFilterRoute: '/transactions/with-filters',
+    notificationRoute: '/notifications',
+    servicesRoute: '/services'
 }

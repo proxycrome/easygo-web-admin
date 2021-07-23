@@ -134,4 +134,57 @@ export class Services{
             data: payload.data
         })
     }
+
+    static async fetchAllNotification(payload){
+        const params = getURLParams({...payload})
+        return axios({
+            method: 'GET',
+            url: /* `http://134.209.64.28:8083/notifications/?credentials=%7B%7D&details=%7B%7D&page=1&principal=%7B%7D&size=10` */ `${domain}${routes.notificationRoute}/${params}`,
+            headers: {
+                Authorization: `Bearer ${localStorage.token}`
+            },
+        })
+    }
+
+
+    static async CreateNotification(payload){
+        return axios({
+            method: 'POST',
+            url: `${domain}${routes.notificationRoute}/?credentials=%7B%7D&details=%7B%7&principal=%7B%7D`,
+            headers: {
+                Authorization: `Bearer ${localStorage.token}`
+            },
+            data: payload.data
+        })
+    }
+
+    static async broadcastById(payload){
+        return axios({
+            method: 'POST',
+            url: `${domain}${routes.notificationRoute}/broadcast/id/?id=${payload.id}`,
+            headers: {
+                Authorization: `Bearer ${localStorage.token}`
+            },
+        })
+    }
+    
+    
+    static async fetchAllServices(payload){
+        const params = getURLParams({...payload});
+        return axios({
+            method: 'GET',
+            url: `${domain}${routes.servicesRoute}/${params}`,
+        })
+    }
+
+    static async createService(payload){
+        return axios({
+            method: 'POST',
+            url: `${domain}${routes.servicesRoute}/?credentials=%7B%7D&details=%7B%7&principal=%7B%7D`,
+            headers: {
+                Authorization: `Bearer ${localStorage.token}`
+            },
+            data: payload.data
+        })
+    }
 }
