@@ -7,6 +7,7 @@ import { CardScaffold } from './CardScaffold';
 import { getCenter } from '../../utils/getCenter';
 import { Select } from 'antd';
 import { TopSelectButton } from './TopSelectButton';
+import { PrimaryButton } from './Buttons';
 
 const { Option } = Select;
 
@@ -18,10 +19,7 @@ export const PageTitleBar = (props) => {
         {' '}
         {!props.hideButtons && (
           <>
-            <TopSelectButton
-              optionList={['All Channels', 'lucy', 'Yiminghe']}
-            />{' '}
-            <TopSelectButton optionList={['Today', 'lucy', 'Yiminghe']} />{' '}
+           <PrimaryButton onClick={props.onButtonClick} text={props.buttonText}/>
           </>
         )}{' '}
       </div>{' '}
