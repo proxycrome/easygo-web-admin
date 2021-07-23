@@ -25,6 +25,8 @@ import {Switch, Link, Route, useRouteMatch, useHistory, useLocation, useParams} 
 import { fetchAllUser } from '../Users/slice';
 import { fetchTransactions } from '../Transactions/slice';
 import ScrollToTop  from '../../ScrollTop';
+import { AiOutlineNotification } from 'react-icons/ai';
+import { Notifications } from '../Notifications';
 
 import moment from 'moment';
 const { TabPane } = Tabs;
@@ -35,6 +37,7 @@ const navs = [
   { name: 'dashboard', icon: <HomeIcon />,  route:''},
   { name: 'users', icon: <FiUsers />, route:'/users'},
   { name: 'transactions', icon: <TransactionIcon />, route:'/transactions' },
+  {name: 'notification', icon: <AiOutlineNotification/>, route: '/notifications'}
 ];
 
 const title = ['ID', 'Merchat Name', 'Channels', 'Volume', 'Revenue', 'Transaction count', 'Last Activity']
@@ -141,6 +144,9 @@ export function Home(props) {
                     </Route>
                     <Route path={`${path}/transactions`}>
                       <Transaction/>
+                    </Route>
+                    <Route path={`${path}/notifications`}>
+                      <Notifications/> 
                     </Route>
                 </Switch>
               </StyledBodyComtainer>

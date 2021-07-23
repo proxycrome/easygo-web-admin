@@ -14,5 +14,6 @@ export const themes = {
     deepBlack: '#16192C',
     subtleBlack : '#7A7A9D',
     darkPrimaryColor: '#41AF1B',
-    orange: 'orange'
+    orange: 'orange',
+    border: '#C4C4C4',
 }

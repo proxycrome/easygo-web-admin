@@ -224,11 +224,7 @@ export const Transaction = (props) => {
         return record.valueGiven === value;
       },
       render: (status) => {
-        if (status) {
-          return <Tag color="#87d068">Successful</Tag>;
-        } else {
-          return <Tag color="#f50">Failed</Tag>;
-        }
+        return status ? <Tag color="#87d068">Successful</Tag> :  <Tag color="#f50">Failed</Tag>;
       },
     },
 
