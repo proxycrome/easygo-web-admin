@@ -11,5 +11,8 @@ export const routes = {
     requeryRoute: '/admin/re-query-payment',
     transactionWithFilterRoute: '/transactions/with-filters',
     notificationRoute: '/notifications',
-    servicesRoute: '/services'
+    servicesRoute: '/services',
+    roleTypeRoute: '/data/role-types',
+    discountTypeRoute: '/data/coupon-discount-types',
+    couponRoute: '/coupon',
 }

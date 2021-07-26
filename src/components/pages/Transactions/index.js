@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Tabs,
   Table as AntTable,
@@ -8,48 +8,48 @@ import {
   Input,
   Select,
   Typography,
-} from 'antd';
+} from "antd";
 import {
   TableTopBar,
   StyledSelect,
   StyledSelectDiv,
   StyledSearchInputBorder,
-} from '../../globalComponents/TableTopBar';
-import { TableComponent } from '../../globalComponents/TableComponent';
-import { PrimaryButton } from '../../globalComponents/Buttons';
-import { Switch, Route, useRouteMatch, useHistory } from 'react-router-dom';
-import { TransactionDetail } from '../../globalComponents/TransactionDetail';
-import { PageTitleBar } from '../../globalComponents/PageTitleBar';
-import { FiMoreVertical } from 'react-icons/fi';
-import moment from 'moment';
+} from "../../globalComponents/TableTopBar";
+import { TableComponent } from "../../globalComponents/TableComponent";
+import { PrimaryButton } from "../../globalComponents/Buttons";
+import { Switch, Route, useRouteMatch, useHistory } from "react-router-dom";
+import { TransactionDetail } from "../../globalComponents/TransactionDetail";
+import { PageTitleBar } from "../../globalComponents/PageTitleBar";
+import { FiMoreVertical } from "react-icons/fi";
+import moment from "moment";
 import {
   selectTransactions,
   fetchTransactions,
   requeryTransaction,
-} from './slice';
-import { useDispatch, useSelector } from 'react-redux';
-import { StyledModal } from '../../globalComponents/styles';
-import { notificationAlert } from '../../../utils/notificationAlert';
-import { PaymentDetail } from '../Users/CustomerDetails';
+} from "./slice";
+import { useDispatch, useSelector } from "react-redux";
+import { StyledModal } from "../../globalComponents/styles";
+import { notificationAlert } from "../../../utils/notificationAlert";
+import { PaymentDetail } from "../Users/CustomerDetails";
 const { Option } = Select;
 const { TabPane } = Tabs;
 
 const dataSource = [
   {
-    key: '1',
-    id: '#12234',
-    status: 'successful',
-    date: 'June 21st 2021',
-    amount: '200000',
-    username: 'Johnson Adewale',
+    key: "1",
+    id: "#12234",
+    status: "successful",
+    date: "June 21st 2021",
+    amount: "200000",
+    username: "Johnson Adewale",
   },
   {
-    key: '2',
-    id: '#56778',
-    date: 'Dec 21st 2021',
-    amount: '200000',
-    status: 'failed',
-    username: 'Johnson Adewale',
+    key: "2",
+    id: "#56778",
+    date: "Dec 21st 2021",
+    amount: "200000",
+    status: "failed",
+    username: "Johnson Adewale",
   },
 ];
 
@@ -63,13 +63,13 @@ export const Transaction = (props) => {
   const [requeryModalProps, setRequeryModalProps] = useState({
     loading: false,
     isVisible: false,
-    ref: '',
-    id: '',
+    ref: "",
+    id: "",
   });
   const [transactionPageSize, setTransactionPageSize] = useState(10);
-  const [endDate, setEndDate] = useState(moment().format('YYYY/MM/DD'));
-  const [startDate, setStartDate] = useState('2019/01/01');
-  const [filterParam, setFilterParam] = useState({ field: '', value: '' });
+  const [endDate, setEndDate] = useState(moment().format("YYYY/MM/DD"));
+  const [startDate, setStartDate] = useState("2019/01/01");
+  const [filterParam, setFilterParam] = useState({ field: "", value: "" });
 
   const [queryResultModalProps, setQueryResultModalProps] = useState({
     data: {},
@@ -92,131 +92,131 @@ export const Transaction = (props) => {
 
   const columns = [
     {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-      width: '3%',
-      fixed: 'left',
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+      width: "3%",
+      fixed: "left",
     },
     {
-      title: 'Name',
-      dataIndex: 'customerFullName',
-      key: 'customerFullName',
+      title: "Name",
+      dataIndex: "customerFullName",
+      key: "customerFullName",
       /*  width: '7%',
       fixed: 'left', */
     },
     {
-      title: 'Email',
-      dataIndex: 'customerEmail',
-      key: 'customerEmail',
+      title: "Email",
+      dataIndex: "customerEmail",
+      key: "customerEmail",
     },
     {
-      title: 'Phone number',
-      dataIndex: 'customerPhoneNumber',
-      key: 'customerPhoneNumber',
+      title: "Phone number",
+      dataIndex: "customerPhoneNumber",
+      key: "customerPhoneNumber",
     },
     {
-      title: 'Amount',
-      dataIndex: 'amount',
-      key: 'amount',
-      defaultSortOrder: 'descend',
+      title: "Amount",
+      dataIndex: "amount",
+      key: "amount",
+      defaultSortOrder: "descend",
       sorter: (a, b) => parseInt(a.amount) - parseInt(b.amount),
-      sortDirections: ['descend', 'ascend'],
+      sortDirections: ["descend", "ascend"],
     },
     {
-      title: 'Charge',
-      dataIndex: 'charge',
-      key: 'charge',
+      title: "Charge",
+      dataIndex: "charge",
+      key: "charge",
     },
     {
-      title: 'Logged At',
-      dataIndex: 'dateTransactionLoggedAt',
-      key: 'dateTransactionLoggedAt',
+      title: "Logged At",
+      dataIndex: "dateTransactionLoggedAt",
+      key: "dateTransactionLoggedAt",
       render: (time) => {
         return time ? (
-          <p>{moment(time).format('dddd, MMMM Do YYYY, h:mm:ss a')}</p>
+          <p>{moment(time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</p>
         ) : (
-          ''
+          ""
         );
       },
     },
     {
-      title: 'Value Given At',
-      dataIndex: 'dateValueWasGiven',
-      key: 'dateValueWasGiven',
+      title: "Value Given At",
+      dataIndex: "dateValueWasGiven",
+      key: "dateValueWasGiven",
       render: (time) => {
         return time ? (
-          <p>{moment(time).format('dddd, MMMM Do YYYY, h:mm:ss a')}</p>
+          <p>{moment(time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</p>
         ) : (
-          ''
+          ""
         );
       },
     },
     {
-      title: 'Paid At',
-      dataIndex: 'paidAt',
-      key: 'paidAt',
+      title: "Paid At",
+      dataIndex: "paidAt",
+      key: "paidAt",
       render: (time) => {
         return time ? (
-          <p>{moment(time).format('dddd, MMMM Do YYYY, h:mm:ss a')}</p>
+          <p>{moment(time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</p>
         ) : (
-          ''
+          ""
         );
       },
     },
     {
-      title: 'Paid For',
-      dataIndex: 'paidFor',
-      key: 'paidFor',
+      title: "Paid For",
+      dataIndex: "paidFor",
+      key: "paidFor",
     },
     {
-      title: 'Payee',
-      dataIndex: 'payee',
-      key: 'payee',
+      title: "Payee",
+      dataIndex: "payee",
+      key: "payee",
     },
     {
-      title: 'Payment Gateway',
-      dataIndex: 'paymentGateway',
-      key: 'paymentGateway',
+      title: "Payment Gateway",
+      dataIndex: "paymentGateway",
+      key: "paymentGateway",
     },
     {
-      title: 'Provider',
-      dataIndex: 'provider',
-      key: 'provider',
+      title: "Provider",
+      dataIndex: "provider",
+      key: "provider",
     },
     {
-      title: 'Service',
-      dataIndex: 'service',
-      key: 'service',
+      title: "Service",
+      dataIndex: "service",
+      key: "service",
     },
     {
-      title: 'Method',
-      dataIndex: 'transactionMethod',
-      key: 'transactionMethod',
+      title: "Method",
+      dataIndex: "transactionMethod",
+      key: "transactionMethod",
     },
     {
-      title: 'Type',
-      dataIndex: 'transactionType',
-      key: 'transactionType',
+      title: "Type",
+      dataIndex: "transactionType",
+      key: "transactionType",
     },
     {
-      title: 'Reference',
-      dataIndex: 'transactionReference',
-      key: 'transactionReference',
+      title: "Reference",
+      dataIndex: "transactionReference",
+      key: "transactionReference",
     },
     {
-      title: 'Status',
-      dataIndex: 'valueGiven',
-      key: 'valueGiven',
+      title: "Status",
+      dataIndex: "valueGiven",
+      key: "valueGiven",
       width: 100,
-      fixed: 'right',
+      fixed: "right",
       filters: [
         {
-          text: 'Successful',
+          text: "Successful",
           value: true,
         },
         {
-          text: 'Failed',
+          text: "Failed",
           value: false,
         },
       ],
@@ -224,22 +224,27 @@ export const Transaction = (props) => {
         return record.valueGiven === value;
       },
       render: (status) => {
-        return status ? <Tag color="#87d068">Successful</Tag> :  <Tag color="#f50">Failed</Tag>;
+        return status ? (
+          <Tag color="#87d068">Successful</Tag>
+        ) : (
+          <Tag color="#f50">Failed</Tag>
+        );
       },
     },
 
     {
-      title: 'Actions',
-      dataIndex: 'actions',
-      key: 'actions',
-      width: '4%',
-      fixed: 'right',
+      title: "Actions",
+      dataIndex: "actions",
+      key: "actions",
+      width: "4%",
+      fixed: "right",
       render: (action, { transactionReference, id }) => {
         const content = (
           <div>
             <p
               onClick={openRequeryModal(transactionReference, id)}
-              style={{ cursor: 'pointer' }}>
+              style={{ cursor: "pointer" }}
+            >
               Re-query
             </p>
           </div>
@@ -254,8 +259,7 @@ export const Transaction = (props) => {
     },
   ];
 
-  function callback(key) {
-  }
+  function callback(key) {}
 
   const gotoAllTransactionTable = () => {
     history.push(`${url}/table`);
@@ -268,8 +272,8 @@ export const Transaction = (props) => {
       fetchTransactions({
         page: page - 1,
         pageSize,
-        'start-date': startDate,
-        'end-date': endDate,
+        "start-date": startDate,
+        "end-date": endDate,
         [filterParam.field]: filterParam.value,
       })
     );
@@ -279,9 +283,9 @@ export const Transaction = (props) => {
     try {
       const response = await dispatcher(requeryTransaction({ data: values }));
       notificationAlert(
-        'success',
-        'Re-query Successfull',
-        'Operation was successful'
+        "success",
+        "Re-query Successfull",
+        "Operation was successful"
       );
       setQueryResultModalProps((prevState) => ({
         ...prevState,
@@ -294,7 +298,7 @@ export const Transaction = (props) => {
         loading: false,
       }));
     } catch (error) {
-      notificationAlert('error', 'Re-query Failed', 'Please try again');
+      notificationAlert("error", "Re-query Failed", "Please try again");
       setRequeryModalProps((prevState) => ({ ...prevState, loading: false }));
     }
   };
@@ -311,7 +315,7 @@ export const Transaction = (props) => {
   };
 
   const formatDate = (date) => {
-    return date.split('-').join('/');
+    return date.split("-").join("/");
   };
   const onStartDateChange = (date, dateString) => {
     setStartDate(formatDate(dateString));
@@ -319,8 +323,8 @@ export const Transaction = (props) => {
       fetchTransactions({
         page: page - 1,
         pageSize: transactionPageSize,
-        'start-date': formatDate(dateString),
-        'end-date': endDate,
+        "start-date": formatDate(dateString),
+        "end-date": endDate,
         [filterParam.field]: filterParam.value,
       })
     );
@@ -332,15 +336,14 @@ export const Transaction = (props) => {
       fetchTransactions({
         page: page - 1,
         pageSize: transactionPageSize,
-        'start-date': startDate,
-        'end-date': formatDate(dateString),
+        "start-date": startDate,
+        "end-date": formatDate(dateString),
         [filterParam.field]: filterParam.value,
       })
     );
   };
 
   const onFilterTransaction = (value, field) => {
-
     //value = value === 'Successful' ? true : value === 'Failed' ? false : value;
 
     setFilterParam({ value, field });
@@ -349,15 +352,15 @@ export const Transaction = (props) => {
       fetchTransactions({
         page: page - 1,
         pageSize: transactionPageSize,
-        'start-date': startDate,
-        'end-date': endDate,
+        "start-date": startDate,
+        "end-date": endDate,
         [field]: value,
       })
     );
   };
 
   const clearFilter = () => {
-    setFilterParam({ value: '', field: '' });
+    setFilterParam({ value: "", field: "" });
   };
 
   return (
@@ -366,9 +369,10 @@ export const Transaction = (props) => {
         <PageTitleBar hideButtons={true} title="Transactions" />
         <TableComponent onClick={gotoAllTransactionTable}>
           <Tabs
-            tabBarStyle={{ color: '#A0AEC0', padding: '0px 23px' }}
+            tabBarStyle={{ color: "#A0AEC0", padding: "0px 23px" }}
             defaultActiveKey="1"
-            onChange={callback}>
+            onChange={callback}
+          >
             <TabPane tab="All Transactions" key="1">
               <TableTopBar
                 isTransaction={true}
@@ -383,7 +387,7 @@ export const Transaction = (props) => {
               />
               <AntTable
                 columns={columns}
-                scroll={{ x: '180vw' }}
+                scroll={{ x: "180vw" }}
                 dataSource={allTransactions.data}
                 pagination={{
                   total: allTransactions.total,
@@ -399,17 +403,17 @@ export const Transaction = (props) => {
             </TabPane>
           </Tabs>
         </TableComponent>
-        <table id="transactions" style={{ display: 'none' }}>
+        <table id="transactions" style={{ display: "none" }}>
           <thead>
             <tr>
               {allTransactions.data.length &&
                 Object.keys(allTransactions.data[0])
                   .filter(
                     (props) =>
-                      props !== 'requestBody' &&
-                      props !== 'responseBody' &&
-                      props !== 'user' &&
-                      props !== 'monnifyResponseBody'
+                      props !== "requestBody" &&
+                      props !== "responseBody" &&
+                      props !== "user" &&
+                      props !== "monnifyResponseBody"
                   )
                   .map((item, index) => {
                     return <td key={index}>{item}</td>;
@@ -434,17 +438,19 @@ export const Transaction = (props) => {
                       Object.fromEntries(
                         Object.entries(item).map(([key, value]) => [
                           key,
-                          typeof value === 'boolean' && value
-                            ? 'Successful'
-                            : typeof value === 'boolean' && !value
-                            ? 'Failed'
-                            : typeof value !== 'boolean' && value? value : '',
+                          typeof value === "boolean" && value
+                            ? "Successful"
+                            : typeof value === "boolean" && !value
+                            ? "Failed"
+                            : typeof value !== "boolean" && value
+                            ? value
+                            : "",
                         ])
                       )
                     )
-                      .filter((item) => typeof item !== 'object')
+                      .filter((item) => typeof item !== "object")
                       .map((data, idx) => {
-                        return <td key={`${idx}-data`}>{data ?? ''}</td>;
+                        return <td key={`${idx}-data`}>{data ?? ""}</td>;
                       })}
                   </tr>
                 );
@@ -455,7 +461,8 @@ export const Transaction = (props) => {
         <StyledModal
           onCancel={closeRequeryModal}
           visible={requeryModalProps.isVisible}
-          footer={false}>
+          footer={false}
+        >
           <Typography.Title level={4}>Re-query Transaction</Typography.Title>
           <Form
             form={form}
@@ -474,23 +481,26 @@ export const Transaction = (props) => {
             <Form.Item
               rules={[{ required: true }]}
               name="paymentStatus"
-              label="Transaction Status">
+              label="Transaction Status"
+            >
               <Select placeholder="Select payment status">
-                <Option value="SUCCESSFUL">SUCCESSFUL </Option>{' '}
-                <Option value="PENDING"> PENDING </Option>{' '}
-                <Option value="FAILED"> FAILED </Option>{' '}
+                <Option value="SUCCESSFUL">SUCCESSFUL </Option>{" "}
+                <Option value="PENDING"> PENDING </Option>{" "}
+                <Option value="FAILED"> FAILED </Option>{" "}
               </Select>
             </Form.Item>
             <Form.Item
               rules={[{ required: true }]}
               name="transactionId"
-              label="Transaction ID">
+              label="Transaction ID"
+            >
               <Input />
             </Form.Item>
             <Form.Item
               rules={[{ required: true }]}
               name="transactionReference"
-              label="Transaction Reference">
+              label="Transaction Reference"
+            >
               <Input />
             </Form.Item>
             <Form.Item>
@@ -505,8 +515,9 @@ export const Transaction = (props) => {
         <StyledModal
           onCancel={closeQueryResultModal}
           visible={queryResultModalProps.isVisible}
-          footer={false}>
-          <div style={{ width: '100%' }}>
+          footer={false}
+        >
+          <div style={{ width: "100%" }}>
             <PaymentDetail
               left="Transaction Reference"
               right={queryResultModalProps?.data?.transactionReference}
@@ -535,8 +546,8 @@ export const Transaction = (props) => {
               left="Status"
               right={
                 queryResultModalProps?.data?.valueGiven
-                  ? 'Successful'
-                  : 'Failed'
+                  ? "Successful"
+                  : "Failed"
               }
             />
             <PaymentDetail
