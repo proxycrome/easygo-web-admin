@@ -14,6 +14,7 @@ import {
   FiList as TransactionIcon,
   FiActivity
 } from 'react-icons/fi';
+import { RiCouponLine } from 'react-icons/ri'
 import { GoHome as HomeIcon } from 'react-icons/go';
 import { fontFamily } from '../../../globalAssets/fontFamily';
 import img1 from '../../../images/img1.png';
@@ -29,7 +30,9 @@ import { fetchTransactions } from '../Transactions/slice';
 import ScrollToTop  from '../../ScrollTop';
 import { AiOutlineNotification } from 'react-icons/ai';
 import { Notifications } from '../Notifications';
-import { fetchAllServices } from '../Services/slice'
+import { fetchAllServices } from '../Services/slice';
+import { getRoleTypes, getDiscountTypes} from './slice';
+import { Coupons } from '../Coupon/index';
 
 import moment from 'moment';
 const { TabPane } = Tabs;
@@ -41,7 +44,8 @@ const navs = [
   { name: 'users', icon: <FiUsers />, route:'/users'},
   { name: 'transactions', icon: <TransactionIcon />, route:'/transactions' },
   {name: 'notification', icon: <AiOutlineNotification/>, route: '/notifications'},
-  {name: 'services', icon: <FiActivity/>, route: '/services'}
+  {name: 'services', icon: <FiActivity/>, route: '/services'},
+  {name: 'coupons', icon: <RiCouponLine/>, route: '/coupons'}
 ];
 
 const title = ['ID', 'Merchat Name', 'Channels', 'Volume', 'Revenue', 'Transaction count', 'Last Activity']
@@ -67,6 +71,8 @@ export function Home(props) {
       await dispatcher(fetchAllUser({page: 0, pageSize: 10, status: 'SUSPENDED'}));
       await dispatcher(fetchTransactions({page: 0, pageSize: 10,'end-date': moment().format('YYYY/MM/DD'), 'start-date': '2019/01/01'}));
       await dispatcher(fetchAllServices({page: 0, pageSize: 10}));
+      await dispatcher(getRoleTypes({page: 0, pageSize: 10}));
+      await dispatcher(getDiscountTypes({page: 0, pageSize: 10}));
     } catch (error) {
       console.log(error);
     }
@@ -155,6 +161,9 @@ export function Home(props) {
                     </Route>
                     <Route path={`${path}/services`}>
                       <ProductServices/> 
+                    </Route>
+                    <Route  path={`${path}/coupons`}>
+                      <Coupons/>
                     </Route>
                 </Switch>
               </StyledBodyComtainer>
