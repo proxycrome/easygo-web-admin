@@ -5,7 +5,6 @@ import getURLParams from "./utils/getParams";
 
 export class Services{
     static login(payload){
-        console.log(payload);
         return axios({
             method: 'POST',
             url: `${domain}${routes.loginRoute}`,

@@ -56,7 +56,6 @@ export const getDiscountTypes = payload => dispatcher => {
 export const getRoleTypes = payload => dispatcher => {
     return Services.getRoleTypes(payload).then(
         response => {
-            console.log('ROLES', response.data.data.body)
             dispatcher(addRoleTypes(response.data.data.body))
             return Promise.resolve(response.data);
         }
