@@ -188,6 +188,17 @@ export class Services{
         })
     }
 
+    static async updateService(payload){
+        return axios({
+            method: 'PUT',
+            url: `${domain}${routes.servicesRoute}/?credentials=%7B%7D&details=%7B%7&principal=%7B%7D`,
+            headers: {
+                Authorization: `Bearer ${localStorage.token}`
+            },
+            data: payload.data
+        })
+    }
+
     static async getRoleTypes(payload){
         const params = getURLParams({...payload});
         return axios({
