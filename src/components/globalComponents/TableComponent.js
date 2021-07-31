@@ -1,19 +1,19 @@
-import React from 'react';
-import img1 from '../../images/img1.png';
-import styled from 'styled-components';
-import { themes } from '../../globalAssets/theme';
-import { getCenter } from '../../utils/getCenter';
-import { fontFamily } from '../../globalAssets/fontFamily';
-import { device } from '../../globalAssets/breakpoints';
-import { CardScaffold } from './CardScaffold';
-import { Pagination } from 'antd';
+import React from "react";
+import img1 from "../../images/img1.png";
+import styled from "styled-components";
+import { themes } from "../../globalAssets/theme";
+import { getCenter } from "../../utils/getCenter";
+import { fontFamily } from "../../globalAssets/fontFamily";
+import { device } from "../../globalAssets/breakpoints";
+import { CardScaffold } from "./CardScaffold";
+import { Pagination } from "antd";
 
 export const TableComponent = (props) => {
   return (
     <StyledTableComponent>
-      <CardScaffold style={{ paddingLeft: '0px', paddingRight: '0px' }}>
-        {' '}
-        {props.children}{' '}
+      <CardScaffold style={{ paddingLeft: "0px", paddingRight: "0px" }}>
+        {" "}
+        {props.children}{" "}
         {props.isfulltable ? (
           <Paginate
             length={props.length}
@@ -25,10 +25,10 @@ export const TableComponent = (props) => {
           <StyledTableFooter>
             <StyledSeeAll onClick={props.onClick}>
               {props.bottomText}
-            </StyledSeeAll>{' '}
+            </StyledSeeAll>{" "}
           </StyledTableFooter>
-        )}{' '}
-      </CardScaffold>{' '}
+        )}{" "}
+      </CardScaffold>{" "}
     </StyledTableComponent>
   );
 };
@@ -36,7 +36,7 @@ export const TableComponent = (props) => {
 export const Paginate = (props) => {
   return (
     <StyledTableFooter2>
-      <p> {props.length} </p>{' '}
+      <p> {props.length} </p>{" "}
       <StyledPagination
         onChange={props.handlePaginationChange}
         pageSize={props.pageSize}

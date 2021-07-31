@@ -187,4 +187,49 @@ export class Services{
             data: payload.data
         })
     }
+
+    static async getRoleTypes(payload){
+        const params = getURLParams({...payload});
+        return axios({
+            method: 'GET',
+            url: `${domain}${routes.roleTypeRoute}/${params}`,
+            headers: {
+                Authorization: `Bearer ${localStorage.token}`
+            }
+        })
+    }
+
+    static async getDiscountTypes(payload){
+        const params = getURLParams({...payload});
+        return axios({
+            method: 'GET',
+            url: `${domain}${routes.discountTypeRoute}/${params}`,
+            headers: {
+                Authorization: `Bearer ${localStorage.token}`
+            }
+        })
+    }
+
+    static async getCoupons(payload){
+        const params = getURLParams({...payload});
+        return axios({
+            method: 'GET',
+            url: `${domain}${routes.couponRoute}/${params}`,
+            headers: {
+                Authorization: `Bearer ${localStorage.token}`
+            }
+        })
+    }
+
+    static async createCoupon(payload){
+        return axios({
+            method: 'POST',
+            url: `${domain}${routes.couponRoute}/?credentials=%7B%7D&details=%7B%7&principal=%7B%7D`,
+            headers: {
+                Authorization: `Bearer ${localStorage.token}`
+            },
+            data: payload.data
+
+        })
+    }
 }
