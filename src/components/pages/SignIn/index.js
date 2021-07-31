@@ -22,22 +22,22 @@ export const SignIn = (props) => {
     const history = useHistory();
     const location = useLocation();
 
-    const {from} = location.state ||  { from: { pathname: "/dashboard", state: {from: location}}};
+   /*  const {from} = location.state ||  { from: { pathname: "/dashboard", state: {from: location}}};
 
 
     useEffect(() => {
         if(localStorage.token){
             history.replace(from);
           }
-    }, [])
+    }, []) */
 
     const onFinish = async (values) => {
         setSignInLoading(true);
 
         try {
-           const response =  await dispatcher(loginAdmin({data: values}));
-           history.push(`/dashboard`)
-           setSignInLoading(false);
+            await dispatcher(loginAdmin({data: values}));
+            history.push(`/dashboard`)
+            setSignInLoading(false);
         } catch (error) {
             setSignInLoading(false);
             notificationAlert('error', 'Failed', error.message || 'Please try again');
@@ -58,13 +58,15 @@ export const SignIn = (props) => {
                   prefix={<FiUser />}
                   bordered={false}
                   placeholder="Email"
+                  required
                 />
               </Form.Item>
-              <Form.Item name="password">
+              <Form.Item name="password" >
                 <StyledPassword
                   prefix={<FiLock />}
                   bordered={false}
                   placeholder="Password"
+                  required
                 />
               </Form.Item>
               <Form.Item>

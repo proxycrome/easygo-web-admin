@@ -169,7 +169,6 @@ export const Notifications = (props) => {
         page: 0,
       });
       setNotifications(response.data.data.body);
-      console.log({ fetchAllNotification: response });
     } catch (error) {
       console.log({ error });
     }

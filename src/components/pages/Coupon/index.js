@@ -196,7 +196,6 @@ export const Coupons = (props) => {
 
   const handleDurationChange = (moments, dateString) => {
     const dates = moments.map((moment) => moment.toISOString());
-    console.log({ dates, dateString });
     setDuration(dates);
   };
 

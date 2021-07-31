@@ -104,7 +104,6 @@ export const ProductServices = (props) => {
           iconText: e.target.files[0]?.name || "",
         }));
         const base64String = await getBase64(e.target.files[0]);
-        console.log(base64String.split("base64,")[1]);
         setIconString(base64String.split("base64,")[1]);
       } catch (error) {
         console.log(error);
@@ -129,7 +128,6 @@ export const ProductServices = (props) => {
       }
       values.iconBase64String = iconString;
       const response = await Services.createService({ data: values });
-      console.log("SERVICE-CREATED", response);
       dispatcher(fetchAllServices({ page: 0, pageSize: 10 }));
       setCreateServicesProps((prevState) => ({
         ...prevState,
