@@ -48,16 +48,27 @@ const { Option } = Select;
 const { TabPane } = Tabs;
 
 export const ProductServices = (props) => {
+  const [editModalForm] = Form.useForm();
   const { services, paginationProps } = useSelector(servicesSelector);
   const [createServicesProps, setCreateServicesProps] = useState({
     visible: false,
     loading: false,
     iconText: "",
   });
+  const [editServicesProps, setEditServicesProps] = useState({
+    visible: false,
+    loading: false,
+    iconText: "",
+    selectedService: {},
+  });
   const [iconString, setIconString] = useState("");
   const dispatcher = useDispatch();
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    editModalForm.setFieldsValue(editServicesProps.selectedService);
+  }, [editServicesProps.selectedService, editServicesProps.visible]);
 
   const columns = [
     {
@@ -83,13 +94,23 @@ export const ProductServices = (props) => {
       render: (data, allData) => {
         const content = (
           <div>
-            <p style={{ cursor: "pointer" }}>Edit</p>
-            {/* <p onClick={() => setEditNotificationProps(prevState => ({...prevState, selectedNotification: allData, visible: true}))} style={{ cursor: 'pointer' }}>Edit</p> */}
+            <p onClick={() => {
+                editModalForm.resetFields();
+               return setEditServicesProps((prevState) => ({
+                ...prevState,
+                selectedService: allData,
+                visible: true,
+              }))
+            }} style={{ cursor: "pointer" }}>
+              Edit
+            </p>
           </div>
         );
         return (
           <Popover trigger="click" content={content}>
-            <FiMoreVertical />
+            <div style={{cursor: "pointer"}}>
+              <FiMoreVertical />  
+            </div>
           </Popover>
         );
       },
@@ -127,7 +148,7 @@ export const ProductServices = (props) => {
         return;
       }
       values.iconBase64String = iconString;
-      const response = await Services.createService({ data: values });
+      await Services.createService({ data: values });
       dispatcher(fetchAllServices({ page: 0, pageSize: 10 }));
       setCreateServicesProps((prevState) => ({
         ...prevState,
@@ -139,6 +160,7 @@ export const ProductServices = (props) => {
         "Service Created",
         `${values.name} service has been created`
       );
+      setIconString('');
     } catch (error) {
       setCreateServicesProps((prevState) => ({ ...prevState, loading: false }));
       notificationAlert(
@@ -158,6 +180,52 @@ export const ProductServices = (props) => {
         pageSize,
       })
     );
+  };
+
+  const onEditFinish = async (values) => {
+    try {
+      setEditServicesProps((prevState) => ({ ...prevState, loading: true }));
+    if (!iconString && !editServicesProps.selectedService.iconUrl) {
+      notificationAlert(
+        "error",
+        "Invalid Icon",
+        "Please upload a service icons"
+      );
+      setEditServicesProps((prevState) => ({
+        ...prevState,
+        loading: false,
+      }));
+      return;
+    }
+
+    if(!iconString && editServicesProps.selectedService.iconUrl){
+      console.log('HERE', editServicesProps.selectedService.iconUrl);
+      values.iconBase64String = editServicesProps.selectedService.iconUrl;
+    }else{
+      values.iconBase64String = iconString;
+    }
+
+    values.iconBase64String = iconString;
+    await Services.updateService({ data: values });
+    dispatcher(fetchAllServices({ page: 0, pageSize: 10 }));
+    setEditServicesProps((prevState) => ({
+      ...prevState,
+      loading: false,
+      visible: false,
+    }));
+    notificationAlert(
+      "success",
+      "Service Created",
+      `${values.name} service has been created`
+    );
+    } catch (error) {
+      setEditServicesProps((prevState) => ({ ...prevState, loading: false }));
+      notificationAlert(
+        "error",
+        "Error Occurred",
+        error.message || "Please try again later"
+      );
+    }
   };
 
   return (
@@ -201,7 +269,21 @@ export const ProductServices = (props) => {
         handleImageInputChange={handleImageInputChange}
         onFinish={onFinish}
         iconText={createServicesProps.iconText}
-        /* servicesList={servicesList} */
+      />
+      <EditServiceModal
+        loading={editServicesProps.loading}
+        onCancel={() =>
+          setEditServicesProps((prevState) => ({
+            ...prevState,
+            visible: false,
+          }))
+        }
+        visible={editServicesProps.visible}
+        handleImageInputChange={handleImageInputChange}
+        onFinish={onEditFinish}
+        iconText={editServicesProps.iconText}
+        defaultValues={editServicesProps.selectedService}
+        form={editModalForm}
       />
     </>
   );
@@ -283,16 +365,22 @@ const CreateServicesModal = (props) => {
   );
 };
 
-const EditNotificationModal = (props) => {
-  const [form] = Form.useForm();
+const EditServiceModal = (props) => {
+  /*  const [form] = Form.useForm(); */
+  const imageInputRef = useRef();
+
+  const handleImageInputClick = (e) => {
+    e.preventDefault();
+    imageInputRef.current.click();
+  };
 
   const onOk = () => {
-    form.submit();
+    props.form.submit();
   };
 
   return (
     <StyledModal
-      title="Create Service"
+      title="Edit Service"
       visible={props.visible}
       okButtonProps={{
         loading: props.loading,
@@ -313,57 +401,42 @@ const EditNotificationModal = (props) => {
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
         onFinish={props.onFinish}
-        form={form}
+        form={props.form}
       >
-        <Form.Item label="Title" name="title">
+        <Form.Item label="Name" name="name" rules={[{ required: true }]}>
           <StyledInputContainer>
-            <Input bordered={false} defaultValue={props.data.title} />
+            <Input defaultValue={props.defaultValues.name} required bordered={false} />
           </StyledInputContainer>
         </Form.Item>
-        <Form.Item label="Message" name="message">
+        <Form.Item
+          label="Description"
+          name="description"
+          rules={[{ required: true }]}
+        >
           <StyledInputContainer>
             <Input.TextArea
-              defaultValue={props.data.message}
+              defaultValue={props.defaultValues.description}
+              required
               autoSize={{ minRows: 2, maxRows: 6 }}
               bordered={false}
             />
           </StyledInputContainer>
         </Form.Item>
-        <Form.Item label="Expiry Date" name="expiryDate">
-          <StyledInputContainer>
-            <DatePicker
-              defaultValue={props.data.expiryDate}
-              onChange={props.getExpiryDate}
-              style={{ width: "100%" }}
-              bordered={false}
+        <Form.Item name="iconBase64String">
+          <div>
+            <PrimaryButton
+              type="dashed"
+              onClick={handleImageInputClick}
+              text="Upload Icon"
             />
-          </StyledInputContainer>
-        </Form.Item>
-
-        <Form.Item label="Service Id" name="serviceId">
-          <StyledInputContainer>
-            <Select
-              defaultValue={props.data.serviceId}
-              placeholder="Select Service"
-              onChange={props.onServiceChange}
-              style={{ width: "100%", textAlign: "left" }}
-              bordered={false}
-            >
-              {props.servicesList}
-            </Select>
-          </StyledInputContainer>
-        </Form.Item>
-        <Form.Item name="show">
-          <Row justify="start">
-            <Col xs={9}>
-              <Checkbox
-                defaultValue={props.data.show}
-                onChange={props.onShowNotification}
-              >
-                Broadcast Notification
-              </Checkbox>
-            </Col>
-          </Row>
+            <input
+              onChange={props.handleImageInputChange}
+              ref={imageInputRef}
+              type="file"
+              style={{ display: "none" }}
+            />
+            <p>{props.iconText}</p>
+          </div>
         </Form.Item>
       </Form>
     </StyledModal>
