@@ -31,6 +31,8 @@ export const fetchTransactions = (payload) => (dispatcher) => {
           page: response.data.page,
         })
       );
+
+      console.log('ALL TRANSACTIONS' , response.data.data.body)
       return Promise.resolve(response.data.data.body);
     })
     .catch((error) => {
