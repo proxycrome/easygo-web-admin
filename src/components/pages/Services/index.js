@@ -50,6 +50,8 @@ const { TabPane } = Tabs;
 export const ProductServices = (props) => {
   const [editModalForm] = Form.useForm();
   const { services, paginationProps } = useSelector(servicesSelector);
+  const [changeServiceImage, setChangeServiceImage] = useState(false);
+  const [serviceStatus, setServiceStatus] = useState(null);
   const [createServicesProps, setCreateServicesProps] = useState({
     visible: false,
     loading: false,
@@ -67,7 +69,10 @@ export const ProductServices = (props) => {
   const [page, setPage] = useState(1);
 
   useEffect(() => {
-    editModalForm.setFieldsValue(editServicesProps.selectedService);
+    editModalForm.setFieldsValue({
+      ...editServicesProps.selectedService,
+      statusType: editServicesProps.selectedService?.recordStatus?.status
+    });
   }, [editServicesProps.selectedService, editServicesProps.visible]);
 
   const columns = [
@@ -75,7 +80,7 @@ export const ProductServices = (props) => {
       title: "Icon",
       dataIndex: "iconUrl",
       key: "iconUrl",
-      render: (data) => <img src={data} alt="icon" />,
+      render: (data) => <img style={{width: '2vw', height: 'auto'}} src={data} alt="icon" />,
     },
     {
       title: "Name",
@@ -86,6 +91,20 @@ export const ProductServices = (props) => {
       title: "Description",
       dataIndex: "description",
       key: "description",
+    },
+    {
+      title: "Status",
+      dataIndex: "recordStatus",
+      key: "recordStatus",
+      render: ({status}, allData) => {
+        return status === 'ACTIVE' ? (
+          <Tag color="#87d068">{status}</Tag>
+        ) : status === 'SUSPENDED'? (
+          <Tag color="#FF9800">{status}</Tag>
+        ) : (
+          <Tag color="#f50">{status}</Tag>
+        );
+      },
     },
     {
       title: "Action",
@@ -198,19 +217,19 @@ export const ProductServices = (props) => {
       return;
     }
 
-    if(iconString){
-      values.iconBase64String = iconString;
-    }
+   /*  if(iconString){ */
+      values.iconBase64String = iconString ?? '';
+   /*  } */
    /*  if(!iconString && editServicesProps.selectedService.iconUrl){
       console.log('HERE', editServicesProps.selectedService.iconUrl);
       values.iconBase64String = editServicesProps.selectedService.iconUrl;
-    } */else{
+    } *//* else{
       delete values.iconBase64String
-    }
-    values.imageChanged =  false;
-    console.log(values)
-    await Services.updateService({ data: values });
-    dispatcher(fetchAllServices({ page: 0, pageSize: 10 }));
+    } */
+    values.imageChanged =  changeServiceImage;
+    values.statusType = serviceStatus ?? values.statusType
+    await Services.updateService({ data: values, id: editServicesProps.selectedService.id });
+    dispatcher(fetchAllServices({ page: page - 1, pageSize: pageSize }));
     setEditServicesProps((prevState) => ({
       ...prevState,
       loading: false,
@@ -218,8 +237,8 @@ export const ProductServices = (props) => {
     }));
     notificationAlert(
       "success",
-      "Service Created",
-      `${values.name} service has been created`
+      "Service Updated",
+      `${values.name} service has been updated`
     );
     } catch (error) {
       setEditServicesProps((prevState) => ({ ...prevState, loading: false }));
@@ -230,6 +249,8 @@ export const ProductServices = (props) => {
       );
     }
   };
+
+  
 
   return (
     <>
@@ -283,6 +304,8 @@ export const ProductServices = (props) => {
         }
         visible={editServicesProps.visible}
         handleImageInputChange={handleImageInputChange}
+        onChangeServiceImage={(e) => setChangeServiceImage(e.target.checked)}
+        onRecordStatusChange={(val) => setServiceStatus(val) }
         onFinish={onEditFinish}
         iconText={editServicesProps.iconText}
         defaultValues={editServicesProps.selectedService}
@@ -369,7 +392,6 @@ const CreateServicesModal = (props) => {
 };
 
 const EditServiceModal = (props) => {
-  /*  const [form] = Form.useForm(); */
   const imageInputRef = useRef();
 
   const handleImageInputClick = (e) => {
@@ -425,6 +447,25 @@ const EditServiceModal = (props) => {
             />
           </StyledInputContainer>
         </Form.Item>
+        <Form.Item
+          rules={[{ required: true }]}
+          name="statusType"
+          label="Status"
+        >
+          <StyledInputContainer>
+            <Select
+              placeholder="Select payment status"
+              defaultValue={props.defaultValues?.recordStatus?.status}
+              bordered={false}
+              style={{ width: "100%", textAlign: "left" }}
+              onChange={props.onRecordStatusChange}
+            >
+              <Option value="ACTIVE">ACTIVE </Option>{" "}
+              <Option value="SUSPENDED"> SUSPENDED </Option>{" "}
+              <Option value="DELETE"> DELETE </Option>{" "}
+            </Select>
+          </StyledInputContainer>
+        </Form.Item>
         <Form.Item name="iconBase64String">
           <div>
             <PrimaryButton
@@ -441,42 +482,19 @@ const EditServiceModal = (props) => {
             <p>{props.iconText}</p>
           </div>
         </Form.Item>
+        <Form.Item name="imageChanged">
+          <Row justify="start">
+            <Col xs={9}>
+              <Checkbox
+                onChange={props.onChangeServiceImage}
+              >
+                Change Service Image
+              </Checkbox>
+            </Col>
+          </Row>
+        </Form.Item>
       </Form>
     </StyledModal>
   );
 };
 
-const BroadcastModal = (props) => {
-  return (
-    <StyledModal
-      /*  title='Broadcast Notification' */
-      visible={props.visible}
-      okButtonProps={{
-        loading: props.loading,
-        style: {
-          backgroundColor: themes.primaryColor,
-          border: `1px solid ${themes.primaryColor}`,
-        },
-      }}
-      cancelButtonProps={{
-        type: "danger",
-      }}
-      onOk={props.onOk}
-      okText="Send"
-      onCancel={props.onCancel}
-    >
-      <h3>Broadcast Notification</h3>
-      {props.isActive ? (
-        <p>
-          This notification is <strong>active</strong>, do you want to{" "}
-          <strong>rebroadcast</strong>
-        </p>
-      ) : (
-        <p>
-          Would like to broadcast notification with the title{" "}
-          <strong>{props.notificationTitle}</strong>
-        </p>
-      )}
-    </StyledModal>
-  );
-};

@@ -67,6 +67,7 @@ export const Coupons = (props) => {
   const { services } = useSelector(servicesSelector);
   const { discountTypes, roleTypes } = useSelector(selectDashboard);
   const [selectedService, setSelectedService] = useState(null);
+  const [serviceStatus, setServiceStatus] = useState(null);
   const [selectedRole, setSelectedRole] = useState("");
   const [selectedDiscount, setSelectedDiscount] = useState("");
   const [duration, setDuration] = useState([]);
@@ -86,12 +87,15 @@ export const Coupons = (props) => {
           ? editCouponProps.selectedCoupon?.discountValueInPercentage
           : editCouponProps.selectedCoupon?.discountValueInFixedAmount,
       serviceId: editCouponProps.selectedCoupon?.serviceDto?.id,
+      statusType: editCouponProps.selectedCoupon?.recordStatus?.status,
+      code: editCouponProps.selectedCoupon?.couponCode
     });
   }, [editCouponProps.selectedCoupon]);
 
   const fetchCoupons = async () => {
     try {
       const response = await Services.getCoupons({ page: 0, pageSize: 10 });
+      console.log(response.data.data.body);
       setCouponList(response.data.data.body);
     } catch (error) {
       console.log(error);
@@ -159,13 +163,26 @@ export const Coupons = (props) => {
       key: "discountValueInPercentage",
     },
     {
+      title: "Status",
+      dataIndex: "recordStatus",
+      key: "recordStatus",
+      render: ({ status }, allData) => {
+        return status === "ACTIVE" ? (
+          <Tag color="#87d068">{status}</Tag>
+        ) : status === "SUSPENDED" ? (
+          <Tag color="#FF9800">{status}</Tag>
+        ) : (
+          <Tag color="#f50">{status}</Tag>
+        );
+      },
+    },
+    {
       title: "Action",
       dataIndex: "action",
       key: "action",
       fixed: "right",
       width: "5%",
       render: (data, allData) => {
-        console.log({ allData });
         const content = (
           <div>
             <p
@@ -313,6 +330,8 @@ export const Coupons = (props) => {
       values.applicableTo = selectedRole || values.applicableTo;
       values.discountType = selectedDiscount || values.discountType;
       values.serviceId = selectedService || values.serviceId;
+      values.statusType = serviceStatus ?? values.statusType
+     /*  values.code = editCouponProps.selectedCoupon.couponCode */
       values[
         selectedDiscount === "PERCENTAGE"
           ? "discountValueInPercentage"
@@ -320,8 +339,8 @@ export const Coupons = (props) => {
       ] = values.discountValue;
       delete values.duration;
       delete values.discountValue;
-
-      const response = await Services.updateCoupon({data: values});
+      console.log(values);
+      const response = await Services.updateCoupon({ data: values, id:  editCouponProps.selectedCoupon.id});
       const couponListRespnse = await Services.getCoupons({
         page: 0,
         pageSize: 10,
@@ -416,6 +435,7 @@ export const Coupons = (props) => {
         onServiceChange={(e) => setSelectedService(e)}
         onRoleTypeChange={(e) => setSelectedRole(e)}
         onDiscountTypeChange={(e) => setSelectedDiscount(e)}
+        onRecordStatusChange={(val) => setServiceStatus(val) }
         visible={editCouponProps.visible}
         servicesList={servicesList}
         roleList={roleTypesList}
@@ -561,8 +581,6 @@ const CreateCouponModal = (props) => {
 };
 
 const EditCouponModal = (props) => {
-  /*  const [form] = Form.useForm(); */
-  console.log({ defaultValue: props.defaultValue });
   const onOk = () => {
     props.form.submit();
   };
@@ -604,6 +622,20 @@ const EditCouponModal = (props) => {
           serviceId: props.defaultValue?.serviceDto?.id,
         }}
       >
+         <Form.Item
+          label="Coupon Code"
+          name="code"
+          rules={[{ required: true }]}
+        >
+          <StyledInputContainer>
+            <Input
+              defaultValue={props.defaultValue?.couponCode}
+              required
+              bordered={false}
+              disabled
+            />
+          </StyledInputContainer>
+        </Form.Item>
         <Form.Item label="Discount Type" name="discountType">
           <StyledInputContainer>
             <Select
@@ -711,6 +743,25 @@ const EditCouponModal = (props) => {
           </StyledInputContainer>
         </Form.Item>
         <Form.Item
+          rules={[{ required: true }]}
+          name="statusType"
+          label="Status"
+        >
+          <StyledInputContainer>
+            <Select
+              placeholder="Select payment status"
+              defaultValue={props.defaultValue?.recordStatus?.status}
+              bordered={false}
+              style={{ width: "100%", textAlign: "left" }}
+              onChange={props.onRecordStatusChange}
+            >
+              <Option value="ACTIVE">ACTIVE </Option>{" "}
+              <Option value="SUSPENDED"> SUSPENDED </Option>{" "}
+              <Option value="DELETE"> DELETE </Option>{" "}
+            </Select>
+          </StyledInputContainer>
+        </Form.Item>
+        <Form.Item
           label="Description"
           name="description"
           rules={[{ required: true }]}
@@ -725,41 +776,6 @@ const EditCouponModal = (props) => {
           </StyledInputContainer>
         </Form.Item>
       </Form>
-    </StyledModal>
-  );
-};
-
-const BroadcastModal = (props) => {
-  return (
-    <StyledModal
-      /*  title='Broadcast Notification' */
-      visible={props.visible}
-      okButtonProps={{
-        loading: props.loading,
-        style: {
-          backgroundColor: themes.primaryColor,
-          border: `1px solid ${themes.primaryColor}`,
-        },
-      }}
-      cancelButtonProps={{
-        type: "danger",
-      }}
-      onOk={props.onOk}
-      okText="Send"
-      onCancel={props.onCancel}
-    >
-      <h3>Broadcast Notification</h3>
-      {props.isActive ? (
-        <p>
-          This notification is <strong>active</strong>, do you want to{" "}
-          <strong>rebroadcast</strong>
-        </p>
-      ) : (
-        <p>
-          Would like to broadcast notification with the title{" "}
-          <strong>{props.notificationTitle}</strong>
-        </p>
-      )}
     </StyledModal>
   );
 };

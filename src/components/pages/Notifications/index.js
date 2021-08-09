@@ -340,8 +340,8 @@ export const Notifications = (props) => {
       }));
       notificationAlert(
         "success",
-        `Notification Edited`,
-        `${values.title} notification has been edited`
+        `Notification Updated`,
+        `${values.title} notification has been updated`
       );
 
       setSelectedService(null);
