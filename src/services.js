@@ -158,6 +158,18 @@ export class Services{
         })
     }
 
+
+    static async updateNotification(payload){
+        return axios({
+            method: 'PUT',
+            url: `${domain}${routes.notificationRoute}/${payload.id}`,
+            headers: {
+                Authorization: `Bearer ${localStorage.token}`
+            },
+            data: payload.data
+        })
+    }
+
     static async broadcastById(payload){
         return axios({
             method: 'POST',
@@ -235,6 +247,18 @@ export class Services{
     static async createCoupon(payload){
         return axios({
             method: 'POST',
+            url: `${domain}${routes.couponRoute}/?credentials=%7B%7D&details=%7B%7&principal=%7B%7D`,
+            headers: {
+                Authorization: `Bearer ${localStorage.token}`
+            },
+            data: payload.data
+
+        })
+    }
+
+    static async updateCoupon(payload){
+        return axios({
+            method: 'PUT',
             url: `${domain}${routes.couponRoute}/?credentials=%7B%7D&details=%7B%7&principal=%7B%7D`,
             headers: {
                 Authorization: `Bearer ${localStorage.token}`

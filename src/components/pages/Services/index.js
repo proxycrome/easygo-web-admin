@@ -198,14 +198,17 @@ export const ProductServices = (props) => {
       return;
     }
 
-    if(!iconString && editServicesProps.selectedService.iconUrl){
-      console.log('HERE', editServicesProps.selectedService.iconUrl);
-      values.iconBase64String = editServicesProps.selectedService.iconUrl;
-    }else{
+    if(iconString){
       values.iconBase64String = iconString;
     }
-
-    values.iconBase64String = iconString;
+   /*  if(!iconString && editServicesProps.selectedService.iconUrl){
+      console.log('HERE', editServicesProps.selectedService.iconUrl);
+      values.iconBase64String = editServicesProps.selectedService.iconUrl;
+    } */else{
+      delete values.iconBase64String
+    }
+    values.imageChanged =  false;
+    console.log(values)
     await Services.updateService({ data: values });
     dispatcher(fetchAllServices({ page: 0, pageSize: 10 }));
     setEditServicesProps((prevState) => ({
