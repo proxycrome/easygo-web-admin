@@ -119,7 +119,6 @@ export const Transaction = (props) => {
       title: "Amount",
       dataIndex: "amount",
       key: "amount",
-      defaultSortOrder: "descend",
       sorter: (a, b) => parseInt(a.amount) - parseInt(b.amount),
       sortDirections: ["descend", "ascend"],
     },
@@ -132,9 +131,10 @@ export const Transaction = (props) => {
       title: "Logged At",
       dataIndex: "dateTransactionLoggedAt",
       key: "dateTransactionLoggedAt",
-      render: (time) => {
-        return time ? (
-          <p>{moment(time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</p>
+      render: (time, allData) => {
+        let realTime = allData.valueGiven? allData.dateTransactionLoggedAt: allData.dateInitLogged;  
+        return realTime ? (
+          <p>{moment(realTime).format("dddd, MMMM Do YYYY, h:mm:ss a")}</p>
         ) : (
           ""
         );
@@ -203,6 +203,9 @@ export const Transaction = (props) => {
       title: "Reference",
       dataIndex: "transactionReference",
       key: "transactionReference",
+      render: (data, allData) => {
+        return allData.valueGiven? allData.transactionReference : allData.transactionReferenceInit;
+      }
     },
     {
       title: "Status",
@@ -238,11 +241,11 @@ export const Transaction = (props) => {
       key: "actions",
       width: "4%",
       fixed: "right",
-      render: (action, { transactionReference, id }) => {
+      render: (action, { transactionReference,transactionReferenceInit, id, valueGiven }) => {
         const content = (
           <div>
             <p
-              onClick={openRequeryModal(transactionReference, id)}
+              onClick={openRequeryModal(valueGiven? transactionReference : transactionReferenceInit, id)}
               style={{ cursor: "pointer" }}
             >
               Re-query
@@ -279,9 +282,11 @@ export const Transaction = (props) => {
     );
   };
   const handleRequeryTransaction = async (values) => {
-    setRequeryModalProps((prevState) => ({ ...prevState, loading: true }));
     try {
+      setRequeryModalProps((prevState) => ({ ...prevState, loading: true }));
+      values.transactionId = values.transactionReference;
       const response = await dispatcher(requeryTransaction({ data: values }));
+      console.log('REQUERY',response);
       notificationAlert(
         "success",
         "Re-query Successfull",
@@ -489,13 +494,13 @@ export const Transaction = (props) => {
                 <Option value="FAILED"> FAILED </Option>{" "}
               </Select>
             </Form.Item>
-            <Form.Item
+            {/* <Form.Item
               rules={[{ required: true }]}
               name="transactionId"
               label="Transaction ID"
             >
               <Input />
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item
               rules={[{ required: true }]}
               name="transactionReference"
@@ -505,7 +510,7 @@ export const Transaction = (props) => {
             </Form.Item>
             <Form.Item>
               <PrimaryButton
-                disabled={requeryModalProps.loading}
+                loading={requeryModalProps.loading}
                 htmlType="submit"
                 text="Re-query"
               />

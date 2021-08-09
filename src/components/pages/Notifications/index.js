@@ -55,11 +55,13 @@ export const Notifications = (props) => {
   const [endDate, setEndDate] = useState(moment().format("YYYY/MM/DD"));
   const [startDate, setStartDate] = useState("2019/01/01");
   /* const [services, setServices] = useState([]); */
+  const [editModalForm] = Form.useForm();
   const { services } = useSelector(servicesSelector);
   const [notifications, setNotifications] = useState([]);
   const [selectedService, setSelectedService] = useState(null);
+  const [recordStatus, setRecordStatus] = useState(null)
   const [notificationExpiryDate, setNotificationExpiryDate] = useState(null);
-  const [showNotification, setShowNotification] = useState(false);
+  const [showNotification, setShowNotification] = useState(null);
   const [createNotificationProps, setCreateNotificationProps] = useState({
     visible: false,
     loading: false,
@@ -75,6 +77,15 @@ export const Notifications = (props) => {
     loading: false,
     selectedNotification: {},
   });
+
+  useEffect(() => {
+    editModalForm.setFieldsValue({
+      ...editNotificationProps.selectedNotification,
+      expiryDate: moment(editNotificationProps.selectedNotification.expiryDate),
+      serviceId: editNotificationProps.selectedNotification?.service?.id,
+      statusType: editNotificationProps.selectedNotification?.recordStatus?.status
+    });
+  }, [editNotificationProps.selectedNotification]);
 
   const columns = [
     {
@@ -150,7 +161,19 @@ export const Notifications = (props) => {
             >
               Broadcast
             </p>
-            {/* <p onClick={() => setEditNotificationProps(prevState => ({...prevState, selectedNotification: allData, visible: true}))} style={{ cursor: 'pointer' }}>Edit</p> */}
+            <p
+              onClick={() => {
+                editModalForm.resetFields();
+                return setEditNotificationProps((prevState) => ({
+                  ...prevState,
+                  selectedNotification: allData,
+                  visible: true,
+                }));
+              }}
+              style={{ cursor: "pointer" }}
+            >
+              Edit
+            </p>
           </div>
         );
         return (
@@ -168,24 +191,16 @@ export const Notifications = (props) => {
         size: 10,
         page: 0,
       });
+      console.log("NOTIFICATIONS", response.data.data.body);
       setNotifications(response.data.data.body);
     } catch (error) {
       console.log({ error });
     }
   };
 
-  /*   const fetchAllServices = async () => {
-        try {
-            const response = await Services.fetchAllServices({ size: 10, page: 0 });
-            setServices(response.data.data.body);
-        } catch (error) {
-            console.log({ error });
-        }
-    } */
 
   useEffect(() => {
     fetchAllNotification();
-    /*  fetchAllServices(); */
   }, []);
 
   const formatDate = (date) => {
@@ -226,6 +241,9 @@ export const Notifications = (props) => {
           values.show ? "broadcasted" : "created"
         }`
       );
+      setSelectedService(null);
+      setNotificationExpiryDate(null);
+      setShowNotification(null);
     } catch (error) {
       setCreateNotificationProps((prevState) => ({
         ...prevState,
@@ -295,6 +313,61 @@ export const Notifications = (props) => {
     }
   };
 
+  const onEditFinish = async (values) => {
+    try {
+      values.expiryDate =
+        notificationExpiryDate || moment(values.expiryDate).toISOString();
+      values.serviceId = selectedService || values.serviceId;
+      values.show = showNotification ?? values.show;
+      values.statusType = recordStatus ?? values.statusType
+      console.log({
+        values,
+        id: editNotificationProps.selectedNotification.id,
+      });
+      await Services.updateNotification({
+        data: values,
+        id: editNotificationProps.selectedNotification.id,
+      });
+      const notificationResponse = await Services.fetchAllNotification({
+        size: 10,
+        page: 0,
+      });
+      setNotifications(notificationResponse.data.data.body);
+      setEditNotificationProps((prevState) => ({
+        ...prevState,
+        visible: false,
+        loading: false,
+      }));
+      notificationAlert(
+        "success",
+        `Notification Updated`,
+        `${values.title} notification has been updated`
+      );
+
+      setSelectedService(null);
+      setNotificationExpiryDate(null);
+      setShowNotification(null);
+    } catch (error) {
+      setEditNotificationProps((prevState) => ({
+        ...prevState,
+        loading: false,
+      }));
+      if (error.response) {
+        notificationAlert(
+          "error",
+          "Not Sent",
+          error.response.data.message || "Error occurred, try again later"
+        );
+      } else {
+        notificationAlert(
+          "error",
+          "Not Sent",
+          "Error occurred, try again later"
+        );
+      }
+    }
+  };
+
   return (
     <>
       <PageTitleBar
@@ -332,14 +405,16 @@ export const Notifications = (props) => {
           }))
         }
         visible={editNotificationProps.visible}
-        onFinish={onFinish}
+        onFinish={onEditFinish}
         getExpiryDate={(moment, dateString) =>
           setNotificationExpiryDate(moment.toISOString())
         }
         servicesList={servicesList}
-        onServiceChange={(e) => setSelectedService(e)}
+        onServiceChange={(val) => setSelectedService(val)}
         onShowNotification={(e) => setShowNotification(e.target.checked)}
+        onRecordStatusChange={(val) => setRecordStatus(val)}
         data={editNotificationProps.selectedNotification}
+        form={editModalForm}
       />
       <BroadcastModal
         notificationTitle={broadcastNotificationProps.title}
@@ -440,10 +515,10 @@ const CreateNotificationModal = (props) => {
 };
 
 const EditNotificationModal = (props) => {
-  const [form] = Form.useForm();
+  /*   const [form] = Form.useForm(); */
 
   const onOk = () => {
-    form.submit();
+    props.form.submit();
   };
 
   return (
@@ -469,7 +544,7 @@ const EditNotificationModal = (props) => {
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
         onFinish={props.onFinish}
-        form={form}
+        form={props.form}
       >
         <Form.Item label="Title" name="title">
           <StyledInputContainer>
@@ -488,10 +563,11 @@ const EditNotificationModal = (props) => {
         <Form.Item label="Expiry Date" name="expiryDate">
           <StyledInputContainer>
             <DatePicker
-              defaultValue={props.data.expiryDate}
+              format="YYYY-MM-DD"
               onChange={props.getExpiryDate}
               style={{ width: "100%" }}
               bordered={false}
+              defaultValue={moment(props.data.expiryDate)}
             />
           </StyledInputContainer>
         </Form.Item>
@@ -499,7 +575,7 @@ const EditNotificationModal = (props) => {
         <Form.Item label="Service Id" name="serviceId">
           <StyledInputContainer>
             <Select
-              defaultValue={props.data.serviceId}
+              defaultValue={props.data?.service?.id}
               placeholder="Select Service"
               onChange={props.onServiceChange}
               style={{ width: "100%", textAlign: "left" }}
@@ -509,14 +585,33 @@ const EditNotificationModal = (props) => {
             </Select>
           </StyledInputContainer>
         </Form.Item>
+        <Form.Item
+          rules={[{ required: true }]}
+          name="statusType"
+          label="Status"
+        >
+          <StyledInputContainer>
+            <Select
+              placeholder="Select payment status"
+              defaultValue={props.data?.recordStatus?.status}
+              bordered={false}
+              style={{ width: "100%", textAlign: "left" }}
+              onChange={props.onRecordStatusChange}
+            >
+              <Option value="ACTIVE">ACTIVE </Option>{" "}
+              <Option value="SUSPENDED"> SUSPENDED </Option>{" "}
+              <Option value="DELETE"> DELETE </Option>{" "}
+            </Select>
+          </StyledInputContainer>
+        </Form.Item>
         <Form.Item name="show">
           <Row justify="start">
             <Col xs={9}>
               <Checkbox
-                defaultValue={props.data.show}
                 onChange={props.onShowNotification}
+                defaultChecked={props.data.show}
               >
-                Broadcast Notification
+                Show Notification
               </Checkbox>
             </Col>
           </Row>
