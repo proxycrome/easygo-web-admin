@@ -26,7 +26,6 @@ export const fetchAllServices = payload => dispatcher => {
     return Services.fetchAllServices(payload).then(
         response => {
             dispatcher(addServices(response.data.data.body));
-            console.log('SERVICES', response);
             dispatcher(addPaginationPros({page: response.data.page, limit: response.data.limit, total: response.data.total}));
             return Promise.resolve(response.data.data.body);
         }

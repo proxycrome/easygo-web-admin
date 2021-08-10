@@ -30,7 +30,7 @@ import { fetchTransactions } from '../Transactions/slice';
 import ScrollToTop  from '../../ScrollTop';
 import { AiOutlineNotification } from 'react-icons/ai';
 import { Notifications } from '../Notifications';
-import { fetchAllServices } from '../Services/slice';
+import { fetchAllServices } from '../ProductServices/slice';
 import { getRoleTypes, getDiscountTypes} from './slice';
 import { Coupons } from '../Coupon/index';
 

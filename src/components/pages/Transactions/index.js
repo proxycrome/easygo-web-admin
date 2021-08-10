@@ -290,7 +290,6 @@ export const Transaction = (props) => {
       setRequeryModalProps((prevState) => ({ ...prevState, loading: true }));
       values.transactionId = values.transactionReference;
       const response = await dispatcher(requeryTransaction({ data: values }));
-      console.log('REQUERY',response);
       notificationAlert(
         "success",
         "Re-query Successfull",
