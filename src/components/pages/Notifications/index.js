@@ -191,7 +191,6 @@ export const Notifications = (props) => {
         size: 10,
         page: 0,
       });
-      console.log("NOTIFICATIONS", response.data.data.body);
       setNotifications(response.data.data.body);
     } catch (error) {
       console.log({ error });
@@ -320,10 +319,6 @@ export const Notifications = (props) => {
       values.serviceId = selectedService || values.serviceId;
       values.show = showNotification ?? values.show;
       values.statusType = recordStatus ?? values.statusType
-      console.log({
-        values,
-        id: editNotificationProps.selectedNotification.id,
-      });
       await Services.updateNotification({
         data: values,
         id: editNotificationProps.selectedNotification.id,

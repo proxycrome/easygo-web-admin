@@ -95,7 +95,6 @@ export const Coupons = (props) => {
   const fetchCoupons = async () => {
     try {
       const response = await Services.getCoupons({ page: 0, pageSize: 10 });
-      console.log(response.data.data.body);
       setCouponList(response.data.data.body);
     } catch (error) {
       console.log(error);
@@ -339,7 +338,6 @@ export const Coupons = (props) => {
       ] = values.discountValue;
       delete values.duration;
       delete values.discountValue;
-      console.log(values);
       const response = await Services.updateCoupon({ data: values, id:  editCouponProps.selectedCoupon.id});
       const couponListRespnse = await Services.getCoupons({
         page: 0,

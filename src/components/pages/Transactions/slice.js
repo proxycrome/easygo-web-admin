@@ -32,7 +32,6 @@ export const fetchTransactions = (payload) => (dispatcher) => {
         })
       );
 
-      console.log('ALL TRANSACTIONS' , response.data.data.body)
       return Promise.resolve(response.data.data.body);
     })
     .catch((error) => {
@@ -58,8 +57,6 @@ export const fetchTransactionsByEmail = (payload) => (dispatcher) => {
 export const requeryTransaction = (payload) => dispatcher => {
     return Services.requeryTransaction(payload).then(
         response => {
-
-            console.log('REQUERY',response, payload);
             return Promise.resolve(response.data.data.body);
         }
     ).catch((error) => {
