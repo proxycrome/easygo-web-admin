@@ -103,7 +103,7 @@ export class Services{
        
         return axios({
             method: 'GET',
-            url: `${domain}${routes.transactionWithFilterRoute}${params}`,
+            url: `${domain}${routes.transactionRoute}${params}`,
             headers: {
                 Authorization: `Bearer ${localStorage.token}`
             },

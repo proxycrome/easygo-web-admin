@@ -8,6 +8,7 @@ import {
   Input,
   Select,
   Typography,
+  Statistic
 } from "antd";
 import {
   TableTopBar,
@@ -31,6 +32,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { StyledModal } from "../../globalComponents/styles";
 import { notificationAlert } from "../../../utils/notificationAlert";
 import { PaymentDetail } from "../Users/CustomerDetails";
+import { themes } from '../../../globalAssets/theme';
 const { Option } = Select;
 const { TabPane } = Tabs;
 
@@ -121,18 +123,20 @@ export const Transaction = (props) => {
       key: "amount",
       sorter: (a, b) => parseInt(a.amount) - parseInt(b.amount),
       sortDirections: ["descend", "ascend"],
+      render: (data) => <Statistic valueStyle={{fontSize: '1.1vw', color: themes.boldText}}  value={data} prefix='₦' />
     },
     {
       title: "Charge",
       dataIndex: "charge",
       key: "charge",
+      render: (data) => <Statistic valueStyle={{fontSize: '1.1vw', color: themes.boldText}}  value={data} prefix='₦' />
     },
     {
       title: "Logged At",
       dataIndex: "dateTransactionLoggedAt",
       key: "dateTransactionLoggedAt",
       render: (time, allData) => {
-        let realTime = allData.valueGiven? allData.dateTransactionLoggedAt: allData.dateInitLogged;  
+        let realTime = /* allData.valueGiven? allData.dateTransactionLoggedAt: */ allData.dateInitLogged;  
         return realTime ? (
           <p>{moment(realTime).format("dddd, MMMM Do YYYY, h:mm:ss a")}</p>
         ) : (
