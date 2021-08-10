@@ -23,7 +23,7 @@ import sterlingLogo from '../../../images/logo.png';
 import { DashBoard } from './DashBoard';
 import { User } from '../Users/index';
 import { Transaction } from '../Transactions/index';
-import { ProductServices } from '../Services/index';
+import { ProductServices } from '../ProductServices/index';
 import {Switch, Link, Route, useRouteMatch, useHistory, useLocation, useParams} from 'react-router-dom';
 import { fetchAllUser } from '../Users/slice';
 import { fetchTransactions } from '../Transactions/slice';
