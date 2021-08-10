@@ -42,7 +42,7 @@ import { PaymentDetail } from "../Users/CustomerDetails";
 import { addNotificationList, selectNotification } from "./slice";
 import { Services } from "../../../services";
 import { themes } from "../../../globalAssets/theme";
-import { servicesSelector } from "../Services/slice";
+import { servicesSelector } from "../ProductServices/slice";
 const { Option } = Select;
 const { TabPane } = Tabs;
 
