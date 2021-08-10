@@ -45,7 +45,7 @@ import { Services } from "../../../services";
 import { themes } from "../../../globalAssets/theme";
 import { selectDashboard } from "../Dashboard/slice";
 import { getBase64 } from "../../../utils/getBase64";
-import { servicesSelector } from "../Services/slice";
+import { servicesSelector } from "../ProductServices/slice";
 
 const { RangePicker } = DatePicker;
 
