@@ -100,7 +100,6 @@ export class Services{
 
     static fetchTransactionsWithFilter(payload){
         const params = getURLParams({...payload}).replace('Successful', true).replace('Failed', false);
-       
         return axios({
             method: 'GET',
             url: `${domain}${routes.transactionRoute}${params}`,

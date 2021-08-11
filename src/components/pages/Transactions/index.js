@@ -133,12 +133,21 @@ export const Transaction = (props) => {
     },
     {
       title: "Logged At",
-      dataIndex: "dateTransactionLoggedAt",
-      key: "dateTransactionLoggedAt",
+      dataIndex: "dateInitLogged",
+      key: "dateInitLogged",
+      sorter: (a, b) => {
+        let startDate = moment(a.dateInitLogged);
+        let endDate = moment(b.dateInitLogged);
+
+        return endDate.diff(startDate, 'days');
+      },
+      defaultSortOrder: "ascend",
+      sortDirections: ["ascend"],
       render: (time, allData) => {
-        let realTime = /* allData.valueGiven? allData.dateTransactionLoggedAt: */ allData.dateInitLogged;  
-        return realTime ? (
-          <p>{moment(realTime).format("dddd, MMMM Do YYYY, h:mm:ss a")}</p>
+        /* console.log(time); */
+        /*let realTime =  allData.valueGiven? allData.dateTransactionLoggedAt:  allData.dateInitLogged; */ 
+        return time ? (
+          <p>{moment(time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</p>
         ) : (
           ""
         );
