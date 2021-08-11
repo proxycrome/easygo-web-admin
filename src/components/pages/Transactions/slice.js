@@ -23,6 +23,7 @@ export const { addTransactionByEmail, addAllTransactions } =
 export const fetchTransactions = (payload) => (dispatcher) => {
   return Services.fetchTransactionsWithFilter(payload)
     .then((response) => {
+      console.log('TRASACTION', response.data.data);
       dispatcher(
         addAllTransactions({
           data: response.data.data.body,
