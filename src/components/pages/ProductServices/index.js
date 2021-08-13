@@ -316,6 +316,7 @@ export const ProductServices = (props) => {
 };
 
 const CreateServicesModal = (props) => {
+
   const [form] = Form.useForm();
   const imageInputRef = useRef();
 
@@ -448,7 +449,6 @@ const EditServiceModal = (props) => {
           </StyledInputContainer>
         </Form.Item>
         <Form.Item
-          rules={[{ required: true }]}
           name="statusType"
           label="Status"
         >
