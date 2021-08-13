@@ -290,8 +290,8 @@ export const Coupons = (props) => {
 
       const response = await Services.createCoupon({ data: formattedValues });
       const couponListRespnse = await Services.getCoupons({
-        page: 0,
-        pageSize: 10,
+        page: page,
+        pageSize: pageSize,
       });
       setCouponList(couponListRespnse.data.data.body);
       setCreateCouponProps((prevState) => ({
@@ -338,10 +338,11 @@ export const Coupons = (props) => {
       ] = values.discountValue;
       delete values.duration;
       delete values.discountValue;
+      console.log(values);
       const response = await Services.updateCoupon({ data: values, id:  editCouponProps.selectedCoupon.id});
       const couponListRespnse = await Services.getCoupons({
-        page: 0,
-        pageSize: 10,
+        page: page,
+        pageSize: pageSize,
       });
       setCouponList(couponListRespnse.data.data.body);
       setEditCouponProps((prevState) => ({
@@ -741,7 +742,6 @@ const EditCouponModal = (props) => {
           </StyledInputContainer>
         </Form.Item>
         <Form.Item
-          rules={[{ required: true }]}
           name="statusType"
           label="Status"
         >

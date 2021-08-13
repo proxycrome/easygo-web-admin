@@ -126,7 +126,7 @@ export class Services{
     static requeryTransaction(payload){
         return axios({
             method: 'POST',
-            url:`${domain}${routes.requeryRoute}`,
+            url:`${domain}${routes.requeryRouteNew}`,
             headers: {
                 Authorization: `Bearer ${localStorage.token}`
             },

@@ -420,7 +420,7 @@ export const DashBoard = (props) => {
       history.push(`${url}/transactions`);
     }
   };
-
+  console.log(activeTab);
   const onTabChange = (value) => {
     setActiveTab(value);
   };
@@ -484,33 +484,6 @@ export const DashBoard = (props) => {
       <Route exact path={path}>
         <PageTitleBar hideButtons={true} title="Dashboard" />
         <StyledStatDiv>
-          {/* <StatCard
-            isCount={true}
-            isGrey={true}
-            title="Total Transactions"
-            hidenaira
-            hidePrecision
-            amount={dashboardStat.totalTransactions || 0}
-          />
-
-          <StatCard
-            isCount={true}
-            isGrey={true}
-            title="Total Card Transactions"
-            hidenaira
-            hidePrecision
-            amount={dashboardStat.totalCardTransactions || 0}
-          />
-
-          <StatCard
-            isCount={true}
-            isGrey={true}
-            title="Total Wallet Transactions"
-            hidenaira
-            hidePrecision
-            amount={dashboardStat.totalWalletTransactions || 0}
-          /> */}
-
           <StatCard
             isCount={true}
             isGrey={true}
@@ -566,22 +539,11 @@ export const DashBoard = (props) => {
             hidenaira
             failed
           />
-          {/* <StatCard
-            isCount={true}
-            isGrey={true}
-            title="Total Wallet Top-Up Today"
-            hidePrecision={false}
-            amount={50000}
-            isOdd={true}
-           
-          /> */}
+          
         </StyledStatDiv>
-       {/*  <StyledKeyActionSection>
-          <ChartComponent title="Transactions" />
-        </StyledKeyActionSection> */}
         <TableComponent
           bottomText={
-            activeTab === 1 ? 'View All Users' : 'View All Transactions'
+            activeTab * 1  === 1 ? 'View All Users' : 'View All Transactions'
           }
           onClick={handleTableExpand}>
           <Tabs
