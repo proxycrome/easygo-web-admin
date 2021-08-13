@@ -8,7 +8,7 @@ import {
   Input,
   Select,
   Typography,
-  Statistic
+  Statistic,
 } from "antd";
 import {
   TableTopBar,
@@ -32,7 +32,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { StyledModal } from "../../globalComponents/styles";
 import { notificationAlert } from "../../../utils/notificationAlert";
 import { PaymentDetail } from "../Users/CustomerDetails";
-import { themes } from '../../../globalAssets/theme';
+import { themes } from "../../../globalAssets/theme";
 const { Option } = Select;
 const { TabPane } = Tabs;
 
@@ -78,16 +78,14 @@ export const Transaction = (props) => {
     isVisible: false,
   });
 
-  const openRequeryModal = (ref, id) => () => {
-    //form.resetFields();
-    form.setFieldsValue({
-      transactionId: ref,
-      transactionReference: ref,
-    });
+  const openRequeryModal = ({transactionIdIfRave,amount,transactionReferenceInit, customerFullName, id}) => () => {
     setRequeryModalProps((prevState) => ({
       ...prevState,
-      ref,
+      rave: transactionIdIfRave,
+      ref: transactionReferenceInit,
       id,
+      amount,
+      fullName: customerFullName,
       isVisible: true,
     }));
   };
@@ -123,13 +121,25 @@ export const Transaction = (props) => {
       key: "amount",
       sorter: (a, b) => parseInt(a.amount) - parseInt(b.amount),
       sortDirections: ["descend", "ascend"],
-      render: (data) => <Statistic valueStyle={{fontSize: '1.1vw', color: themes.boldText}}  value={data} prefix='₦' />
+      render: (data) => (
+        <Statistic
+          valueStyle={{ fontSize: "1.1vw", color: themes.boldText }}
+          value={data}
+          prefix="₦"
+        />
+      ),
     },
     {
       title: "Charge",
       dataIndex: "charge",
       key: "charge",
-      render: (data) => <Statistic valueStyle={{fontSize: '1.1vw', color: themes.boldText}}  value={data} prefix='₦' />
+      render: (data) => (
+        <Statistic
+          valueStyle={{ fontSize: "1.1vw", color: themes.boldText }}
+          value={data}
+          prefix="₦"
+        />
+      ),
     },
     {
       title: "Logged At",
@@ -139,13 +149,13 @@ export const Transaction = (props) => {
         let startDate = moment(a.dateInitLogged);
         let endDate = moment(b.dateInitLogged);
 
-        return endDate.diff(startDate, 'days');
+        return endDate.diff(startDate, "days");
       },
       defaultSortOrder: "ascend",
       sortDirections: ["ascend"],
       render: (time, allData) => {
         /* console.log(time); */
-        /*let realTime =  allData.valueGiven? allData.dateTransactionLoggedAt:  allData.dateInitLogged; */ 
+        /*let realTime =  allData.valueGiven? allData.dateTransactionLoggedAt:  allData.dateInitLogged; */
         return time ? (
           <p>{moment(time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</p>
         ) : (
@@ -217,8 +227,10 @@ export const Transaction = (props) => {
       dataIndex: "transactionReference",
       key: "transactionReference",
       render: (data, allData) => {
-        return allData.valueGiven? allData.transactionReference : allData.transactionReferenceInit;
-      }
+        return allData.valueGiven
+          ? allData.transactionReference
+          : allData.transactionReferenceInit;
+      },
     },
     {
       title: "Status",
@@ -247,17 +259,17 @@ export const Transaction = (props) => {
         );
       },
     },
-   /*  {
+    {
       title: "Actions",
       dataIndex: "actions",
       key: "actions",
       width: "4%",
       fixed: "right",
-      render: (action, { transactionReference,transactionReferenceInit, id, valueGiven }) => {
+      render: (action, { transactionIdIfRave,customerFullName,transactionReferenceInit, amount, id,  }) => {
         const content = (
           <div>
             <p
-              onClick={openRequeryModal(valueGiven? transactionReference : transactionReferenceInit, id)}
+              onClick={openRequeryModal({transactionIdIfRave,amount,transactionReferenceInit, customerFullName, id})}
               style={{ cursor: "pointer" }}
             >
               Re-query
@@ -271,7 +283,7 @@ export const Transaction = (props) => {
           </Popover>
         );
       },
-    }, */
+    },
   ];
 
   function callback(key) {}
@@ -293,13 +305,11 @@ export const Transaction = (props) => {
       })
     );
   };
-  const handleRequeryTransaction = async (values) => {
-    console.log(values)
+  const handleRequeryTransaction = async (e) => {
+    e.preventDefault();
     try {
-      setRequeryModalProps((prevState) => ({ ...prevState, loading: true }));
-
-      /* values.transactionId = values.transactionReference; */
-      const response = await dispatcher(requeryTransaction({ data: values }));
+       setRequeryModalProps((prevState) => ({ ...prevState, loading: true }));
+      const response = await dispatcher(requeryTransaction({ data: {transactionReference: requeryModalProps.ref}}));
       console.log(response);
       notificationAlert(
         "success",
@@ -483,30 +493,22 @@ export const Transaction = (props) => {
           footer={false}
         >
           <Typography.Title level={4}>Re-query Transaction</Typography.Title>
-          <Form
-            form={form}
-            onFinish={handleRequeryTransaction}
-            labelCol={{
-              span: 24,
-            }}
-            wrapperCol={{
-              span: 24,
-            }}
-          >
-            <Form.Item
-              name="transactionReference"
-              label="Transaction Reference"
-            >
-              <Input  disabled />
-            </Form.Item>
-            <Form.Item>
-              <PrimaryButton
-                loading={requeryModalProps.loading}
-                htmlType="submit"
-                text="Re-query"
-              />
-            </Form.Item>
-          </Form>
+          {requeryModalProps.rave? 
+            <Typography>
+              Would you like to re-query transaction of{" "}
+              <strong>{requeryModalProps.amount}</strong> by{" "}
+              <strong>{requeryModalProps.fullName}</strong>
+            </Typography>
+            :
+            <Typography>
+              This transaction can not be re-queried.
+          </Typography>
+          }
+          
+          {requeryModalProps.rave && 
+             <PrimaryButton style={{marginTop: '20px'}} onClick={handleRequeryTransaction} text='Re-query'/>
+         
+          }
         </StyledModal>
         <StyledModal
           onCancel={closeQueryResultModal}
@@ -558,5 +560,39 @@ export const Transaction = (props) => {
         </StyledModal>
       </Route>
     </Switch>
+  );
+};
+
+const RequeryModal = (props) => {
+  return (
+    <StyledModal
+      /*  title='Broadcast Notification' */
+      visible={props.visible}
+      okButtonProps={{
+        loading: props.loading,
+        style: {
+          backgroundColor: themes.primaryColor,
+          border: `1px solid ${themes.primaryColor}`,
+        },
+      }}
+      cancelButtonProps={{
+        type: "danger",
+      }}
+      onOk={props.onOk}
+      okText="Send"
+      onCancel={props.onCancel}
+    >
+      <h3>Re-query Transaction </h3>
+      {props.referenceId ? (
+        <p>
+          Do you want to re-query transaction by <strong></strong>
+        </p>
+      ) : (
+        <p>
+          Would like to broadcast notification with the title{" "}
+          <strong>{props.notificationTitle}</strong>
+        </p>
+      )}
+    </StyledModal>
   );
 };
