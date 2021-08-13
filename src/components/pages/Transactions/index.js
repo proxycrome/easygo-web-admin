@@ -247,8 +247,7 @@ export const Transaction = (props) => {
         );
       },
     },
-
-    {
+   /*  {
       title: "Actions",
       dataIndex: "actions",
       key: "actions",
@@ -272,7 +271,7 @@ export const Transaction = (props) => {
           </Popover>
         );
       },
-    },
+    }, */
   ];
 
   function callback(key) {}
@@ -295,10 +294,13 @@ export const Transaction = (props) => {
     );
   };
   const handleRequeryTransaction = async (values) => {
+    console.log(values)
     try {
       setRequeryModalProps((prevState) => ({ ...prevState, loading: true }));
-      values.transactionId = values.transactionReference;
+
+      /* values.transactionId = values.transactionReference; */
       const response = await dispatcher(requeryTransaction({ data: values }));
+      console.log(response);
       notificationAlert(
         "success",
         "Re-query Successfull",
@@ -490,35 +492,12 @@ export const Transaction = (props) => {
             wrapperCol={{
               span: 24,
             }}
-            /*  initialValues={{
-              transactionId: requeryModalProps.id,
-              transactionReference: requeryModalProps.ref
-            }} */
           >
             <Form.Item
-              rules={[{ required: true }]}
-              name="paymentStatus"
-              label="Transaction Status"
-            >
-              <Select placeholder="Select payment status">
-                <Option value="SUCCESSFUL">SUCCESSFUL </Option>{" "}
-                <Option value="PENDING"> PENDING </Option>{" "}
-                <Option value="FAILED"> FAILED </Option>{" "}
-              </Select>
-            </Form.Item>
-            {/* <Form.Item
-              rules={[{ required: true }]}
-              name="transactionId"
-              label="Transaction ID"
-            >
-              <Input />
-            </Form.Item> */}
-            <Form.Item
-              rules={[{ required: true }]}
               name="transactionReference"
               label="Transaction Reference"
             >
-              <Input />
+              <Input  disabled />
             </Form.Item>
             <Form.Item>
               <PrimaryButton
