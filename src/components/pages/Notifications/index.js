@@ -7,31 +7,18 @@ import {
   Form,
   Input,
   Select,
-  Typography,
   Checkbox,
   Row,
   Col,
   DatePicker,
-  useForm,
 } from "antd";
-import {
-  TableTopBar,
-  StyledSelect,
-  StyledSelectDiv,
-  StyledSearchInputBorder,
-} from "../../globalComponents/TableTopBar";
+
 import { TableComponent } from "../../globalComponents/TableComponent";
-import { PrimaryButton } from "../../globalComponents/Buttons";
-import { Switch, Route, useRouteMatch, useHistory } from "react-router-dom";
-import { TransactionDetail } from "../../globalComponents/TransactionDetail";
+import { useRouteMatch, useHistory } from "react-router-dom";
 import { PageTitleBar } from "../../globalComponents/PageTitleBar";
 import { FiMoreVertical } from "react-icons/fi";
 import moment from "moment";
-import {
-  selectTransactions,
-  fetchTransactions,
-  requeryTransaction,
-} from "./slice";
+
 import { useDispatch, useSelector } from "react-redux";
 import {
   StyledModal,
@@ -126,6 +113,7 @@ export const Notifications = (props) => {
         );
       },
     },
+   
     {
       title: "Broadcast Status",
       dataIndex: "sent",
@@ -137,6 +125,20 @@ export const Notifications = (props) => {
           <Tag color="#FF9800">Not Sent</Tag>
         ) : (
           <Tag color="#f50">Expired</Tag>
+        );
+      },
+    },
+    {
+      title: "Status",
+      dataIndex: "recordStatus",
+      key: "recordStatus",
+      render: ({ status }, allData) => {
+        return status === "ACTIVE" ? (
+          <Tag color="#87d068">{status}</Tag>
+        ) : status === "SUSPENDED" ? (
+          <Tag color="#FF9800">{status}</Tag>
+        ) : (
+          <Tag color="#f50">{status}</Tag>
         );
       },
     },
@@ -191,6 +193,7 @@ export const Notifications = (props) => {
         size: 10,
         page: 0,
       });
+      console.log(response.data.data.body)
       setNotifications(response.data.data.body);
     } catch (error) {
       console.log({ error });

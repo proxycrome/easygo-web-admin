@@ -100,7 +100,6 @@ export class Services{
 
     static fetchTransactionsWithFilter(payload){
         const params = getURLParams({...payload}).replace('Successful', true).replace('Failed', false);
-       
         return axios({
             method: 'GET',
             url: `${domain}${routes.transactionRoute}${params}`,
@@ -127,7 +126,7 @@ export class Services{
     static requeryTransaction(payload){
         return axios({
             method: 'POST',
-            url:`${domain}${routes.requeryRoute}`,
+            url:`${domain}${routes.requeryRouteNew}`,
             headers: {
                 Authorization: `Bearer ${localStorage.token}`
             },

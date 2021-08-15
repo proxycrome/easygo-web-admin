@@ -168,7 +168,7 @@ export const ProductServices = (props) => {
       }
       values.iconBase64String = iconString;
       await Services.createService({ data: values });
-      dispatcher(fetchAllServices({ page: 0, pageSize: 10 }));
+      dispatcher(fetchAllServices({ page: page - 1, pageSize: pageSize }));
       setCreateServicesProps((prevState) => ({
         ...prevState,
         loading: false,
@@ -316,6 +316,7 @@ export const ProductServices = (props) => {
 };
 
 const CreateServicesModal = (props) => {
+
   const [form] = Form.useForm();
   const imageInputRef = useRef();
 
@@ -448,7 +449,6 @@ const EditServiceModal = (props) => {
           </StyledInputContainer>
         </Form.Item>
         <Form.Item
-          rules={[{ required: true }]}
           name="statusType"
           label="Status"
         >
