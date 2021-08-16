@@ -258,6 +258,13 @@ export const Transaction = (props) => {
           <Tag color="#f50">Failed</Tag>
         );
       },
+    },{
+      title: "Re-query",
+      dataIndex: "transactionIdIfRave",
+      key: "transactionIdIfRave",
+      width: 100,
+      fixed: "right",
+      render: (data) => data? 'YES':'NO'
     },
     {
       title: "Actions",
@@ -416,7 +423,7 @@ export const Transaction = (props) => {
               />
               <AntTable
                 columns={columns}
-                scroll={{ x: "180vw" }}
+                scroll={{ x: "180vw", y: '80vh' }}
                 dataSource={allTransactions.data}
                 pagination={{
                   total: allTransactions.total,
