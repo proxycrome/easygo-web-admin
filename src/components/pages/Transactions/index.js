@@ -361,7 +361,7 @@ export const Transaction = (props) => {
         pageSize: transactionPageSize,
         "start-date": formatDate(dateString),
         "end-date": endDate,
-        [filterParam.field]: filterParam.value,
+        ...filterParam
       })
     );
   };
@@ -374,15 +374,15 @@ export const Transaction = (props) => {
         pageSize: transactionPageSize,
         "start-date": startDate,
         "end-date": formatDate(dateString),
-        [filterParam.field]: filterParam.value,
+        ...filterParam
       })
     );
   };
 
   const onFilterTransaction = (value, field) => {
-    //value = value === 'Successful' ? true : value === 'Failed' ? false : value;
-
-    setFilterParam({ value, field });
+    const filterParamPrev = {...filterParam};
+    filterParamPrev[field] = value;
+    setFilterParam(filterParamPrev);
 
     dispatcher(
       fetchTransactions({
@@ -390,13 +390,25 @@ export const Transaction = (props) => {
         pageSize: transactionPageSize,
         "start-date": startDate,
         "end-date": endDate,
-        [field]: value,
+        ...filterParamPrev
       })
     );
   };
 
-  const clearFilter = () => {
+  const clearFilter = (field) =>  () => {
+    const filterParamPrev = {...filterParam};
+    delete filterParamPrev[field];
     setFilterParam({ value: "", field: "" });
+
+    dispatcher(
+      fetchTransactions({
+        page: page - 1,
+        pageSize: transactionPageSize,
+        "start-date": startDate,
+        "end-date": endDate,
+        ...filterParamPrev
+      })
+    );
   };
 
   return (
@@ -412,7 +424,7 @@ export const Transaction = (props) => {
             <TabPane tab="All Transactions" key="1">
               <TableTopBar
                 isTransaction={true}
-                showfilterby
+                showFilter={true}
                 onFilterTransaction={onFilterTransaction}
                 onStartDateChange={onStartDateChange}
                 onEndDateChange={onEndDateChange}
