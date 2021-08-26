@@ -22,14 +22,14 @@ export const SignIn = (props) => {
     const history = useHistory();
     const location = useLocation();
 
-   /*  const {from} = location.state ||  { from: { pathname: "/dashboard", state: {from: location}}};
+    const {from} = location.state ||  { from: { pathname: "/dashboard", state: {from: location}}};
 
 
     useEffect(() => {
         if(localStorage.token){
             history.replace(from);
           }
-    }, []) */
+    }, [])
 
     const onFinish = async (values) => {
         setSignInLoading(true);

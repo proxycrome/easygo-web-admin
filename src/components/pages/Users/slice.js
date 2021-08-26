@@ -29,7 +29,9 @@ export const { addActiveUserList , addSuspendedUserList, addSingleUser} = userSl
 
 export const fetchAllUser = (payload) => dispatcher => {
     return Services.fetchAllUser(payload).then(
+           
             response => {
+                console.log(response);
                 if(payload.status === 'ACTIVE'){
                     dispatcher(addActiveUserList({
                         data: response.data.data.body,

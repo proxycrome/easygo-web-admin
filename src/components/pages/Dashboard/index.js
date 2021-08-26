@@ -120,7 +120,7 @@ export function Home(props) {
           </StyledLinkDiv>
         </StyledSideBar>
       </Col>
-      <Col span={20}>
+      {/* <Col span={20}>
         <StyledMainBodyContainer>
           <Row>
             <Col span={24}>
@@ -133,19 +133,13 @@ export function Home(props) {
                   <Badge count={5}>
                     <BellIcon />
                   </Badge>
-                  {/* <StyledButtonDiv>
-                    <StyledButton>
-                      <PlusIcon />
-                      Create
-                    </StyledButton>
-                  </StyledButtonDiv> */}
                 </StyledAlertDiv>
               </StyledHeader>
             </Col>
           </Row>
           <Row>
             <Col sm={24}>
-              <StyledBodyComtainer>
+              <StyledBodyComtainer> */}
                 <Switch>
                     <Route exact path={`${path}`}>
                         <DashBoard/>
@@ -165,12 +159,12 @@ export function Home(props) {
                     <Route  path={`${path}/coupons`}>
                       <Coupons/>
                     </Route>
-                </Switch>
+                </Switch>{/* 
               </StyledBodyComtainer>
             </Col>
           </Row>
         </StyledMainBodyContainer>
-      </Col>
+      </Col> */}
     </Row>
     </>
   );
