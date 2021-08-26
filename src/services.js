@@ -26,6 +26,18 @@ export class Services{
     }
 
 
+    static searchUser(payload){
+        const param = getURLParams(payload);
+        return axios({
+            method: 'GET',
+            url:`${domain}${routes.userRoute}${param}`,
+            headers: {
+                Authorization: `Bearer ${localStorage.token}`
+            }
+        })
+    }
+
+
     static fetchUserByEmail(payload){
         return axios({
             method: 'GET',

@@ -33,6 +33,8 @@ import { StyledModal } from "../../globalComponents/styles";
 import { notificationAlert } from "../../../utils/notificationAlert";
 import { PaymentDetail } from "../Users/CustomerDetails";
 import { themes } from "../../../globalAssets/theme";
+import { MainPageScaffold } from "../../globalComponents/MainPageScaffold";
+
 const { Option } = Select;
 const { TabPane } = Tabs;
 
@@ -412,8 +414,7 @@ export const Transaction = (props) => {
   };
 
   return (
-    <Switch>
-      <Route exact path={`${path}`}>
+    <MainPageScaffold>
         <PageTitleBar hideButtons={true} title="Transactions" />
         <TableComponent onClick={gotoAllTransactionTable}>
           <Tabs
@@ -577,8 +578,7 @@ export const Transaction = (props) => {
             />
           </div>
         </StyledModal>
-      </Route>
-    </Switch>
+    </MainPageScaffold>
   );
 };
 

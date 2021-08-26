@@ -1,19 +1,21 @@
-import React, { useState } from 'react';
-import { Tabs, Table as AntTable, Tag, Popover, Modal } from 'antd';
-import { Switch, Route, useRouteMatch, useHistory } from 'react-router-dom';
-import { CustomerDetail } from './CustomerDetails';
-import { TableTopBar } from '../../globalComponents/TableTopBar';
-import { TableComponent } from '../../globalComponents/TableComponent';
-import { PageTitleBar } from '../../globalComponents/PageTitleBar';
-import { FiMoreVertical } from 'react-icons/fi';
-import { selectUser, suspendUser } from './slice';
-import { useSelector } from 'react-redux';
-import styled from 'styled-components';
-import { sendVerificationEmail, activateUser, fetchAllUser } from './slice';
-import { useDispatch } from 'react-redux';
-import { StyledModal } from '../../globalComponents/styles';
-import { notificationAlert } from '../../../utils/notificationAlert';
-import { themes } from '../../../globalAssets/theme';
+import React, { useState } from "react";
+import { Tabs, Table as AntTable, Tag, Popover, Modal } from "antd";
+import { Switch, Route, useRouteMatch, useHistory } from "react-router-dom";
+import { CustomerDetail } from "./CustomerDetails";
+import { TableTopBar } from "../../globalComponents/TableTopBar";
+import { TableComponent } from "../../globalComponents/TableComponent";
+import { PageTitleBar } from "../../globalComponents/PageTitleBar";
+import { FiMoreVertical } from "react-icons/fi";
+import { selectUser, suspendUser } from "./slice";
+import { useSelector } from "react-redux";
+import styled from "styled-components";
+import { sendVerificationEmail, activateUser, fetchAllUser } from "./slice";
+import { useDispatch } from "react-redux";
+import { StyledModal } from "../../globalComponents/styles";
+import { notificationAlert } from "../../../utils/notificationAlert";
+import { themes } from "../../../globalAssets/theme";
+import { MainPageScaffold } from "../../globalComponents/MainPageScaffold";
+import { Services } from "../../../services";
 
 const { TabPane } = Tabs;
 
@@ -21,29 +23,31 @@ export const User = (props) => {
   const { url, path } = useRouteMatch();
   const history = useHistory();
   const userState = useSelector(selectUser);
-  const [activeTab, setActiveTab] = useState('1');
+  const [activeTab, setActiveTab] = useState("1");
   const [verifyEmailProps, setVerifyEmailProps] = useState({
     loading: false,
-    email: '',
+    email: "",
     isModalVisible: false,
   });
   const [activateUserProps, setActivateUserProps] = useState({
     loading: false,
-    email: '',
+    email: "",
     isModalVisible: false,
   });
   const [suspendUserProps, setSuspendUserProps] = useState({
     loading: false,
-    email: '',
+    email: "",
     isModalVisible: false,
   });
   const [activeUserPageSize, setActiveUserPageSize] = useState(10);
   const [suspendedUserPageSize, setSuspendedUserPageSize] = useState(10);
+  const [searchValues, setSearchValues] = useState([]);
+  const [isSearching, setSearching] = useState(false);
   const dispatcher = useDispatch();
 
   const onOpenSendVerificationEmailModal = (user) => async () => {
     if (user.emailVerified) {
-      notificationAlert('warning', 'Email Verified', 'Email already verified');
+      notificationAlert("warning", "Email Verified", "Email already verified");
       return;
     }
     setVerifyEmailProps((prevState) => ({
@@ -69,69 +73,71 @@ export const User = (props) => {
     }));
   };
 
-
   const getWalletDigit = (value) => {
-    return value?.split('₦').join('');
-  }
+    return value?.split("₦").join("");
+  };
   const columns = [
     {
-      title: 'Name',
-      dataIndex: 'fullName',
-      key: 'fullName',
+      title: "Name",
+      dataIndex: "fullName",
+      key: "fullName",
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
     },
     {
-      title: 'Phone Number',
-      dataIndex: 'phoneNumber',
-      key: 'phoneNumber',
+      title: "Phone Number",
+      dataIndex: "phoneNumber",
+      key: "phoneNumber",
     },
     {
-      title: 'Device Name',
-      dataIndex: 'deviceName',
-      key: 'deviceName',
-    },
-
-    {
-      title: 'Wallet Balance',
-      dataIndex: 'walletBalance',
-      key: 'walletBalance',
-      defaultSortOrder: 'descend',
-      sorter: (a, b) => getWalletDigit(a.walletBalance) - getWalletDigit(b.walletBalance),
-      sortDirections: ['descend', 'ascend'],
-    },
-    {
-      title: 'Wallet Number',
-      dataIndex: 'walletNumber',
-      key: 'walletNumber',
+      title: "Device Name",
+      dataIndex: "deviceName",
+      key: "deviceName",
     },
 
     {
-      title: 'Actions',
-      dataIndex: 'actions',
-      key: 'actions',
+      title: "Wallet Balance",
+      dataIndex: "walletBalance",
+      key: "walletBalance",
+      defaultSortOrder: "descend",
+      sorter: (a, b) =>
+        getWalletDigit(a.walletBalance) - getWalletDigit(b.walletBalance),
+      sortDirections: ["descend", "ascend"],
+    },
+    {
+      title: "Wallet Number",
+      dataIndex: "walletNumber",
+      key: "walletNumber",
+    },
+
+    {
+      title: "Actions",
+      dataIndex: "actions",
+      key: "actions",
       render: (action, alldata) => {
         const content = (
           <div>
             <p
-              style={{ cursor: 'pointer' }}
-              onClick={onOpenSendVerificationEmailModal(alldata)}>
+              style={{ cursor: "pointer" }}
+              onClick={onOpenSendVerificationEmailModal(alldata)}
+            >
               Send Email Verification
             </p>
             <p
               onClick={
-                activeTab === '1'
+                activeTab === "1"
                   ? openSuspendUserModal(alldata)
                   : openActivateUserModal(alldata)
               }
               style={{
-                color: activeTab === '1' ? themes.red : themes.primaryColor,
-                cursor: 'pointer',
-              }}>
-              {activeTab === '1' ? 'Suspend' : 'Activate'}
+                color: activeTab === "1" ? themes.red : themes.primaryColor,
+                cursor: "pointer",
+              }}
+            >
+              {activeTab === "1" ? "Suspend" : "Activate"}
             </p>
           </div>
         );
@@ -168,9 +174,9 @@ export const User = (props) => {
         isModalVisible: false,
         loading: false,
       }));
-      notificationAlert('success', 'Sent', response);
+      notificationAlert("success", "Sent", response);
     } catch (error) {
-      notificationAlert('error', 'Failed', error.message || 'Please try again');
+      notificationAlert("error", "Failed", error.message || "Please try again");
       setVerifyEmailProps((prevState) => ({ ...prevState, loading: false }));
     }
   };
@@ -204,10 +210,10 @@ export const User = (props) => {
       };
       await dispatcher(activateUser(payload));
       await dispatcher(
-        fetchAllUser({ page: 0, pageSize: 10, status: 'ACTIVE' })
+        fetchAllUser({ page: 0, pageSize: 10, status: "ACTIVE" })
       );
       await dispatcher(
-        fetchAllUser({ page: 0, pageSize: 10, status: 'SUSPENDED' })
+        fetchAllUser({ page: 0, pageSize: 10, status: "SUSPENDED" })
       );
       setActivateUserProps((prevState) => ({
         ...prevState,
@@ -215,13 +221,13 @@ export const User = (props) => {
         loading: false,
       }));
       notificationAlert(
-        'success',
-        'Activated',
+        "success",
+        "Activated",
         `User with the email ${activateUserProps.email} has been activated`
       );
     } catch (error) {
       setActivateUserProps((prevState) => ({ ...prevState, loading: false }));
-      notificationAlert('error', 'Failed', error.message || 'Please try again');
+      notificationAlert("error", "Failed", error.message || "Please try again");
     }
   };
 
@@ -243,10 +249,10 @@ export const User = (props) => {
       };
       await dispatcher(suspendUser(payload));
       await dispatcher(
-        fetchAllUser({ page: 0, pageSize: 10, status: 'ACTIVE' })
+        fetchAllUser({ page: 0, pageSize: 10, status: "ACTIVE" })
       );
       await dispatcher(
-        fetchAllUser({ page: 0, pageSize: 10, status: 'SUSPENDED' })
+        fetchAllUser({ page: 0, pageSize: 10, status: "SUSPENDED" })
       );
       setSuspendUserProps((prevState) => ({
         ...prevState,
@@ -254,134 +260,178 @@ export const User = (props) => {
         loading: false,
       }));
       notificationAlert(
-        'success',
-        'Suspended',
+        "success",
+        "Suspended",
         `User with the email ${suspendUserProps.email} has been suspended`
       );
     } catch (error) {
       setSuspendUserProps((prevState) => ({ ...prevState, loading: false }));
-      notificationAlert('error', 'Failed', error.message || 'Please try again');
+      notificationAlert("error", "Failed", error.message || "Please try again");
     }
   };
 
   const handleActiveUserPagination = (page, pageSize) => {
     setActiveUserPageSize(pageSize);
-    dispatcher(fetchAllUser({ page: page - 1, pageSize, status: 'ACTIVE' }));
+    dispatcher(fetchAllUser({ page: page - 1, pageSize, status: "ACTIVE" }));
   };
 
   const handleSuspendedUserPagination = (page, pageSize) => {
     setSuspendedUserPageSize(pageSize);
-    dispatcher(fetchAllUser({ page: page - 1, pageSize, status: 'SUSPENDED' }));
+    dispatcher(fetchAllUser({ page: page - 1, pageSize, status: "SUSPENDED" }));
   };
 
+  const handleUserSearch = (event) => {
+    (async () => {
+      try {
+        console.log(event);
+        setSearching(Boolean(event.target.value))
+        const response = await Services.searchUser({
+          search: event.target.value,
+        });
+        setSearchValues(response.data.data.body);
+        console.log(response.data.data.body);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  };
 
   return (
     <>
       <Switch>
         <Route exact path={`${path}`}>
-          <PageTitleBar hideButtons={true} title="Users" />
-          <TableComponent onClick={gotoAllUserTable}>
-            <Tabs
-              tabBarStyle={{ color: '#A0AEC0', padding: '0px 23px' }}
-              defaultActiveKey="1"
-              onChange={onTabChange}>
-              <TabPane tab="Active Users" key="1">
-                <TableTopBar hideDate={true} fullName= {activeTab === '1' ? "Active Users":"Suspended Users"} tableId='all-user' placeholder="Email, Full name" 
-                />
+          <MainPageScaffold onSearch={handleUserSearch} showSearch>
+            <PageTitleBar hideButtons={true} title="Users" />
+            <TableComponent onClick={gotoAllUserTable}>
+              {isSearching ? (
                 <StyledAntTable
-                  onRow={handleRow('active')}
+                  onRow={handleRow("active")}
                   columns={columns}
-                  dataSource={userState.activeUserList.data}
-                  pagination={{
-                    total: userState.activeUserList.total,
-                    showTotal: (total, range) =>
-                      `${range[0]}-${range[1]} of ${total} items`,
-                    defaultCurrent: 1,
-                    current: userState.activeUserList.page + 1,
-                    pageSize: activeUserPageSize,
-                    showSizeChanger: true,
-                    onChange: handleActiveUserPagination,
-                  }}
+                  dataSource={searchValues}
+                  pagination={false}
                 />
-              </TabPane>
-              <TabPane tab="Suspended Users" key="2">
-                <TableTopBar 
-                hideDate={true} fullName= {activeTab === '1' ? "Active Users":"Suspended Users"} tableId='all-user' placeholder="Email, Full name" 
-                />
-                <StyledAntTable
-                  onRow={handleRow('suspended')}
-                  columns={columns}
-                  dataSource={userState.suspendedUserList.data}
-                  pagination={{
-                    total: userState.suspendedUserList.total,
-                    showTotal: (total, range) =>
-                      `${range[0]}-${range[1]} of ${total} items`,
-                    defaultCurrent: 1,
-                    current: userState.suspendedUserList.page + 1,
-                    pageSize: suspendedUserPageSize,
-                    showSizeChanger: true,
-                    onChange: handleSuspendedUserPagination,
-                  }}
-                />
-              </TabPane>
-            </Tabs>
-          </TableComponent>
-         {activeTab === '1' ? (<table id="all-user" style={{ display: 'none' }}>
-            <thead>
-              <tr>
-                {userState.suspendedUserList.data.length &&
-                  Object.keys(userState.suspendedUserList.data[0]).map(
-                    (item, index) => {
-                      return <td key={index}>{item}</td>;
-                    }
-                  )}
-              </tr>
-            </thead>
-            <tbody>
-              {userState.suspendedUserList.data.map((item, index) => {
-                return (
-                  <tr key={`${index}-item`}>
-                    {Object.values(item)
-                      .filter((item) => typeof item !== 'object')
-                      .map((data, index) => {
-                        return <td key={`${index}-data`}>{data}</td>;
-                      })}
+              ) : (
+                <Tabs
+                  tabBarStyle={{ color: "#A0AEC0", padding: "0px 23px" }}
+                  defaultActiveKey="1"
+                  onChange={onTabChange}
+                >
+                  <TabPane tab="Active Users" key="1">
+                    <TableTopBar
+                      hideDate={true}
+                      fullName={
+                        activeTab === "1" ? "Active Users" : "Suspended Users"
+                      }
+                      tableId="all-user"
+                      placeholder="Email, Full name"
+                    />
+                    <StyledAntTable
+                      onRow={handleRow("active")}
+                      columns={columns}
+                      dataSource={userState.activeUserList.data}
+                      pagination={{
+                        total: userState.activeUserList.total,
+                        showTotal: (total, range) =>
+                          `${range[0]}-${range[1]} of ${total} items`,
+                        defaultCurrent: 1,
+                        current: userState.activeUserList.page + 1,
+                        pageSize: activeUserPageSize,
+                        showSizeChanger: true,
+                        onChange: handleActiveUserPagination,
+                      }}
+                    />
+                  </TabPane>
+                  <TabPane tab="Suspended Users" key="2">
+                    <TableTopBar
+                      hideDate={true}
+                      fullName={
+                        activeTab === "1" ? "Active Users" : "Suspended Users"
+                      }
+                      tableId="all-user"
+                      placeholder="Email, Full name"
+                    />
+                    <StyledAntTable
+                      onRow={handleRow("suspended")}
+                      columns={columns}
+                      dataSource={userState.suspendedUserList.data}
+                      pagination={{
+                        total: userState.suspendedUserList.total,
+                        showTotal: (total, range) =>
+                          `${range[0]}-${range[1]} of ${total} items`,
+                        defaultCurrent: 1,
+                        current: userState.suspendedUserList.page + 1,
+                        pageSize: suspendedUserPageSize,
+                        showSizeChanger: true,
+                        onChange: handleSuspendedUserPagination,
+                      }}
+                    />
+                  </TabPane>
+                </Tabs>
+              )}
+            </TableComponent>
+            {activeTab === "1" ? (
+              <table id="all-user" style={{ display: "none" }}>
+                <thead>
+                  <tr>
+                    {userState.suspendedUserList.data.length &&
+                      Object.keys(userState.suspendedUserList.data[0]).map(
+                        (item, index) => {
+                          return <td key={index}>{item}</td>;
+                        }
+                      )}
                   </tr>
-                );
-              })}
-            </tbody>
-          </table>) : (
-          <table id="all-user" style={{ display: 'none' }}>
-            <thead>
-              <tr>
-                {userState.activeUserList.data.length &&
-                  Object.keys(userState.activeUserList.data[0]).map(
-                    (item, index) => {
-                      return <td key={index}>{item}</td>;
-                    }
-                  )}
-              </tr>
-            </thead>
-            <tbody>
-              {userState.activeUserList.data.map((item, index) => {
-                return (
-                  <tr key={`${index}-item`}>
-                    {Object.values(item)
-                      .filter((item) => typeof item !== 'object')
-                      .map((data, index) => {
-                        return <td key={`${index}-data`}>{data}</td>;
-                      })}
+                </thead>
+                <tbody>
+                  {userState.suspendedUserList.data.map((item, index) => {
+                    return (
+                      <tr key={`${index}-item`}>
+                        {Object.values(item)
+                          .filter((item) => typeof item !== "object")
+                          .map((data, index) => {
+                            return <td key={`${index}-data`}>{data}</td>;
+                          })}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            ) : (
+              <table id="all-user" style={{ display: "none" }}>
+                <thead>
+                  <tr>
+                    {userState.activeUserList.data.length &&
+                      Object.keys(userState.activeUserList.data[0]).map(
+                        (item, index) => {
+                          return <td key={index}>{item}</td>;
+                        }
+                      )}
                   </tr>
-                );
-              })}
-            </tbody>
-          </table>)}
+                </thead>
+                <tbody>
+                  {userState.activeUserList.data.map((item, index) => {
+                    return (
+                      <tr key={`${index}-item`}>
+                        {Object.values(item)
+                          .filter((item) => typeof item !== "object")
+                          .map((data, index) => {
+                            return <td key={`${index}-data`}>{data}</td>;
+                          })}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            )}
+          </MainPageScaffold>
         </Route>
+
         <Route path={`${path}/:email`}>
-          <CustomerDetail
-            onSuspendUser={openSuspendUserModal}
-            onActivateUser={openActivateUserModal}
-          />
+          <MainPageScaffold>
+            <CustomerDetail
+              onSuspendUser={openSuspendUserModal}
+              onActivateUser={openActivateUserModal}
+            />
+          </MainPageScaffold>
         </Route>
       </Switch>
       <SendEmailVerificatioModal
@@ -421,14 +471,15 @@ export const SendEmailVerificatioModal = (props) => {
         },
       }}
       cancelButtonProps={{
-        type: 'danger',
+        type: "danger",
       }}
       onOk={props.onOk}
       okText="Send"
-      onCancel={props.onCancel}>
+      onCancel={props.onCancel}
+    >
       <h3>Send Email Verification</h3>
       <p>
-        Would you like to send email verification link to{' '}
+        Would you like to send email verification link to{" "}
         <strong>{props.email}</strong>
       </p>
     </StyledModal>
@@ -447,14 +498,15 @@ export const ActivateUserModal = (props) => {
         },
       }}
       cancelButtonProps={{
-        type: 'danger',
+        type: "danger",
       }}
       onOk={props.onOk}
       okText="Activate"
-      onCancel={props.onCancel}>
+      onCancel={props.onCancel}
+    >
       <h3>Activate User</h3>
       <p>
-        Would you like to <strong>activate</strong> the user with this email{' '}
+        Would you like to <strong>activate</strong> the user with this email{" "}
         <strong>{props.email}</strong>?
       </p>
     </StyledModal>
@@ -467,21 +519,22 @@ export const SuspendUserModal = (props) => {
       visible={props.visible}
       okButtonProps={{
         loading: props.loading,
-        type: 'danger',
+        type: "danger",
       }}
       cancelButtonProps={{
         style: {
           backgroundColor: themes.primaryColor,
           border: `1px solid ${themes.primaryColor}`,
-          color: '#fff',
+          color: "#fff",
         },
       }}
       onOk={props.onOk}
       okText="Suspend"
-      onCancel={props.onCancel}>
+      onCancel={props.onCancel}
+    >
       <h3>Suspend User</h3>
       <p>
-        Would you like to{' '}
+        Would you like to{" "}
         <strong style={{ color: themes.red }}>suspend </strong>the user with
         this email <strong>{props.email}</strong>?
       </p>
