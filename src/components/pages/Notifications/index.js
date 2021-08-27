@@ -30,6 +30,8 @@ import { addNotificationList, selectNotification } from "./slice";
 import { Services } from "../../../services";
 import { themes } from "../../../globalAssets/theme";
 import { servicesSelector } from "../ProductServices/slice";
+import { MainPageScaffold } from "../../globalComponents/MainPageScaffold";
+
 const { Option } = Select;
 const { TabPane } = Tabs;
 
@@ -367,7 +369,7 @@ export const Notifications = (props) => {
   };
 
   return (
-    <>
+    <MainPageScaffold>
       <PageTitleBar
         onButtonClick={() =>
           setCreateNotificationProps((prevState) => ({
@@ -427,7 +429,7 @@ export const Notifications = (props) => {
         onOk={handleBroadCastNotification}
         isActive={broadcastNotificationProps.isActive}
       />
-    </>
+    </MainPageScaffold>
   );
 };
 

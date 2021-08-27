@@ -1,28 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import styled from 'styled-components';
-import { Select, Tabs, Table as AntTable, Tag, Popover } from 'antd';
-import { getCenter } from '../../../utils/getCenter';
-import { StatCard } from '../../globalComponents/StatCard';
-import { ChartComponent } from '../../globalComponents/ChartComponent';
-import { fontFamily } from '../../../globalAssets/fontFamily';
-import { PageTitleBar } from '../../globalComponents/PageTitleBar';
-import { Switch, Route, useRouteMatch, useHistory } from 'react-router-dom';
-import moment from 'moment';
-import { TableComponent } from '../../globalComponents/TableComponent';
-import { data } from '../../data/merchantData';
-import { FiMoreVertical } from 'react-icons/fi';
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import styled from "styled-components";
+import { Select, Tabs, Table as AntTable, Tag, Popover } from "antd";
+import { getCenter } from "../../../utils/getCenter";
+import { StatCard } from "../../globalComponents/StatCard";
+import { ChartComponent } from "../../globalComponents/ChartComponent";
+import { fontFamily } from "../../../globalAssets/fontFamily";
+import { PageTitleBar } from "../../globalComponents/PageTitleBar";
+import { Switch, Route, useRouteMatch, useHistory } from "react-router-dom";
+import moment from "moment";
+import { TableComponent } from "../../globalComponents/TableComponent";
+import { data } from "../../data/merchantData";
+import { FiMoreVertical } from "react-icons/fi";
 import {
   selectUser,
   sendVerificationEmail,
   suspendUser,
   fetchAllUser,
-} from '../Users/slice';
-import { SuspendUserModal } from '../Users/index';
-import { SendEmailVerificatioModal } from '../Users/index';
-import { selectTransactions } from '../Transactions/slice'
-import { getDashboardStat, selectDashboard } from './slice';
-import { notificationAlert } from '../../../utils/notificationAlert';
+} from "../Users/slice";
+import { SuspendUserModal } from "../Users/index";
+import { SendEmailVerificatioModal } from "../Users/index";
+import { selectTransactions } from "../Transactions/slice";
+import { getDashboardStat, selectDashboard } from "./slice";
+import { notificationAlert } from "../../../utils/notificationAlert";
+import { MainPageScaffold } from "../../globalComponents/MainPageScaffold";
 
 const { TabPane } = Tabs;
 
@@ -30,41 +31,41 @@ const { Option } = Select;
 
 const transactionDataSource = [
   {
-    key: '1',
-    id: '#12234',
-    status: 'successful',
-    date: 'June 21st 2021',
-    amount: '200000',
-    username: 'Johnson Adewale',
+    key: "1",
+    id: "#12234",
+    status: "successful",
+    date: "June 21st 2021",
+    amount: "200000",
+    username: "Johnson Adewale",
   },
   {
-    key: '2',
-    id: '#56778',
-    date: 'Dec 21st 2021',
-    amount: '200000',
-    status: 'failed',
-    username: 'Johnson Adewale',
+    key: "2",
+    id: "#56778",
+    date: "Dec 21st 2021",
+    amount: "200000",
+    status: "failed",
+    username: "Johnson Adewale",
   },
 ];
 
 const userDataSource = [
   {
-    key: '1',
-    id: '#12234',
-    status: 'active',
-    name: 'Johnson Adewale',
+    key: "1",
+    id: "#12234",
+    status: "active",
+    name: "Johnson Adewale",
     count: 30,
-    lastActivity: '10/02/2021 10:01pm',
-    email: 'test@yahoo.com',
+    lastActivity: "10/02/2021 10:01pm",
+    email: "test@yahoo.com",
   },
   {
-    key: '2',
-    id: '#56778',
-    status: 'blocked',
-    name: 'Johnson Adewale',
+    key: "2",
+    id: "#56778",
+    status: "blocked",
+    name: "Johnson Adewale",
     count: 10,
-    lastActivity: '10/02/2021 10:01pm',
-    email: 'test@yahoo.com',
+    lastActivity: "10/02/2021 10:01pm",
+    email: "test@yahoo.com",
   },
 ];
 
@@ -78,19 +79,19 @@ export const DashBoard = (props) => {
   const { dashboardStat } = useSelector(selectDashboard);
   const [verifyEmailProps, setVerifyEmailProps] = useState({
     loading: false,
-    email: '',
+    email: "",
     isModalVisible: false,
   });
   const [suspendUserProps, setSuspendUserProps] = useState({
     loading: false,
-    email: '',
+    email: "",
     isModalVisible: false,
   });
   const dispatcher = useDispatch();
 
   const onOpenSendVerificationEmailModal = (user) => async () => {
     if (user.emailVerified) {
-      notificationAlert('warning', 'Email Verified', 'Email already verified');
+      notificationAlert("warning", "Email Verified", "Email already verified");
       return;
     }
     setVerifyEmailProps((prevState) => ({
@@ -122,113 +123,123 @@ export const DashBoard = (props) => {
 
   const transactionContent = (
     <div>
-      <p style={{ cursor: 'pointer' }}>Re-query</p>
+      <p style={{ cursor: "pointer" }}>Re-query</p>
     </div>
   );
 
-
   const transactionColumns = [
     {
-      title: 'Name',
-      dataIndex: 'customerFullName',
-      key: 'customerFullName',
-      width: '7%',
-      fixed: 'left',
+      title: "Name",
+      dataIndex: "customerFullName",
+      key: "customerFullName",
+      width: "7%",
+      fixed: "left",
     },
     {
-      title: 'Email',
-      dataIndex: 'customerEmail',
-      key: 'customerEmail',
-      
+      title: "Email",
+      dataIndex: "customerEmail",
+      key: "customerEmail",
     },
     {
-      title: 'Phone number',
-      dataIndex: 'customerPhoneNumber',
-      key: 'customerPhoneNumber',
+      title: "Phone number",
+      dataIndex: "customerPhoneNumber",
+      key: "customerPhoneNumber",
     },
     {
-      title: 'Amount',
-      dataIndex: 'amount',
-      key: 'amount',
-      defaultSortOrder: 'descend',
+      title: "Amount",
+      dataIndex: "amount",
+      key: "amount",
+      defaultSortOrder: "descend",
       sorter: (a, b) => parseInt(a.amount) - parseInt(b.amount),
-      sortDirections: ['descend', 'ascend'],
+      sortDirections: ["descend", "ascend"],
     },
     {
-      title: 'Charge',
-      dataIndex: 'charge',
-      key: 'charge',
+      title: "Charge",
+      dataIndex: "charge",
+      key: "charge",
     },
     {
-      title: 'Logged At',
-      dataIndex: 'dateTransactionLoggedAt',
-      key: 'dateTransactionLoggedAt',
+      title: "Logged At",
+      dataIndex: "dateTransactionLoggedAt",
+      key: "dateTransactionLoggedAt",
       render: (time) => {
-        return time?  <p>{moment(time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</p> : ''
+        return time ? (
+          <p>{moment(time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</p>
+        ) : (
+          ""
+        );
       },
     },
     {
-      title: 'Value Given At',
-      dataIndex: 'dateValueWasGiven',
-      key: 'dateValueWasGiven',
+      title: "Value Given At",
+      dataIndex: "dateValueWasGiven",
+      key: "dateValueWasGiven",
       render: (time) => {
-          return time?  <p>{moment(time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</p> : ''
-        },
+        return time ? (
+          <p>{moment(time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</p>
+        ) : (
+          ""
+        );
+      },
     },
     {
-      title: 'Paid At',
-      dataIndex: 'paidAt',
-      key: 'paidAt',
+      title: "Paid At",
+      dataIndex: "paidAt",
+      key: "paidAt",
       render: (time) => {
-          return time?  <p>{moment(time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</p> : ''
-        },
+        return time ? (
+          <p>{moment(time).format("dddd, MMMM Do YYYY, h:mm:ss a")}</p>
+        ) : (
+          ""
+        );
+      },
     },
     {
-      title: 'Paid For',
-      dataIndex: 'paidFor',
-      key: 'paidFor',
+      title: "Paid For",
+      dataIndex: "paidFor",
+      key: "paidFor",
     },
     {
-      title: 'Payee',
-      dataIndex: 'payee',
-      key: 'payee',
+      title: "Payee",
+      dataIndex: "payee",
+      key: "payee",
     },
     {
-      title: 'Payment Gateway',
-      dataIndex: 'paymentGateway',
-      key: 'paymentGateway',
+      title: "Payment Gateway",
+      dataIndex: "paymentGateway",
+      key: "paymentGateway",
     },
     {
-      title: 'Provider',
-      dataIndex: 'provider',
-      key: 'provider',
+      title: "Provider",
+      dataIndex: "provider",
+      key: "provider",
     },
     {
-      title: 'Service',
-      dataIndex: 'service',
-      key: 'service',
+      title: "Service",
+      dataIndex: "service",
+      key: "service",
     },
     {
-      title: 'Method',
-      dataIndex: 'transactionMethod',
-      key: 'transactionMethod',
+      title: "Method",
+      dataIndex: "transactionMethod",
+      key: "transactionMethod",
     },
     {
-      title: 'Type',
-      dataIndex: 'transactionType',
-      key: 'transactionType',
+      title: "Type",
+      dataIndex: "transactionType",
+      key: "transactionType",
     },
     {
-      title: 'Reference',
-      dataIndex: 'transactionReference',
-      key: 'transactionReference',
+      title: "Reference",
+      dataIndex: "transactionReference",
+      key: "transactionReference",
     },
     {
-      title: 'Status',
-      dataIndex: 'valueGiven',
-      key: 'valueGiven',
+      title: "Status",
+      dataIndex: "valueGiven",
+      key: "valueGiven",
       width: 100,
-      fixed: 'right',
+      fixed: "right",
       render: (status) => {
         if (status) {
           return <Tag color="#87d068">successful</Tag>;
@@ -238,11 +249,11 @@ export const DashBoard = (props) => {
       },
       filters: [
         {
-          text: 'Successful',
+          text: "Successful",
           value: true,
         },
         {
-          text: 'Failed',
+          text: "Failed",
           value: false,
         },
       ],
@@ -252,11 +263,11 @@ export const DashBoard = (props) => {
     },
 
     {
-      title: 'Actions',
-      dataIndex: 'actions',
-      key: 'actions',
-      width: '4%',
-      fixed: 'right',
+      title: "Actions",
+      dataIndex: "actions",
+      key: "actions",
+      width: "4%",
+      fixed: "right",
       render: (action, alldata) => {
         return (
           <Popover trigger="click" content={transactionContent}>
@@ -267,112 +278,66 @@ export const DashBoard = (props) => {
     },
   ];
 
-
-/*   const transactionColumns = [
-    {
-      title: 'Transaction ID',
-      dataIndex: 'id',
-      key: 'id',
-    },
-    {
-      title: 'Username',
-      dataIndex: 'username',
-      key: 'username',
-    },
-    {
-      title: 'Amount',
-      dataIndex: 'amount',
-      key: 'amount',
-    },
-    {
-      title: 'Date',
-      dataIndex: 'date',
-      key: 'date',
-    },
-
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status) => {
-        if (status === 'successful') {
-          return <Tag color="#87d068">successful</Tag>;
-        } else if (status === 'failed') {
-          return <Tag color="#f50">Failed</Tag>;
-        }
-      },
-    },
-
-    {
-      title: 'Actions',
-      dataIndex: 'actions',
-      key: 'actions',
-      render: (action, alldata) => {
-        return (
-          <Popover trigger="click" content={transactionContent}>
-            <FiMoreVertical />
-          </Popover>
-        );
-      },
-    },
-  ]; */
-
+ 
 
   const getWalletDigit = (value) => {
-    return value?.split('₦').join('');
-  }
+    return value?.split("₦").join("");
+  };
 
   const userColumns = [
     {
-      title: 'Name',
-      dataIndex: 'fullName',
-      key: 'fullName',
+      title: "Name",
+      dataIndex: "fullName",
+      key: "fullName",
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
     },
     {
-      title: 'Phone Number',
-      dataIndex: 'phoneNumber',
-      key: 'phoneNumber',
+      title: "Phone Number",
+      dataIndex: "phoneNumber",
+      key: "phoneNumber",
     },
     {
-      title: 'Device Name',
-      dataIndex: 'deviceName',
-      key: 'deviceName',
-    },
-
-    {
-      title: 'Wallet Balance',
-      dataIndex: 'walletBalance',
-      key: 'walletBalance',
-      defaultSortOrder: 'descend',
-      sorter: (a, b) => getWalletDigit(a.walletBalance) - getWalletDigit(b.walletBalance),
-      sortDirections: ['descend', 'ascend'],
-    },
-    {
-      title: 'Wallet Number',
-      dataIndex: 'walletNumber',
-      key: 'walletNumber',
+      title: "Device Name",
+      dataIndex: "deviceName",
+      key: "deviceName",
     },
 
     {
-      title: 'Actions',
-      dataIndex: 'actions',
-      key: 'actions',
+      title: "Wallet Balance",
+      dataIndex: "walletBalance",
+      key: "walletBalance",
+      defaultSortOrder: "descend",
+      sorter: (a, b) =>
+        getWalletDigit(a.walletBalance) - getWalletDigit(b.walletBalance),
+      sortDirections: ["descend", "ascend"],
+    },
+    {
+      title: "Wallet Number",
+      dataIndex: "walletNumber",
+      key: "walletNumber",
+    },
+
+    {
+      title: "Actions",
+      dataIndex: "actions",
+      key: "actions",
       render: (action, alldata) => {
         const userContent = (
           <div>
             <p
-              style={{ cursor: 'pointer' }}
-              onClick={onOpenSendVerificationEmailModal(alldata)}>
+              style={{ cursor: "pointer" }}
+              onClick={onOpenSendVerificationEmailModal(alldata)}
+            >
               Send Email Verification
             </p>
             <p
-              style={{ color: 'red', cursor: 'pointer' }}
-              onClick={openSuspendUserModal(alldata)}>
+              style={{ color: "red", cursor: "pointer" }}
+              onClick={openSuspendUserModal(alldata)}
+            >
               Suspend
             </p>
           </div>
@@ -398,9 +363,9 @@ export const DashBoard = (props) => {
         isModalVisible: false,
         loading: false,
       }));
-      notificationAlert('success', 'Sent', response);
+      notificationAlert("success", "Sent", response);
     } catch (error) {
-      notificationAlert('error', 'Failed', error.message || 'Please try again');
+      notificationAlert("error", "Failed", error.message || "Please try again");
       setVerifyEmailProps((prevState) => ({ ...prevState, loading: false }));
     }
   };
@@ -458,10 +423,10 @@ export const DashBoard = (props) => {
       };
       await dispatcher(suspendUser(payload));
       await dispatcher(
-        fetchAllUser({ page: 0, pageSize: 10, status: 'ACTIVE' })
+        fetchAllUser({ page: 0, pageSize: 10, status: "ACTIVE" })
       );
       await dispatcher(
-        fetchAllUser({ page: 0, pageSize: 10, status: 'SUSPENDED' })
+        fetchAllUser({ page: 0, pageSize: 10, status: "SUSPENDED" })
       );
       setSuspendUserProps((prevState) => ({
         ...prevState,
@@ -469,131 +434,130 @@ export const DashBoard = (props) => {
         loading: false,
       }));
       notificationAlert(
-        'success',
-        'Suspended',
+        "success",
+        "Suspended",
         `User with the email ${suspendUserProps.email} has been suspended`
       );
     } catch (error) {
       setSuspendUserProps((prevState) => ({ ...prevState, loading: false }));
-      notificationAlert('error', 'Failed', error.message || 'Please try again');
+      notificationAlert("error", "Failed", error.message || "Please try again");
     }
   };
 
   return (
-    <Switch>
-      <Route exact path={path}>
-        <PageTitleBar hideButtons={true} title="Dashboard" />
-        <StyledStatDiv>
-          <StatCard
-            isCount={true}
-            isGrey={true}
-            title="Successful Transactions"
-            hidePrecision
-            amount={
-              dashboardStat.totalCardTransactionsWithValueGiven +
-                dashboardStat.totalWalletTransactionsWithValueGiven || 0
-            }
-            hidenaira
-          />
-
-          <StatCard
-            isCount={true}
-            isGrey={true}
-            failed
-            title="Failed Transactions"
-            hidePrecision
-            amount={getTotalFailedTransactions(dashboardStat).totalFailed || 0}
-            hidenaira
-          />
-          <StatCard
-            isCount={true}
-            isGrey={true}
-            title="Total Users"
-            hidePrecision
-            amount={dashboardStat.totalUsers || 0}
-            hidenaira
-          />
-          <StatCard
-            isCount={true}
-            isGrey={true}
-            title="Active Users"
-            hidePrecision
-            amount={dashboardStat.totalActiveUsers || 0}
-            hidenaira
-          />
-          <StatCard
-            isCount={true}
-            isGrey={true}
-            title="Suspended Users"
-            hidePrecision
-            amount={dashboardStat.totalSuspendedUsers || 0}
-            hidenaira
-            warning
-          />
-          <StatCard
-            isCount={true}
-            isGrey={true}
-            title="Deleted Users"
-            hidePrecision
-            amount={dashboardStat.totalDeletedUsersCount || 0}
-            hidenaira
-            failed
-          />
-          
-        </StyledStatDiv>
-        <TableComponent
-          bottomText={
-            activeTab * 1  === 1 ? 'View All Users' : 'View All Transactions'
+    <MainPageScaffold>
+      <PageTitleBar hideButtons={true} title="Dashboard" />
+      <StyledStatDiv>
+        <StatCard
+          isCount={true}
+          isGrey={true}
+          title="Successful Transactions"
+          hidePrecision
+          amount={
+            dashboardStat.totalCardTransactionsWithValueGiven +
+              dashboardStat.totalWalletTransactionsWithValueGiven || 0
           }
-          onClick={handleTableExpand}>
-          <Tabs
-            tabBarStyle={{ color: '#A0AEC0', padding: '0px 23px' }}
-            defaultActiveKey="1"
-            onChange={onTabChange}>
-            <TabPane tab="Recent Active Users" key="1">
-              <AntTable
-               pagination={false}
-                columns={userColumns}
-                dataSource={userState.activeUserList.data}
-              />
-            </TabPane>
-            <TabPane tab="Recent Transactions" key="2">
-              <AntTable
-                pagination={false}
-                columns={transactionColumns}
-                scroll={{ x: '180vw' }}
-                dataSource={allTransactions.data}
-              />
-            </TabPane>
-          </Tabs>
-        </TableComponent>
-        <SendEmailVerificatioModal
-          email={verifyEmailProps.email}
-          onCancel={handleCloseSendVerificationModal}
-          onOk={handleSendVerificationEmail}
-          loading={verifyEmailProps.loading}
-          visible={verifyEmailProps.isModalVisible}
+          hidenaira
         />
-        <SuspendUserModal
-          email={suspendUserProps.email}
-          loading={suspendUserProps.loading}
-          visible={suspendUserProps.isModalVisible}
-          onCancel={handleCloseSuspendUserModal}
-          onOk={handleSuspendUser}
+
+        <StatCard
+          isCount={true}
+          isGrey={true}
+          failed
+          title="Failed Transactions"
+          hidePrecision
+          amount={getTotalFailedTransactions(dashboardStat).totalFailed || 0}
+          hidenaira
         />
-      </Route>
-    </Switch>
+        <StatCard
+          isCount={true}
+          isGrey={true}
+          title="Total Users"
+          hidePrecision
+          amount={dashboardStat.totalUsers || 0}
+          hidenaira
+        />
+        <StatCard
+          isCount={true}
+          isGrey={true}
+          title="Active Users"
+          hidePrecision
+          amount={dashboardStat.totalActiveUsers || 0}
+          hidenaira
+        />
+        <StatCard
+          isCount={true}
+          isGrey={true}
+          title="Suspended Users"
+          hidePrecision
+          amount={dashboardStat.totalSuspendedUsers || 0}
+          hidenaira
+          warning
+        />
+        <StatCard
+          isCount={true}
+          isGrey={true}
+          title="Deleted Users"
+          hidePrecision
+          amount={dashboardStat.totalDeletedUsersCount || 0}
+          hidenaira
+          failed
+        />
+      </StyledStatDiv>
+      <TableComponent
+        bottomText={
+          activeTab * 1 === 1 ? "View All Users" : "View All Transactions"
+        }
+        onClick={handleTableExpand}
+      >
+        <Tabs
+          tabBarStyle={{ color: "#A0AEC0", padding: "0px 23px" }}
+          defaultActiveKey="1"
+          onChange={onTabChange}
+        >
+          <TabPane tab="Recent Active Users" key="1">
+            <AntTable
+              pagination={false}
+              columns={userColumns}
+              dataSource={userState.activeUserList.data}
+            />
+          </TabPane>
+          <TabPane tab="Recent Transactions" key="2">
+            <AntTable
+              pagination={false}
+              columns={transactionColumns}
+              scroll={{ x: "180vw" }}
+              dataSource={allTransactions.data}
+            />
+          </TabPane>
+        </Tabs>
+      </TableComponent>
+      <SendEmailVerificatioModal
+        email={verifyEmailProps.email}
+        onCancel={handleCloseSendVerificationModal}
+        onOk={handleSendVerificationEmail}
+        loading={verifyEmailProps.loading}
+        visible={verifyEmailProps.isModalVisible}
+      />
+      <SuspendUserModal
+        email={suspendUserProps.email}
+        loading={suspendUserProps.loading}
+        visible={suspendUserProps.isModalVisible}
+        onCancel={handleCloseSuspendUserModal}
+        onOk={handleSuspendUser}
+      />
+    </MainPageScaffold>
   );
 };
 
 const StyledStatDiv = styled.div`
   width: 100%;
-  ${getCenter({ justifyContent: 'space-between' })};
+  ${getCenter({ justifyContent: "space-between" })};
   margin-top: 38px;
 `;
 
 const StyledKeyActionSection = styled.div`
   width: 100%;
-  ${getCenter({ justifyContent: 'space-between' })};
+  ${getCenter({ justifyContent: "space-between" })};
   margin-top: 30px;
 `;

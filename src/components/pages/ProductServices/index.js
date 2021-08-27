@@ -44,6 +44,8 @@ import { Services } from "../../../services";
 import { themes } from "../../../globalAssets/theme";
 import { servicesSelector, fetchAllServices } from "./slice";
 import { getBase64 } from "../../../utils/getBase64";
+import { MainPageScaffold } from "../../globalComponents/MainPageScaffold";
+
 const { Option } = Select;
 const { TabPane } = Tabs;
 
@@ -253,7 +255,7 @@ export const ProductServices = (props) => {
   
 
   return (
-    <>
+    <MainPageScaffold>
       <PageTitleBar
         onButtonClick={() =>
           setCreateServicesProps((prevState) => ({
@@ -311,7 +313,7 @@ export const ProductServices = (props) => {
         defaultValues={editServicesProps.selectedService}
         form={editModalForm}
       />
-    </>
+    </MainPageScaffold>
   );
 };
 

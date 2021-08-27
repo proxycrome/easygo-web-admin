@@ -14,6 +14,7 @@ import {
   Col,
   DatePicker,
   useForm,
+  InputNumber
 } from "antd";
 import {
   TableTopBar,
@@ -46,6 +47,7 @@ import { themes } from "../../../globalAssets/theme";
 import { selectDashboard } from "../Dashboard/slice";
 import { getBase64 } from "../../../utils/getBase64";
 import { servicesSelector } from "../ProductServices/slice";
+import { MainPageScaffold } from "../../globalComponents/MainPageScaffold";
 
 const { RangePicker } = DatePicker;
 
@@ -373,7 +375,7 @@ export const Coupons = (props) => {
     }
   };
   return (
-    <>
+    <MainPageScaffold>
       <PageTitleBar
         onButtonClick={() =>
           setCreateCouponProps((prevState) => ({
@@ -445,7 +447,7 @@ export const Coupons = (props) => {
         defaultValue={editCouponProps.selectedCoupon}
         handleDurationChange={handleDurationChange}
       />
-    </>
+    </MainPageScaffold>
   );
 };
 
@@ -505,7 +507,7 @@ const CreateCouponModal = (props) => {
           rules={[{ required: true }]}
         >
           <StyledInputContainer>
-            <Input type="number" required bordered={false} />
+            <InputNumber min={1} required bordered={false} />
           </StyledInputContainer>
         </Form.Item>
 
@@ -539,7 +541,7 @@ const CreateCouponModal = (props) => {
           rules={[{ required: true }]}
         >
           <StyledInputContainer>
-            <Input type="number" required bordered={false} />
+            <InputNumber min={1} required bordered={false} />
           </StyledInputContainer>
         </Form.Item>
         <Form.Item
@@ -548,7 +550,7 @@ const CreateCouponModal = (props) => {
           rules={[{ required: true }]}
         >
           <StyledInputContainer>
-            <Input type="number" required bordered={false} />
+            <InputNumber min={1} required bordered={false} />
           </StyledInputContainer>
         </Form.Item>
         <Form.Item label="Duration" name="duration">
@@ -659,13 +661,14 @@ const EditCouponModal = (props) => {
           rules={[{ required: true }]}
         >
           <StyledInputContainer>
-            <Input
+            <InputNumber
               defaultValue={
                 props.defaultValue?.discountType === "PERCENTAGE"
                   ? props.defaultValue?.discountValueInPercentage
                   : props.defaultValue?.discountValueInFixedAmount
               }
-              type="number"
+              min={1}
+            /*   type="number" */
               required
               bordered={false}
             />
@@ -704,9 +707,9 @@ const EditCouponModal = (props) => {
           rules={[{ required: true }]}
         >
           <StyledInputContainer>
-            <Input
+            <InputNumber
               defaultValue={props.defaultValue?.usageCount}
-              type="number"
+              min={1}
               required
               bordered={false}
             />
@@ -718,9 +721,9 @@ const EditCouponModal = (props) => {
           rules={[{ required: true }]}
         >
           <StyledInputContainer>
-            <Input
+            <InputNumber
               defaultValue={props.defaultValue?.userCount}
-              type="number"
+              min={1}
               required
               bordered={false}
             />
