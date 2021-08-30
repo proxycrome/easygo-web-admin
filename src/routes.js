@@ -16,4 +16,5 @@ export const routes = {
     roleTypeRoute: '/data/role-types',
     discountTypeRoute: '/data/coupon-discount-types',
     couponRoute: '/coupon',
+    walletBalanceRoute: '/data/provider-wallet-balance'
 }
