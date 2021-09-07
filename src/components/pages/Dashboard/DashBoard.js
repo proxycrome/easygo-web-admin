@@ -130,20 +130,23 @@ export const DashBoard = (props) => {
   const transactionColumns = [
     {
       title: "Name",
-      dataIndex: "customerFullName",
-      key: "customerFullName",
+      dataIndex: "user",
+      key: "user",
       width: "7%",
       fixed: "left",
+      render: (user) => user.fullName
     },
     {
       title: "Email",
-      dataIndex: "customerEmail",
-      key: "customerEmail",
+      dataIndex: "user",
+      key: "user",
+      render: (user) => user.email
     },
     {
       title: "Phone number",
-      dataIndex: "customerPhoneNumber",
-      key: "customerPhoneNumber",
+      dataIndex: "user",
+      key: "user",
+      render: (user) => user.fullName
     },
     {
       title: "Amount",
@@ -385,7 +388,7 @@ export const DashBoard = (props) => {
       history.push(`${url}/transactions`);
     }
   };
-  console.log(activeTab);
+
   const onTabChange = (value) => {
     setActiveTab(value);
   };

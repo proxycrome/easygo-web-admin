@@ -507,7 +507,7 @@ const CreateCouponModal = (props) => {
           rules={[{ required: true }]}
         >
           <StyledInputContainer>
-            <InputNumber min={1} required bordered={false} />
+            <StyledNumberInput min={1} required bordered={false} />
           </StyledInputContainer>
         </Form.Item>
 
@@ -541,7 +541,7 @@ const CreateCouponModal = (props) => {
           rules={[{ required: true }]}
         >
           <StyledInputContainer>
-            <InputNumber min={1} required bordered={false} />
+            <StyledNumberInput min={1} required bordered={false} />
           </StyledInputContainer>
         </Form.Item>
         <Form.Item
@@ -550,7 +550,7 @@ const CreateCouponModal = (props) => {
           rules={[{ required: true }]}
         >
           <StyledInputContainer>
-            <InputNumber min={1} required bordered={false} />
+            <StyledNumberInput min={1} required bordered={false} />
           </StyledInputContainer>
         </Form.Item>
         <Form.Item label="Duration" name="duration">
@@ -661,7 +661,7 @@ const EditCouponModal = (props) => {
           rules={[{ required: true }]}
         >
           <StyledInputContainer>
-            <InputNumber
+            <StyledNumberInput
               defaultValue={
                 props.defaultValue?.discountType === "PERCENTAGE"
                   ? props.defaultValue?.discountValueInPercentage
@@ -707,7 +707,8 @@ const EditCouponModal = (props) => {
           rules={[{ required: true }]}
         >
           <StyledInputContainer>
-            <InputNumber
+            <StyledNumberInput
+                /* style={{width: '100%'}} */
               defaultValue={props.defaultValue?.usageCount}
               min={1}
               required
@@ -721,7 +722,8 @@ const EditCouponModal = (props) => {
           rules={[{ required: true }]}
         >
           <StyledInputContainer>
-            <InputNumber
+            <StyledNumberInput
+             /*  style={{width: '100%'}} */
               defaultValue={props.defaultValue?.userCount}
               min={1}
               required
@@ -781,6 +783,10 @@ const EditCouponModal = (props) => {
   );
 };
 
+
+const StyledNumberInput = styled(InputNumber)`
+  width: 100%;
+`
 const StyledTable = styled(AntTable)`
   -ms-overflow-style: none;
   scrollbar-width: none;

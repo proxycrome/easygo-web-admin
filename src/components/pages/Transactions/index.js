@@ -5,21 +5,16 @@ import {
   Tag,
   Popover,
   Form,
-  Input,
   Select,
   Typography,
   Statistic,
 } from "antd";
 import {
   TableTopBar,
-  StyledSelect,
-  StyledSelectDiv,
-  StyledSearchInputBorder,
 } from "../../globalComponents/TableTopBar";
 import { TableComponent } from "../../globalComponents/TableComponent";
 import { PrimaryButton } from "../../globalComponents/Buttons";
-import { Switch, Route, useRouteMatch, useHistory } from "react-router-dom";
-import { TransactionDetail } from "../../globalComponents/TransactionDetail";
+import { useRouteMatch, useHistory } from "react-router-dom";
 import { PageTitleBar } from "../../globalComponents/PageTitleBar";
 import { FiMoreVertical } from "react-icons/fi";
 import moment from "moment";
@@ -35,33 +30,13 @@ import { PaymentDetail } from "../Users/CustomerDetails";
 import { themes } from "../../../globalAssets/theme";
 import { MainPageScaffold } from "../../globalComponents/MainPageScaffold";
 
-const { Option } = Select;
 const { TabPane } = Tabs;
 
-const dataSource = [
-  {
-    key: "1",
-    id: "#12234",
-    status: "successful",
-    date: "June 21st 2021",
-    amount: "200000",
-    username: "Johnson Adewale",
-  },
-  {
-    key: "2",
-    id: "#56778",
-    date: "Dec 21st 2021",
-    amount: "200000",
-    status: "failed",
-    username: "Johnson Adewale",
-  },
-];
-
 export const Transaction = (props) => {
-  const [form] = Form.useForm();
+
   const { allTransactions } = useSelector(selectTransactions);
   const [page, setPage] = useState(1);
-  const { path, url } = useRouteMatch();
+  const {  url } = useRouteMatch();
   const history = useHistory();
   const dispatcher = useDispatch();
   const [requeryModalProps, setRequeryModalProps] = useState({
@@ -92,6 +67,7 @@ export const Transaction = (props) => {
     }));
   };
 
+  console.log({allTransactions});
   const columns = [
     {
       title: "ID",
@@ -102,20 +78,23 @@ export const Transaction = (props) => {
     },
     {
       title: "Name",
-      dataIndex: "customerFullName",
-      key: "customerFullName",
+      dataIndex: "user",
+      key: "user",
+      render: (user) => user?.fullName
       /*  width: '7%',
       fixed: 'left', */
     },
     {
       title: "Email",
-      dataIndex: "customerEmail",
-      key: "customerEmail",
+      dataIndex: "user",
+      key: "user",
+      render: (user) => user.email
     },
     {
       title: "Phone number",
-      dataIndex: "customerPhoneNumber",
-      key: "customerPhoneNumber",
+      dataIndex: "user",
+      key: "user",
+      render: (user) => user.phoneNumber
     },
     {
       title: "Amount",
