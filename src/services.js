@@ -277,7 +277,17 @@ export class Services{
                 Authorization: `Bearer ${localStorage.token}`
             },
             data: payload.data
+        })
+    }
 
+
+    static async getWalletBalance(){
+        return axios({
+            method: 'GET',
+            url: `${domain}${routes.walletBalanceRoute}`,
+            headers: {
+                Authorization: `Bearer ${localStorage.token}`
+            },
         })
     }
 }

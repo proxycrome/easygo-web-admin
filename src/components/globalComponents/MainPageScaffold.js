@@ -1,27 +1,41 @@
-import { Row, Col, Input, Badge, Select } from "antd";
-import { FiSearch as SearchIcon, FiBell as BellIcon } from "react-icons/fi";
+import { useState } from 'react';
+import { Row, Col, Input, Badge, Typography, Statistic } from "antd";
+import {
+  FiSearch as SearchIcon,
+  FiBell as BellIcon,
+  FiPlus as PlusIcon,
+} from "react-icons/fi";
 import styled from "styled-components";
 import { themes } from "../../globalAssets/theme";
 import { getCenter } from "../../utils/getCenter";
 import { device } from "../../globalAssets/breakpoints";
-
+import { fontFamily } from "../../globalAssets/fontFamily";
+import { StyledModal } from "./styles";
+import { Services } from '../../services';
 
 export const MainPageScaffold = (props) => {
- /*  function onChange(value) {
-    console.log(`selected ${value}`);
-  } */
+ const [walletBalanceModalProps, setWalletBalanceModalProps] = useState({
+    visible: false,
+    loading: false,
+    balance: 0
+ })
 
-  function onBlur() {
-    console.log("blur");
-  }
 
-  function onFocus() {
-    console.log("focus");
-  }
+ const getWalletBalance = async () => {
+    try {
+        setWalletBalanceModalProps(prevState =>  ({...prevState, loading: true}));
+        const response = await Services.getWalletBalance();
+        setWalletBalanceModalProps(prevState =>  ({...prevState, loading: false, balance: parseFloat(response.data.split(" = ")[1]) }));
 
-  /* function onSearch(val) {
-    console.log("search:", val);
-  } */
+    } catch (error) {
+        console.log(error);
+    }
+ }
+ 
+ const onOpenWalletBalance = () => {
+    getWalletBalance();
+    setWalletBalanceModalProps(prevState =>  ({...prevState, visible: true}))
+ }
 
   return (
     <Col span={20}>
@@ -31,23 +45,8 @@ export const MainPageScaffold = (props) => {
             <StyledHeader>
               {props.showSearch && (
                 <StyledInputBorder>
-                  {/* <Select
-                    showSearch
-                    suffixIcon={<SearchIcon />}
-                    style={{ width: "100%" }}
-                    bordered={false}
-                    placeholder="Select a person"
-                    optionFilterProp="children"
-                    onChange={props.onChange}
-                    onFocus={onFocus}
-                    onBlur={onBlur}
-                    onSearch={props.onSearch}
-                    allowClear
-                  >
-                   {props.searchOptions}
-                  </Select> */}
-                  <Input bordered={false} onChange={props.onSearch}/>
-                   <SearchIcon />
+                  <Input bordered={false} onChange={props.onSearch} />
+                  <SearchIcon />
                 </StyledInputBorder>
               )}
               {props.showAlerm && (
@@ -57,6 +56,13 @@ export const MainPageScaffold = (props) => {
                   </Badge>
                 </StyledAlertDiv>
               )}
+
+              <StyledButtonDiv onClick={onOpenWalletBalance}>
+                <StyledButton>
+                 {/*  <PlusIcon /> */}
+                  VT-Pass Wallet Balance
+                </StyledButton>
+              </StyledButtonDiv>
             </StyledHeader>
           </Col>
         </Row>
@@ -66,9 +72,90 @@ export const MainPageScaffold = (props) => {
           </Col>
         </Row>
       </StyledMainBodyContainer>
+      <WalletBalanceModal
+        loading={walletBalanceModalProps.loading}
+        onCancel={() => setWalletBalanceModalProps(prevState =>  ({...prevState, visible: false}))}
+        visible={walletBalanceModalProps.visible}
+        getWalletBalance={getWalletBalance}
+        balance={walletBalanceModalProps.balance}
+      />
+
+      {/* <StyledModal
+          onCancel={() => setWalletBalanceModalProps(prevState =>  ({...prevState, visible: false}))}
+          visible={walletBalanceModalProps.visible}
+          footer={false}
+        >
+          <Typography.Title level={4}>Re-query Transaction</Typography.Title>
+         
+        </StyledModal> */}
     </Col>
   );
 };
+
+
+
+const WalletBalanceModal = (props) => {
+    const onOk = () => {
+      props.form.submit();
+    };
+  
+    return (
+      <StyledModal
+        title="VT-Pass Wallet Balance"
+        visible={props.visible}
+        okButtonProps={{
+          loading: props.loading,
+          style: {
+            backgroundColor: themes.primaryColor,
+            border: `1px solid ${themes.primaryColor}`,
+          },
+        }}
+        cancelButtonProps={{
+          type: "danger",
+        }}
+        onOk={props.getWalletBalance}
+        okText="Get Wallet Balance"
+        onCancel={props.onCancel}
+      >
+       {props.loading? <div>
+           <p>...loading</p>
+       </div> : <div> <Statistic value={props.balance} prefix='₦'/></div>}
+      </StyledModal>
+    );
+  };
+
+const StyledButtonDiv = styled.div`
+  height: fit-content;
+  margin-left: auto;
+`;
+
+const StyledButton = styled.button`
+  ${getCenter()};
+  font-size: 12px;
+  background-color: ${themes.primaryColor};
+  border: none;
+  color: #fff;
+  margin-left: 70px;
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-family: ${fontFamily.inter};
+  font-weight: 600;
+  cursor: pointer;
+  &:hover,
+  &:focus {
+    outline: none;
+  }
+  & > :first-child {
+    margin-right: 10px;
+    font-size: 16px;
+  }
+  @media ${device.laptop} {
+    font-size: 0.9vw;
+    & > :first-child {
+      font-size: 1.1vw;
+    }
+  }
+`;
 
 const StyledMainBodyContainer = styled.section`
   min-height: 100vh;
