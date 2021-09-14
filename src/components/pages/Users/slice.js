@@ -34,14 +34,14 @@ export const fetchAllUser = (payload) => dispatcher => {
                 console.log(response);
                 if(payload.status === 'ACTIVE'){
                     dispatcher(addActiveUserList({
-                        data: response.data.data.body,
+                        data: response.data.data.body.filter(item => item.recordStatus.status === 'ACTIVE'),
                         total: response.data.total,
                         limit: response.data.limit,
                         page: response.data.page,
                       }))
                 }else if(payload.status === 'SUSPENDED'){
                     dispatcher(addSuspendedUserList({
-                        data: response.data.data.body,
+                        data: response.data.data.body.filter(item => item.recordStatus.status === 'SUSPENDED'),
                         total: response.data.total,
                         limit: response.data.limit,
                         page: response.data.page,
