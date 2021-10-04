@@ -134,19 +134,19 @@ export const DashBoard = (props) => {
       key: "user",
       width: "7%",
       fixed: "left",
-      render: (user) => user.fullName
+      render: (user) => user?.fullName
     },
     {
       title: "Email",
       dataIndex: "user",
       key: "user",
-      render: (user) => user.email
+      render: (user) => user?.email
     },
     {
       title: "Phone number",
       dataIndex: "user",
       key: "user",
-      render: (user) => user.fullName
+      render: (user) => user?.fullName
     },
     {
       title: "Amount",
