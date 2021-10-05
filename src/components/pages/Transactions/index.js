@@ -88,13 +88,13 @@ export const Transaction = (props) => {
       title: "Email",
       dataIndex: "user",
       key: "user",
-      render: (user) => user.email
+      render: (user) => user?.email
     },
     {
       title: "Phone number",
       dataIndex: "user",
       key: "user",
-      render: (user) => user.phoneNumber
+      render: (user) => user?.phoneNumber
     },
     {
       title: "Amount",
